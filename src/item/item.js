@@ -9,9 +9,8 @@ import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
 import { set } from '../database';
 
-const performSaveItem = (name, photoId) => {
-  console.log(`got ${name} with ${photoId}`);
-  return free.sequence([set(name, { name, photoId }), goToGrid('default')]);
+const performSaveItem = (name, blob) => {
+  return free.sequence([set(name, { name, blob }), goToGrid('default')]);
 };
 
 const goToItem = (itemId) =>
