@@ -1,16 +1,16 @@
 ## Tue Aug 31 16:25:44 MYT 2021
 
-### Create item, store it and show all of them in Grid
+### Create item, take photo, store them and show all items in Grid
 
-To create a new item, we pass up a closure that expect two arguments and will trigger a SOP to `performSaveitem` if Svelte Component invoke it. i.e. Click on the Save button. Insider the SOP, we will save the item into the memory database we created earlier. Then sequence a `gotoGrid` SOP after the save, to move user back to the grid.
+To create a new item, we pass up a closure that expect two arguments and will trigger a SOP to `performSaveitem` if Svelte Component invoke it. i.e. Click on the Save button. To save an item with it's photo, one just take the value the of input and blob from file input, pass both of them into the closure.
+
+In the `performSaveItem` SOP, we first `create` the item with it's name, chain the result of using this Free Monad to the next `attach` function. `create` and `attach` both return a Free Monad. They do not perform any side-effects, in other word: pure function. To use the result of a Free Monad in function that result another Free Monad, we use `.chain()`. After this database steps, we sequence it with a `goToGrid` Free Monad. Sequence is simply unwrap a `[Free Monad X, Free Monad Y]` to a `Free Monad [X, Y]`. X and Y has no relationship at all beside being a series of isolated steps.
 
 In the `goToGrid` SOP, we add new step to read all the item from the database, and set the result to a new ref(Svelte Store). The Grid Component will add a new template to iterate this new ref (which is a list) and display the stored Items.
 
-### Simple memory database with intepretor
+### PouchDB with intepretor
 
-For all side-effects, e.g. CRUD of database, network fetch, setting ref(Svelte Store), fp-svelte demand wrapping these effect with a Free Monad.
-
-To temporally test our web application, we create a simple memory database to store the new item. Just for the sake of showing how to make an interpretor, we now consider setting a JS plain object (the memory database) a side-effect operation. So, each get, get all and set is a lifted, Free Monad. These Free Monad will be use extensively in user's SOP later.
+For all side-effects, e.g. CRUD of database, network fetch, setting ref(Svelte Store), fp-svelte demand wrapping these effect with a Free Monad. PouchDB store data in browser's IndexedDB, that is definitely a side-effect. To let user safely use Free Monad in logic and push all the side-effect code to the Future (during `fork()`), we need to write the intepretor.
 
 There are some boilerplated code that one need to write for each intepretor:
 

@@ -7,10 +7,13 @@ import { viewMainPage } from '../view/view_store';
 import Item from './Item.svelte';
 import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
-import { set } from '../database';
+import { attach, create } from '../database';
 
 const performSaveItem = (name, blob) => {
-  return free.sequence([set(name, { name, blob }), goToGrid('default')]);
+  return free.sequence([
+    create({ name }).chain((doc) => attach(doc, `${name}.jpg`, blob)),
+    goToGrid('default'),
+  ]);
 };
 
 const goToItem = (itemId) =>
