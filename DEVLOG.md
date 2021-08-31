@@ -1,3 +1,23 @@
+## Tue Aug 31 16:25:44 MYT 2021
+
+### Create item, store it and show all of them in Grid
+
+To create a new item, we pass up a closure that expect two arguments and will trigger a SOP to `performSaveitem` if Svelte Component invoke it. i.e. Click on the Save button. Insider the SOP, we will save the item into the memory database we created earlier. Then sequence a `gotoGrid` SOP after the save, to move user back to the grid.
+
+In the `goToGrid` SOP, we add new step to read all the item from the database, and set the result to a new ref(Svelte Store). The Grid Component will add a new template to iterate this new ref (which is a list) and display the stored Items.
+
+### Simple memory database with intepretor
+
+For all side-effects, e.g. CRUD of database, network fetch, setting ref(Svelte Store), fp-svelte demand wrapping these effect with a Free Monad.
+
+To temporally test our web application, we create a simple memory database to store the new item. Just for the sake of showing how to make an interpretor, we now consider setting a JS plain object (the memory database) a side-effect operation. So, each get, get all and set is a lifted, Free Monad. These Free Monad will be use extensively in user's SOP later.
+
+There are some boilerplated code that one need to write for each intepretor:
+
+1. Using `daggy` to create the Sum type. Defining all the posible functions for this sum type.
+2. Write a `<sumtype>ToFuture` function. This is the interpretor. It return a Fluture's Future that runs side-effecting codes base on the Type.
+3. Export functions which return a FreeMonad for each sum type, by lifting the sum type into a Free Monad.
+
 ## Mon Aug 30 15:19:16 MYT 2021
 
 ### `setRef` and Svelte Store
