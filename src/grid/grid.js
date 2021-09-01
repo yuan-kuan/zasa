@@ -10,6 +10,7 @@ import Grid from './Grid.svelte';
 import * as gridStore from './grid_store';
 import { goToItem, goToItemCreation } from '../item/item';
 import { getAll } from '../database';
+import { getAllItemWithBlob } from '../db_ops';
 
 const presentGoToItems = (itemWithBlobs) =>
   free
@@ -18,7 +19,7 @@ const presentGoToItems = (itemWithBlobs) =>
     .chain(setRef(gridStore.goToItem));
 
 const presentItemGrid = (category) =>
-  getAll() //
+  getAllItemWithBlob() //
     .chain((itemWithBlobs) =>
       free.sequence([
         presentGoToItems(itemWithBlobs),

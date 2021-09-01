@@ -9,31 +9,21 @@ import { registerStaticInterpretor } from './sop';
 const pouchdb = new PouchDB('zasa-test');
 
 const Database = daggy.taggedSum('Database', {
-  Get: ['id'],
+  Get: ['id', 'withAttachment'],
   GetAll: [''],
-  Create: ['doc'],
+  Put: ['doc'],
   Attach: ['doc', 'filename', 'blob'],
 });
-const { Get, GetAll, Create, Attach } = Database;
-
-const docToItem = (doc) => {
-  var blob;
-  if (doc._attachments) {
-    blob = Object.values(doc._attachments).pop().data;
-  }
-  return { itemId: doc._id, name: doc.name, blob };
-};
+const { Get, GetAll, Put, Attach } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
-    Get: (id) =>
+    Get: (id, withAttachment) =>
       Future((reject, resolve) => {
-        pouchdb
-          .get(id, { attachments: true, binary: true })
-          .then((doc) => {
-            resolve(docToItem(doc));
-          })
-          .catch(reject);
+        const option = withAttachment
+          ? { attachments: true, binary: true }
+          : {};
+        pouchdb.get(id, option).then(resolve).catch(reject);
         return () => {};
       }),
 
@@ -46,15 +36,13 @@ const databaseToFuture = (p) =>
             binary: true,
           })
           .then((result) => {
-            resolve(
-              R.pipe(R.prop('rows'), R.pluck('doc'), R.map(docToItem))(result)
-            );
+            resolve(R.compose(R.pluck('doc'), R.prop('rows'))(result));
           })
           .catch(reject);
         return () => {};
       }),
 
-    Create: (doc) =>
+    Put: (doc) =>
       Future((reject, resolve) => {
         pouchdb
           .put(doc)
@@ -79,9 +67,10 @@ const databaseToFuture = (p) =>
 
 registerStaticInterpretor([Database, databaseToFuture]);
 
-const get = (id) => lift(Get(id));
+const get = (id) => lift(Get(id, false));
+const getWithAttachment = (id) => lift(Get(id, true));
 const getAll = () => lift(GetAll(null));
-const create = (doc) => lift(Create(doc));
+const create = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 
-export { get, getAll, create, attach };
+export { get, getWithAttachment, getAll, create, attach };

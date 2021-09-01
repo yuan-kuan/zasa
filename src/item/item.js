@@ -10,8 +10,11 @@ import { goToGrid } from '../grid/grid';
 import { attach, create, get } from '../database';
 import { makeItemDoc } from './item_utils';
 import { randomFourCharacter } from '../utils';
+import { getItemWithBlob } from '../db_ops';
 
-const performSaveItem = (name, blob) => {
+const performEditItemName = (itemId) => (name) => {};
+
+const performCreateItem = (name, blob) => {
   const creation = free
     .of(makeItemDoc) //
     .ap(free.of(name))
@@ -30,14 +33,14 @@ const goToItemCreation = () =>
     setRef(itemStore.name, ''),
     setRef(itemStore.nameError, null),
     setRef(itemStore.performSave, (name, photoId) =>
-      addSop(() => performSaveItem(name, photoId))
+      addSop(() => performCreateItem(name, photoId))
     ),
   ]);
 
 const presentItem = (itemId) =>
   free
     .of(itemId) //
-    .chain(get)
+    .chain(getItemWithBlob)
     .chain((itemWithBlob) =>
       free.sequence([
         setRef(itemStore.name, itemWithBlob.name),
