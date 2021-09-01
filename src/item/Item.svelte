@@ -1,9 +1,9 @@
 <script>
-  import { name, performSave } from './item_store';
+  import { isCreation, name, photoBlob, performSave } from './item_store';
 
-  let workingName = '';
+  let workingName;
   const saveItem = () => {
-    $performSave(workingName, photoBlob);
+    $performSave(workingName, blob);
   };
 
   let cameraInput;
@@ -11,14 +11,20 @@
     cameraInput.click();
   }
 
-  var photoBlob;
   var photoUrl;
+  var blob;
   function photoTaken(e) {
-    photoBlob = e.target.files[0];
-    if (photoBlob) {
-      photoUrl = URL.createObjectURL(photoBlob);
+    blob = e.target.files[0];
+    if (blob) {
+      photoUrl = URL.createObjectURL(blob);
     }
   }
+
+  photoBlob.subscribe((value) => {
+    if (value) {
+      photoUrl = URL.createObjectURL(value);
+    }
+  });
 </script>
 
 <input
@@ -32,7 +38,12 @@
   <img class="object-cover h-32 w-full border" src={photoUrl} alt="" />
   <button on:click={addPhoto}>Add Photo</button>
 </div>
-<div>
-  <input type="text" bind:value={workingName} />
-</div>
+
+{#if $isCreation}
+  <div>
+    <input type="text" bind:value={workingName} />
+  </div>
+{:else}
+  <p>{$name}</p>
+{/if}
 <button on:click={saveItem}>Save</button>

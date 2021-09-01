@@ -16,13 +16,26 @@ const Database = daggy.taggedSum('Database', {
 });
 const { Get, GetAll, Create, Attach } = Database;
 
+const docToItem = (doc) => {
+  var blob;
+  if (doc._attachments) {
+    blob = Object.values(doc._attachments).pop().data;
+  }
+  return { itemId: doc._id, name: doc.name, blob };
+};
+
 const databaseToFuture = (p) =>
   p.cata({
     Get: (id) =>
       Future((reject, resolve) => {
-        pouchdb.get(id).then(resolve);
+        pouchdb
+          .get(id, { attachments: true, binary: true })
+          .then((doc) => {
+            resolve(docToItem(doc));
+          })
+          .catch(reject);
         return () => {};
-      }).catch(reject),
+      }),
 
     GetAll: () =>
       Future((reject, resolve) => {
@@ -34,17 +47,7 @@ const databaseToFuture = (p) =>
           })
           .then((result) => {
             resolve(
-              R.pipe(
-                R.prop('rows'),
-                R.pluck('doc'),
-                R.map((doc) => {
-                  var blob;
-                  if (doc._attachments) {
-                    blob = Object.values(doc._attachments).pop().data;
-                  }
-                  return { name: doc.name, blob };
-                })
-              )(result)
+              R.pipe(R.prop('rows'), R.pluck('doc'), R.map(docToItem))(result)
             );
           })
           .catch(reject);

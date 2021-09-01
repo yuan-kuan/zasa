@@ -1,3 +1,13 @@
+## Wed Sep 1 14:45:16 MYT 2021
+
+###
+
+### Aim for Calculation (pure function), test them ASAP
+
+Free Monad functions do not have much to test. They are pure, but they usually contain no logic before we interprete them and `fork()` the result. As much as possible, we want to make Calculation functions, a pure function that give the same output for the same input. We had come across them couple of time but we never make a good effort to isolate them into another module and protect them with unit test.
+
+Now we have the first candicate, creation of the Item PouchDB document. There are more works can be done this way, moving codes to calculations, especially in our `database.js` interpretor, those function are bloated with our own logic, i.e. returning a data structure with specific field and blob. Eventually we will want our interpretor to be lean, do one thing only. And using Calculation to handle our own business logic.
+
 ## Tue Aug 31 16:25:44 MYT 2021
 
 ### Create item, take photo, store them and show all items in Grid

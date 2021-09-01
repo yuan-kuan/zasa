@@ -33,7 +33,7 @@ const nagivationToFuture = (p) =>
       }),
   });
 
-const setUrl = R.curry((path, params) => free.lift(Show(path, params)));
+const setUrl = (path, params) => free.lift(Show(path, params));
 
 const navigationInterpretor = [Navigation, nagivationToFuture];
 registerStaticInterpretor(navigationInterpretor);
@@ -43,6 +43,7 @@ const itemPath = '/item/:itemId';
 
 const setGridUrl = (category) => setUrl(gridPath, { category });
 const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
+const setItemCreationUrl = () => setUrl('/item');
 
 function start() {
   page('/', () => {
@@ -65,4 +66,4 @@ function start() {
   page();
 }
 
-export { start, setGridUrl, setItemUrl };
+export { start, setGridUrl, setItemUrl, setItemCreationUrl };

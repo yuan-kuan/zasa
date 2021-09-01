@@ -1,13 +1,13 @@
 import * as free from '../free_monad';
 import { addSop } from '../sop';
 import { setRef } from '../ref';
-import { setItemUrl } from '../router';
+import { setItemCreationUrl, setItemUrl } from '../router';
 import { viewMainPage } from '../view/view_store';
 
 import Item from './Item.svelte';
 import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
-import { attach, create } from '../database';
+import { attach, create, get } from '../database';
 import { makeItemDoc } from './item_utils';
 
 const performSaveItem = (name, blob) => {
@@ -20,14 +20,34 @@ const performSaveItem = (name, blob) => {
   return free.sequence([savedItem, goToGrid('default')]);
 };
 
-const goToItem = (itemId) =>
+const goToItemCreation = () =>
   free.sequence([
     viewMainPage(Item),
-    setItemUrl(itemId),
-    setRef(itemStore.name, `item with id(${itemId})`),
+    setItemCreationUrl(),
+    setRef(itemStore.isCreation, true),
+    setRef(itemStore.name, ''),
     setRef(itemStore.performSave, (name, photoId) =>
       addSop(() => performSaveItem(name, photoId))
     ),
   ]);
 
-export { goToItem };
+const presentItem = (itemId) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .chain((itemWithBlob) =>
+      free.sequence([
+        setRef(itemStore.name, itemWithBlob.name),
+        setRef(itemStore.photoBlob, itemWithBlob.blob),
+      ])
+    );
+
+const goToItem = (itemId) =>
+  free.sequence([
+    viewMainPage(Item),
+    setItemUrl(itemId),
+    setRef(itemStore.isCreation, false),
+    presentItem(itemId),
+  ]);
+
+export { goToItem, goToItemCreation };
