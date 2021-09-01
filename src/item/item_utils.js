@@ -14,4 +14,4 @@ const makeItemDoc = R.curry((name, postHash) => {
   )({});
 });
 
-export { makeItemDoc };
+export { makeItemDoc, L };

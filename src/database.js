@@ -70,7 +70,7 @@ registerStaticInterpretor([Database, databaseToFuture]);
 const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
 const getAll = () => lift(GetAll(null));
-const create = (doc) => lift(Put(doc));
+const put = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 
-export { get, getWithAttachment, getAll, create, attach };
+export { get, getWithAttachment, getAll, put, attach };

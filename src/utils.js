@@ -28,4 +28,6 @@ const atMostFourChar = R.pipe(
 
 const randomFourCharacter = () => random().map(atMostFourChar);
 
-export { atMostFourChar, randomFourCharacter };
+const tapLog = (label) => (o) => console.log(`${label}: ${JSON.stringify(o)}`);
+
+export { atMostFourChar, randomFourCharacter, tapLog };

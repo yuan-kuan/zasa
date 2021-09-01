@@ -5,9 +5,17 @@
     photoBlob,
     performSave,
     nameError,
+    performEditName,
   } from './item_store';
 
   let workingName;
+  let isEditingName = false;
+
+  const editName = () => {
+    isEditingName = false;
+    $performEditName(workingName);
+  };
+
   const saveItem = () => {
     $performSave(workingName, blob);
   };
@@ -54,5 +62,11 @@
   </div>
 {:else}
   <p>{$name}</p>
+  {#if isEditingName}
+    <input type="text" bind:value={workingName} />
+    <button on:click={editName}>Done</button>
+  {:else}
+    <button on:click={() => (isEditingName = true)}>Edit</button>
+  {/if}
 {/if}
 <button on:click={saveItem}>Save</button>

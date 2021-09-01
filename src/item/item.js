@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import * as free from '../free_monad';
 import { addSop } from '../sop';
 import { setRef } from '../ref';
@@ -7,19 +9,26 @@ import { viewMainPage } from '../view/view_store';
 import Item from './Item.svelte';
 import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
-import { attach, create, get } from '../database';
-import { makeItemDoc } from './item_utils';
-import { randomFourCharacter } from '../utils';
+import { attach, put, get } from '../database';
+import { makeItemDoc, L as ItemL } from './item_utils';
+import { randomFourCharacter, tapLog } from '../utils';
 import { getItemWithBlob } from '../db_ops';
 
-const performEditItemName = (itemId) => (name) => {};
+const performEditName = (itemId, name) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(R.set(ItemL.name, name))
+    .chain(put)
+    .map(R.view(ItemL.name))
+    .chain(setRef(itemStore.name));
 
 const performCreateItem = (name, blob) => {
   const creation = free
     .of(makeItemDoc) //
     .ap(free.of(name))
     .ap(randomFourCharacter())
-    .chain(create)
+    .chain(put)
     .chain((doc) => attach(doc, `image`, blob));
 
   return free.sequence([creation, goToGrid('default')]);
@@ -54,6 +63,9 @@ const goToItem = (itemId) =>
     setItemUrl(itemId),
     setRef(itemStore.isCreation, false),
     setRef(itemStore.nameError, null),
+    setRef(itemStore.performEditName, (newName) =>
+      addSop(() => performEditName(itemId, newName))
+    ),
     presentItem(itemId),
   ]);
 
