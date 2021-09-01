@@ -7,7 +7,6 @@ import { lift } from './free_monad';
 import { registerStaticInterpretor } from './sop';
 
 const pouchdb = new PouchDB('zasa-test');
-const buffer = {};
 
 const Database = daggy.taggedSum('Database', {
   Get: ['id'],
@@ -55,9 +54,8 @@ const databaseToFuture = (p) =>
     Create: (doc) =>
       Future((reject, resolve) => {
         pouchdb
-          .post(doc)
-          .then(({ id, rev }) => {
-            doc._id = id;
+          .put(doc)
+          .then(({ rev }) => {
             doc._rev = rev;
             resolve(doc);
           })
