@@ -9,15 +9,17 @@ import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
 import { attach, create, get } from '../database';
 import { makeItemDoc } from './item_utils';
+import { randomFourCharacter } from '../utils';
 
 const performSaveItem = (name, blob) => {
-  const savedItem = free
-    .of(name) //
-    .map(makeItemDoc)
+  const creation = free
+    .of(makeItemDoc) //
+    .ap(free.of(name))
+    .ap(randomFourCharacter())
     .chain(create)
-    .chain((doc) => attach(doc, `${doc._id}.jpg`, blob));
+    .chain((doc) => attach(doc, `image`, blob));
 
-  return free.sequence([savedItem, goToGrid('default')]);
+  return free.sequence([creation, goToGrid('default')]);
 };
 
 const goToItemCreation = () =>
@@ -26,6 +28,7 @@ const goToItemCreation = () =>
     setItemCreationUrl(),
     setRef(itemStore.isCreation, true),
     setRef(itemStore.name, ''),
+    setRef(itemStore.nameError, null),
     setRef(itemStore.performSave, (name, photoId) =>
       addSop(() => performSaveItem(name, photoId))
     ),
@@ -47,6 +50,7 @@ const goToItem = (itemId) =>
     viewMainPage(Item),
     setItemUrl(itemId),
     setRef(itemStore.isCreation, false),
+    setRef(itemStore.nameError, null),
     presentItem(itemId),
   ]);
 

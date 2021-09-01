@@ -1,5 +1,11 @@
 <script>
-  import { isCreation, name, photoBlob, performSave } from './item_store';
+  import {
+    isCreation,
+    name,
+    photoBlob,
+    performSave,
+    nameError,
+  } from './item_store';
 
   let workingName;
   const saveItem = () => {
@@ -41,6 +47,9 @@
 
 {#if $isCreation}
   <div>
+    {#if $nameError}
+      <p class="text-red-500">{$nameError}</p>
+    {/if}
     <input type="text" bind:value={workingName} />
   </div>
 {:else}

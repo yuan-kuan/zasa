@@ -7,11 +7,11 @@ const L = {
 
 const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
 
-const makeItemDoc = (name) => {
+const makeItemDoc = R.curry((name, postHash) => {
   return R.pipe(
-    R.set(L.id, toSnakeCase(name)),
+    R.set(L.id, R.compose((sc) => `${sc}-${postHash}`, toSnakeCase)(name)),
     R.set(L.name, R.trim(name))
   )({});
-};
+});
 
 export { makeItemDoc };
