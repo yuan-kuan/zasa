@@ -24,19 +24,20 @@ const performEditName = (itemId, name) =>
     .map(R.view(ItemL.name))
     .chain(setRef(itemStore.name));
 
-const performCreateItem = (name, blob) => {
-  let creation = free
+const performCreateItem = (name, blob) =>
+  free
     .of(makeItemDoc) //
     .ap(free.of(name))
     .ap(randomFourCharacter())
-    .chain(put);
-
-  if (blob) {
-    creation = creation.chain((doc) => attach(doc, `image`, blob));
-  }
-
-  return free.sequence([creation, goToGrid('default')]);
-};
+    .chain(put)
+    .chain((doc) => {
+      if (blob) {
+        return attach(doc, `image`, blob).map((_) => doc._id);
+      } else {
+        return free.of(doc._id);
+      }
+    })
+    .chain(goToItem);
 
 const goToItemCreation = () =>
   free.sequence([
