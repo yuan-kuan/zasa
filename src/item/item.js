@@ -12,7 +12,7 @@ import * as itemStore from './item_store.js';
 import { attach, put, get } from '../database';
 import { makeItemDoc, L as ItemL, makeBatchDoc, addBatch } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
-import { getItemWithBlob } from '../db_ops';
+import { getItemWithBlob, getBatches } from '../db_ops';
 
 const performCreateItem = (name, blob) =>
   free
@@ -54,8 +54,14 @@ const performAddBatch = (itemId, expiryDate, count) => {
     .of(makeBatchDoc(itemId, expiryDate)) //
     .map(addBatch(count))
     .chain(put)
-    .map(tapLog('added batch'));
+    .chain((_) => presentBatches(itemId));
 };
+
+const presentBatches = (itemId) =>
+  free
+    .of(itemId) //
+    .chain(getBatches)
+    .chain(setRef(itemStore.batches));
 
 const presentItem = (itemId) =>
   free
@@ -80,6 +86,7 @@ const goToItem = (itemId) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
     presentItem(itemId),
+    presentBatches(itemId),
   ]);
 
 export { goToItem, goToItemCreation };

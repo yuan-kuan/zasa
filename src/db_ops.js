@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import * as free from './free_monad';
 
 import * as pouch from './database';
 
@@ -6,7 +7,10 @@ const L = {
   itemId: R.lensProp('itemId'),
   name: R.lensProp('name'),
   blob: R.lensProp('blob'),
+  includeDoc: R.lensProp('include_docs'),
 };
+
+const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
 
 const makeItemWithBlob = (itemId, name, blob) =>
   R.pipe(R.set(L.itemId, itemId), R.set(L.name, name), R.set(L.blob, blob))({});
@@ -25,4 +29,23 @@ const getItemWithBlob = (id) =>
 
 const getAllItemWithBlob = () => pouch.getAll().map(R.map(docToItemWithBlob));
 
-export { getItemWithBlob, getAllItemWithBlob };
+const makeStartEndRangeAllDocOption = (key) =>
+  R.pipe(
+    R.applySpec({ startkey: R.identity, endkey: (v) => `${v}\ufff0` }),
+    R.set(L.includeDoc, true)
+  )(key);
+
+const getBatches = (itemId) =>
+  free
+    .of(itemId) //
+    .map(convertItemIdToBatchId)
+    .map(makeStartEndRangeAllDocOption)
+    .chain(pouch.alldocs);
+
+export {
+  convertItemIdToBatchId,
+  getItemWithBlob,
+  getAllItemWithBlob,
+  getBatches,
+  makeStartEndRangeAllDocOption,
+};

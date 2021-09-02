@@ -3,6 +3,7 @@
     name,
     nameError,
     photoBlob,
+    batches,
     performAddBatch,
     performEditName,
   } from './item_store';
@@ -67,6 +68,13 @@
 {/if}
 
 <br />
+<ul>
+  {#each $batches as batch}
+    <li>
+      {new Date(batch.expiry)}
+    </li>
+  {/each}
+</ul>
 
 <br />
 <p class="text-green-600">Batches</p>

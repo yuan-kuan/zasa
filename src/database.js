@@ -11,10 +11,11 @@ const pouchdb = new PouchDB('zasa-test');
 const Database = daggy.taggedSum('Database', {
   Get: ['id', 'withAttachment'],
   GetAll: [''],
+  AllDocs: ['options'],
   Put: ['doc'],
   Attach: ['doc', 'filename', 'blob'],
 });
-const { Get, GetAll, Put, Attach } = Database;
+const { Get, GetAll, AllDocs, Put, Attach } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
@@ -35,6 +36,17 @@ const databaseToFuture = (p) =>
             attachments: true,
             binary: true,
           })
+          .then((result) => {
+            resolve(R.compose(R.pluck('doc'), R.prop('rows'))(result));
+          })
+          .catch(reject);
+        return () => {};
+      }),
+
+    AllDocs: (options) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .allDocs(options)
           .then((result) => {
             resolve(R.compose(R.pluck('doc'), R.prop('rows'))(result));
           })
@@ -70,7 +82,8 @@ registerStaticInterpretor([Database, databaseToFuture]);
 const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
 const getAll = () => lift(GetAll(null));
+const alldocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 
-export { get, getWithAttachment, getAll, put, attach };
+export { get, getWithAttachment, getAll, alldocs, put, attach };

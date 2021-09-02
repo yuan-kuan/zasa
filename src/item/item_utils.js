@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { convertItemIdToBatchId } from '../db_ops';
 
 const L = {
   id: R.lensProp('_id'),
@@ -12,7 +13,7 @@ const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
 
 const makeItemDoc = R.curry((name, postHash) =>
   R.pipe(
-    R.set(L.id, R.compose((sc) => `${sc}-${postHash}`, toSnakeCase)(name)),
+    R.set(L.id, R.compose((sc) => `i_${sc}-${postHash}`, toSnakeCase)(name)),
     R.set(L.name, R.trim(name)),
     R.set(L.type, 'i')
   )({})
@@ -26,8 +27,8 @@ const ymdOnly = (date) =>
 
 const makeBatchDoc = R.curry((itemId, expiryDate) =>
   R.pipe(
-    R.set(L.id, `${itemId}:${ymdOnly(expiryDate)}`),
-    R.set(L.expiry, ymdOnly(expiryDate)),
+    R.set(L.id, `${convertItemIdToBatchId(itemId)}:${ymdOnly(expiryDate)}`),
+    R.set(L.expiry, expiryDate.valueOf()),
     R.set(L.type, 'b'),
     R.set(L.count, 0)
   )({})
