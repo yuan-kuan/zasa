@@ -7,6 +7,7 @@ import { setItemCreationUrl, setItemUrl } from '../router';
 import { viewMainPage } from '../view/view_store';
 
 import Item from './Item.svelte';
+import ItemCreation from './ItemCreation.svelte';
 import * as itemStore from './item_store.js';
 import { goToGrid } from '../grid/grid';
 import { attach, put, get } from '../database';
@@ -24,21 +25,23 @@ const performEditName = (itemId, name) =>
     .chain(setRef(itemStore.name));
 
 const performCreateItem = (name, blob) => {
-  const creation = free
+  let creation = free
     .of(makeItemDoc) //
     .ap(free.of(name))
     .ap(randomFourCharacter())
-    .chain(put)
-    .chain((doc) => attach(doc, `image`, blob));
+    .chain(put);
+
+  if (blob) {
+    creation = creation.chain((doc) => attach(doc, `image`, blob));
+  }
 
   return free.sequence([creation, goToGrid('default')]);
 };
 
 const goToItemCreation = () =>
   free.sequence([
-    viewMainPage(Item),
+    viewMainPage(ItemCreation),
     setItemCreationUrl(),
-    setRef(itemStore.isCreation, true),
     setRef(itemStore.name, ''),
     setRef(itemStore.nameError, null),
     setRef(itemStore.performSave, (name, photoId) =>
@@ -61,7 +64,6 @@ const goToItem = (itemId) =>
   free.sequence([
     viewMainPage(Item),
     setItemUrl(itemId),
-    setRef(itemStore.isCreation, false),
     setRef(itemStore.nameError, null),
     setRef(itemStore.performEditName, (newName) =>
       addSop(() => performEditName(itemId, newName))

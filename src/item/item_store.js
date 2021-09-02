@@ -1,8 +1,8 @@
 import { createRef } from '../ref';
 
-export const isCreation = createRef(false);
-export const name = createRef('Not an Item');
+export const name = createRef();
 export const nameError = createRef();
 export const photoBlob = createRef();
-export const performSave = createRef(() => console.log('save item now!'));
+export const performSave = createRef();
 export const performEditName = createRef();
+export const performAddExpiry = createRef();

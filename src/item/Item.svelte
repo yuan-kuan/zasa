@@ -1,10 +1,9 @@
 <script>
   import {
-    isCreation,
     name,
-    photoBlob,
-    performSave,
     nameError,
+    photoBlob,
+    performAddExpiry,
     performEditName,
   } from './item_store';
 
@@ -16,19 +15,16 @@
     $performEditName(workingName);
   };
 
-  const saveItem = () => {
-    $performSave(workingName, blob);
-  };
+  let isAddingBatch = false;
 
   let cameraInput;
   function addPhoto() {
     cameraInput.click();
   }
 
-  var photoUrl;
-  var blob;
+  let photoUrl;
   function photoTaken(e) {
-    blob = e.target.files[0];
+    let blob = e.target.files[0];
     if (blob) {
       photoUrl = URL.createObjectURL(blob);
     }
@@ -53,20 +49,24 @@
   <button on:click={addPhoto}>Add Photo</button>
 </div>
 
-{#if $isCreation}
-  <div>
-    {#if $nameError}
-      <p class="text-red-500">{$nameError}</p>
-    {/if}
-    <input type="text" bind:value={workingName} />
-  </div>
+<br />
+
+{#if isEditingName}
+  <input type="text" bind:value={workingName} />
+  <button on:click={editName}>Done</button>
 {:else}
   <p>{$name}</p>
-  {#if isEditingName}
-    <input type="text" bind:value={workingName} />
-    <button on:click={editName}>Done</button>
-  {:else}
-    <button on:click={() => (isEditingName = true)}>Edit</button>
-  {/if}
+  <button on:click={() => (isEditingName = true)}>Edit</button>
 {/if}
-<button on:click={saveItem}>Save</button>
+
+<br />
+
+<br />
+<p class="text-green-600">Batches</p>
+{#if isAddingBatch}
+  <input type="date" />
+  <span>count</span>
+  <button>+</button>
+{:else}
+  <button on:click={() => (isAddingBatch = true)}>New Batch</button>
+{/if}
