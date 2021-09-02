@@ -1,12 +1,43 @@
 ## Wed Sep 1 14:45:16 MYT 2021
 
-###
+### Lean and Atomic interpretor
+
+### Free Monad and Dot Chaining
+
+We have a lot of these:
+
+```'js'
+const presentItem = (itemId) =>
+  free
+    .of(itemId) //
+    .chain(getItemWithBlob)
+    .chain((itemWithBlob) =>
+      free.sequence([
+        setRef(itemStore.name, itemWithBlob.name),
+        setRef(itemStore.photoBlob, itemWithBlob.blob),
+      ])
+    );
+```
+
+Free Monad is the center of our "universe", the corner stone of our functional architecture. We use them all over the place. All SOPs return a Free Monad, which will be interpreted to corresponding Future, which later will be called `fork()` to execute all codes/actions/commands. All side-effects are protected in Free Monad, and side-effects are inevitable for any software, web application has a ton of side-effects.
+
+Going through the code sample above:
+
+1. We put `itemId` into a Free Monad with `free.of()`.
+2. We `chain` it to `getItemWithBlob(string)`. This basically mean: Invoke `getItemWithBlob` with the content of the caller Free Monad, i.e. a `ItemId`.
+3. We used `chain` because `getItemWithBlob` return a Free Monad. By chaining it, we get back a FreeMonad containing the result of calling the function.
+4. We then `chain` again to a anynomous function, which again, will return a Free Monad.
+5. In the anonymous function, we use `free.sequence` to serialized two separated `setRef` function (return a Free Monad), into a FreeMonad.
+
+The most important point to make here, is calling `presentItem()` will return a Free Monad. But no side-effects code has been run so far. This Free Monad merely containing the instructions of doing things. It never really do anything, i.e. Never hit the database, never set the Svelte Store reference. All these side-effects will be done only when Free Monad been interpreted and `fork()`, by the `SOPManager.js`.
+
+To learn more about Monad, you need to complete this book: https://mostly-adequate.gitbook.io/mostly-adequate-guide/. If you still following this repo after part 2, you should be interested enough in functional programming to finish this book. It is the foundation of fp-svelte.
 
 ### Aim for Calculation (pure function), test them ASAP
 
-Free Monad functions do not have much to test. They are pure, but they usually contain no logic before we interprete them and `fork()` the result. As much as possible, we want to make Calculation functions, a pure function that give the same output for the same input. We had come across them couple of time but we never make a good effort to isolate them into another module and protect them with unit test.
+Free Monad functions do not have much to test. They are pure and usually contain no logic before we interprete them and `fork()` the result. As much as possible, we want to make Calculation functions, a pure function that give the same output for the same input. We had come across them couple of time but we never make a good effort to isolate them into another module and protect them with unit test.
 
-Now we have the first candicate, creation of the Item PouchDB document. There are more works can be done this way, moving codes to calculations, especially in our `database.js` interpretor, those function are bloated with our own logic, i.e. returning a data structure with specific field and blob. Eventually we will want our interpretor to be lean, do one thing only. And using Calculation to handle our own business logic.
+First candidate is `item.test.js`, which currently contains tests of `makeItemDoc`. As soon as we made business logic module, we should use Test Driven Development on exported functions. This will reduce the slow down of writing bulk tests.
 
 ## Tue Aug 31 16:25:44 MYT 2021
 
