@@ -3,7 +3,7 @@
     name,
     nameError,
     photoBlob,
-    performAddExpiry,
+    performAddBatch,
     performEditName,
   } from './item_store';
 
@@ -16,6 +16,13 @@
   };
 
   let isAddingBatch = false;
+  let workingDate;
+  let workingCount = 1;
+
+  const addNewBatch = () => {
+    // <input type="date"> return a FFFF-MM-DD string, convert it to date
+    $performAddBatch(new Date(workingDate), workingCount);
+  };
 
   let cameraInput;
   function addPhoto() {
@@ -64,9 +71,11 @@
 <br />
 <p class="text-green-600">Batches</p>
 {#if isAddingBatch}
-  <input type="date" />
-  <span>count</span>
-  <button>+</button>
+  <input type="date" bind:value={workingDate} />
+  <span>{workingCount}</span>
+  <button on:click={() => workingCount++}>+</button>
+  <br />
+  <button on:click={addNewBatch}>Done Batch</button>
 {:else}
   <button on:click={() => (isAddingBatch = true)}>New Batch</button>
 {/if}

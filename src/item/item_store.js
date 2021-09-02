@@ -5,4 +5,4 @@ export const nameError = createRef();
 export const photoBlob = createRef();
 export const performSave = createRef();
 export const performEditName = createRef();
-export const performAddExpiry = createRef();
+export const performAddBatch = createRef();
