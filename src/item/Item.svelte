@@ -5,6 +5,8 @@
     photoBlob,
     batches,
     performAddBatch,
+    performBatchInc,
+    performBatchDec,
     performEditName,
   } from './item_store';
 
@@ -69,15 +71,15 @@
 
 <br />
 <ul>
-  {#each $batches as batch}
+  {#each $batches as batch, index}
     <li>
       {new Date(batch.expiry)}
       <br />
       ({batch.count})
 
-      <button class="btn btn-blue" on:click={() => workingCount++}>+</button>
+      <button class="btn btn-blue" on:click={$performBatchInc[index]}>+</button>
       <span />
-      <button class="btn btn-red" on:click={() => workingCount++}>-</button>
+      <button class="btn btn-red" on:click={$performBatchDec[index]}>-</button>
     </li>
   {/each}
 </ul>

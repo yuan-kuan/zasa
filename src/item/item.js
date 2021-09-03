@@ -57,11 +57,32 @@ const performAddBatch = (itemId, expiryDate, count) => {
     .chain((_) => presentBatches(itemId));
 };
 
+const performBatchCounting = (itemId, batchId, value) =>
+  free
+    .of(batchId) //
+    .chain(get)
+    .map(addBatch(value))
+    .chain(put)
+    .map(tapLog('new batch?'))
+    .chain((_) => presentBatches(itemId));
+
+const makeBatchAdd = (itemId, value, batches) =>
+  R.map(
+    (batch) => () =>
+      addSop(() => performBatchCounting(itemId, batch._id, value))
+  )(batches);
+
 const presentBatches = (itemId) =>
   free
     .of(itemId) //
     .chain(getBatches)
-    .chain(setRef(itemStore.batches));
+    .chain((batches) =>
+      free.sequence([
+        setRef(itemStore.batches, batches),
+        setRef(itemStore.performBatchInc, makeBatchAdd(itemId, 1, batches)),
+        setRef(itemStore.performBatchDec, makeBatchAdd(itemId, -1, batches)),
+      ])
+    );
 
 const presentItem = (itemId) =>
   free
