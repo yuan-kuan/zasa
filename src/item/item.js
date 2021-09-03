@@ -12,7 +12,7 @@ import * as itemStore from './item_store.js';
 import { attach, put, get } from '../database';
 import { makeItemDoc, L as ItemL, makeBatchDoc, addBatch } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
-import { getItemWithBlob, getBatches } from '../db_ops';
+import { getItemWithBlob, getBatches, remove } from '../db_ops';
 
 const performCreateItem = (name, blob) =>
   free
@@ -57,6 +57,17 @@ const performAddBatch = (itemId, expiryDate, count) => {
     .chain((_) => presentBatches(itemId));
 };
 
+const performDeleteBatch = (itemId, batchId) =>
+  free
+    .of(batchId) //
+    .chain(remove)
+    .chain((_) => presentBatches(itemId));
+
+const makeDeleteBatch = (itemId, batches) =>
+  R.map((batch) => () => addSop(() => performDeleteBatch(itemId, batch._id)))(
+    batches
+  );
+
 const performBatchCounting = (itemId, batchId, value) =>
   free
     .of(batchId) //
@@ -81,6 +92,7 @@ const presentBatches = (itemId) =>
         setRef(itemStore.batches, batches),
         setRef(itemStore.performBatchInc, makeBatchAdd(itemId, 1, batches)),
         setRef(itemStore.performBatchDec, makeBatchAdd(itemId, -1, batches)),
+        setRef(itemStore.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );
 

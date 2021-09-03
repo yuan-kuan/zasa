@@ -5,6 +5,7 @@
     photoBlob,
     batches,
     performAddBatch,
+    performDeleteBatch,
     performBatchInc,
     performBatchDec,
     performEditName,
@@ -25,6 +26,22 @@
   const addNewBatch = () => {
     // <input type="date"> return a FFFF-MM-DD string, convert it to date
     $performAddBatch(new Date(workingDate), workingCount);
+  };
+
+  let confirmingDeleteIndex = -1;
+  const decrementBatchCount = (index) => {
+    confirmingDeleteIndex = -1;
+    const batch = $batches[index];
+    if (batch.count <= 1) {
+      confirmingDeleteIndex = index;
+    } else {
+      $performBatchDec[index]();
+    }
+  };
+
+  const incrementBatchCount = (index) => {
+    confirmingDeleteIndex = -1;
+    $performBatchInc[index]();
   };
 
   let cameraInput;
@@ -77,9 +94,19 @@
       <br />
       ({batch.count})
 
-      <button class="btn btn-blue" on:click={$performBatchInc[index]}>+</button>
+      <button class="btn btn-blue" on:click={() => incrementBatchCount(index)}
+        >+</button
+      >
       <span />
-      <button class="btn btn-red" on:click={$performBatchDec[index]}>-</button>
+      {#if index == confirmingDeleteIndex}
+        <button class="btn btn-red" on:click={$performDeleteBatch[index]}
+          >Delete?</button
+        >
+      {:else}
+        <button class="btn btn-red" on:click={() => decrementBatchCount(index)}
+          >-</button
+        >
+      {/if}
     </li>
   {/each}
 </ul>

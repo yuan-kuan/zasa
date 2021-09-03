@@ -8,6 +8,7 @@ const L = {
   name: R.lensProp('name'),
   blob: R.lensProp('blob'),
   includeDoc: R.lensProp('include_docs'),
+  deleted: R.lensProp('_deleted'),
 };
 
 const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
@@ -42,10 +43,18 @@ const getBatches = (itemId) =>
     .map(makeStartEndRangeAllDocOption)
     .chain(pouch.alldocs);
 
+const remove = (id) =>
+  free
+    .of(id) //
+    .chain(pouch.get)
+    .map(R.set(L.deleted, true))
+    .chain(pouch.put);
+
 export {
   convertItemIdToBatchId,
   getItemWithBlob,
   getAllItemWithBlob,
   getBatches,
   makeStartEndRangeAllDocOption,
+  remove,
 };
