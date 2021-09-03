@@ -72,6 +72,12 @@
   {#each $batches as batch}
     <li>
       {new Date(batch.expiry)}
+      <br />
+      ({batch.count})
+
+      <button class="btn btn-blue" on:click={() => workingCount++}>+</button>
+      <span />
+      <button class="btn btn-red" on:click={() => workingCount++}>-</button>
     </li>
   {/each}
 </ul>
@@ -81,9 +87,9 @@
 {#if isAddingBatch}
   <input type="date" bind:value={workingDate} />
   <span>{workingCount}</span>
-  <button on:click={() => workingCount++}>+</button>
+  <button class="btn btn-blue" on:click={() => workingCount++}>+</button>
   <br />
-  <button on:click={addNewBatch}>Done Batch</button>
+  <button class="btn btn-blue" on:click={addNewBatch}>Done Batch</button>
 {:else}
   <button on:click={() => (isAddingBatch = true)}>New Batch</button>
 {/if}
