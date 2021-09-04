@@ -38,6 +38,13 @@ FreeMonad.prototype.chain = function (f) {
   });
 };
 
+// KUAN ADDON:
+// Call function `f` with this free monad as argument.
+// This is useful to dot-chainning `bichain` and `bimap`.
+FreeMonad.prototype.call = function (f) {
+  return f(this);
+};
+
 const of = FreeMonad.Pure; // FreeMonad.of
 const lift = (command) => FreeMonad.Impure(command, FreeMonad.Pure);
 
@@ -45,41 +52,20 @@ FreeMonad.prototype.foldMap = function (interpreter, of) {
   return this.cata({
     Pure: (a) => of(a),
     Impure: (intruction_of_arg, next) => {
-      if (FutureCommand.Parallel.is(intruction_of_arg)) {
-        // Interpret each free monads in the array
-        const futures = R.map(
-          (fm) => fm.foldMap(interpreter, of),
-          interpreter(intruction_of_arg)
-        );
-
-        // Run all interpreted Future with parallel
+      // FutureCommand sumtype interpreter will return a function instead of
+      // `Future`. We must check the type before fluter.chain them.
+      let interpreted = interpreter(intruction_of_arg);
+      if (fluture.isFuture(interpreted)) {
         return fluture.chain((result) => next(result).foldMap(interpreter, of))(
-          fluture.parallel(MAX_THREAD)(futures)
-        );
-      } else if (FutureCommand.Bichain.is(intruction_of_arg)) {
-        const [left, right, fm] = interpreter(intruction_of_arg);
-
-        // bichain will change the outcome of the future.
-        // if the chained future resolved a rejected outcome, the returned
-        // future will became a resolution. Vice versa.
-        return fluture.chain((result) => next(result).foldMap(interpreter, of))(
-          fluture.bichain((result) => left(result).foldMap(interpreter, of))(
-            (result) => right(result).foldMap(interpreter, of)
-          )(fm.foldMap(interpreter, of))
-        );
-      } else if (FutureCommand.Bimap.is(intruction_of_arg)) {
-        const [left, right, fm] = interpreter(intruction_of_arg);
-
-        // bimap will not change the outcome of the future.
-        // if it was a rejection, the returned future remains a rejection.
-        return fluture.chain((result) => next(result).foldMap(interpreter, of))(
-          fluture.bimap(left)(right)(fm.foldMap(interpreter, of))
+          interpreted
         );
       } else {
+        let future = interpreted(interpreter, of);
         return fluture.chain((result) => next(result).foldMap(interpreter, of))(
-          interpreter(intruction_of_arg)
+          future
         );
       }
+      // }
     },
   });
 };
@@ -93,15 +79,26 @@ const FutureCommand = daggy.taggedSum('FutureCommand', {
 });
 const { Bichain, Bimap, Parallel } = FutureCommand;
 
+// This interpretor return a function that expect `interpreter` and `of`, when
+// called with the arguments (which usually pass in by caller `foldMap`), this
+// will return a Future.
 const futureCommandToFuture = (p) =>
   p.cata({
-    Bichain: (left, right, freeMonad) => {
-      return [left, right, freeMonad];
+    Bichain: (left, right, freeMonad) => (interpreter, of) =>
+      fluture.bichain((result) => left(result).foldMap(interpreter, of))(
+        (result) => right(result).foldMap(interpreter, of)
+      )(freeMonad.foldMap(interpreter, of)),
+
+    Bimap: (left, right, freeMonad) => (interpreter, of) =>
+      fluture.bimap(left)(right)(freeMonad.foldMap(interpreter, of)),
+
+    Parallel: (freeMonads) => (interpreter, of) => {
+      // Interpret each free monads in the array
+      const futures = R.map((fm) => fm.foldMap(interpreter, of), freeMonads);
+
+      // Run all interpreted Future with parallel
+      return fluture.parallel(MAX_THREAD)(futures);
     },
-    Bimap: (left, right, freeMonad) => {
-      return [left, right, freeMonad];
-    },
-    Parallel: (freeMonads) => freeMonads,
   });
 
 const futureCommandInterpretor = [FutureCommand, futureCommandToFuture];
