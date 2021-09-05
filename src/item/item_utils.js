@@ -1,16 +1,21 @@
 import * as R from 'ramda';
-import { convertItemIdToBatchId } from '../db_ops';
+import * as free from '../free_monad';
+import * as pouch from '../database';
+import { makeStartEndRangeAllDocOption } from '../db_ops';
 
 const L = {
   id: R.lensProp('_id'),
+  itemId: R.lensProp('itemId'),
   name: R.lensProp('name'),
+  blob: R.lensProp('blob'),
   expiry: R.lensProp('expiry'),
   type: R.lensProp('type'),
   count: R.lensProp('count'),
 };
 
-const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
+const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
 
+const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
 const makeItemDoc = R.curry((name, postHash) =>
   R.pipe(
     R.set(L.id, R.compose((sc) => `i_${sc}-${postHash}`, toSnakeCase)(name)),
@@ -36,4 +41,36 @@ const makeBatchDoc = R.curry((itemId, expiryDate) =>
 
 const addBatch = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
 
-export { addBatch, makeBatchDoc, makeItemDoc, L };
+const getBatches = (itemId) =>
+  free
+    .of(itemId) //
+    .map(convertItemIdToBatchId)
+    .map(makeStartEndRangeAllDocOption)
+    .chain(pouch.alldocs);
+
+const makeItemWithBlob = (itemId, name, blob) =>
+  R.pipe(R.set(L.itemId, itemId), R.set(L.name, name), R.set(L.blob, blob))({});
+
+const docToItemWithBlob = (doc) => {
+  var blob;
+  if (doc._attachments) {
+    blob = Object.values(doc._attachments).pop().data;
+  }
+
+  return makeItemWithBlob(doc._id, doc.name, blob);
+};
+
+const getItemWithBlob = (id) =>
+  pouch.getWithAttachment(id).map(docToItemWithBlob);
+
+const getAllItemWithBlob = () => pouch.getAll().map(R.map(docToItemWithBlob));
+
+export {
+  addBatch,
+  makeBatchDoc,
+  makeItemDoc,
+  L,
+  getItemWithBlob,
+  getAllItemWithBlob,
+  getBatches,
+};

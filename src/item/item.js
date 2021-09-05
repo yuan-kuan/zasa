@@ -10,9 +10,16 @@ import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
 import * as itemStore from './item_store.js';
 import { attach, put, get } from '../database';
-import { makeItemDoc, L as ItemL, makeBatchDoc, addBatch } from './item_utils';
+import {
+  getItemWithBlob,
+  getBatches,
+  makeItemDoc,
+  L as ItemL,
+  makeBatchDoc,
+  addBatch,
+} from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
-import { getItemWithBlob, getBatches, remove } from '../db_ops';
+import { remove } from '../db_ops';
 
 const performCreateItem = (name, blob) =>
   free
@@ -74,7 +81,6 @@ const performBatchCounting = (itemId, batchId, value) =>
     .chain(get)
     .map(addBatch(value))
     .chain(put)
-    .map(tapLog('new batch?'))
     .chain((_) => presentBatches(itemId));
 
 const makeBatchAdd = (itemId, value, batches) =>

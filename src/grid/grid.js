@@ -9,8 +9,7 @@ import { viewMainPage } from '../view/view_store';
 import Grid from './Grid.svelte';
 import * as gridStore from './grid_store';
 import { goToItem, goToItemCreation } from '../item/item';
-import { getAll } from '../database';
-import { getAllItemWithBlob } from '../db_ops';
+import { getAllItemWithBlob } from '../item/item_utils';
 
 const presentGoToItems = (itemWithBlobs) =>
   free
