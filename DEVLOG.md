@@ -1,6 +1,28 @@
-## Wed Sep 1 14:45:16 MYT 2021
+## Part 3 (Wed Sep 1 14:45:16 MYT 2021)
 
-### Lean and Atomic interpretor
+### More Dot Chaining
+
+```'js'
+const performEditName = (itemId, name) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(R.set(ItemL.name, name))
+    .chain(put)
+    .map(R.view(ItemL.name))
+    .chain(setRef(itemStore.name));
+```
+
+Consider that this function will be call once user click on a "Edit Name" button, because we had hooked it up before hand. Now, as developer, you like to follow all the events happen after the click. They are all, in 6 lines:
+
+1. We put `itemId` into a box, the Free Monad box.
+2. We hit the database to get the document for `itemId`. Chain because `get` return a Free Monad.
+3. We want to update the item document with new `name`: We use `map` and setting the lense with the new name. After step 2, our Free Monad will be containing a PouchDB document, so, we pass it into the `R.set` function to get a new document.
+4. Changed doc? Pass it back to the database. `.chain()` and `put`, should be obvious now.
+5. Our special version of `put` return the changed doc, instead of just the `rev` like normal PouchDB. We wrote our own interpretor afterall. So, we read the new name from the updated document, using lense.
+6. Lastly, we update the `itemStore.name` store variable with the new name. This will trigger Svelte and update our HTML next tick.
+
+That complete the cycle. No other side effect or services/component/listener will react to this mouse click. Everything that will and should happen, all lay out in this function.
 
 ### Free Monad and Dot Chaining
 
@@ -39,7 +61,7 @@ Free Monad functions do not have much to test. They are pure and usually contain
 
 First candidate is `item.test.js`, which currently contains tests of `makeItemDoc`. As soon as we made business logic module, we should use Test Driven Development on exported functions. This will reduce the slow down of writing bulk tests.
 
-## Tue Aug 31 16:25:44 MYT 2021
+## Part 2 (Tue Aug 31 16:25:44 MYT 2021)
 
 ### Create item, take photo, store them and show all items in Grid
 
@@ -59,7 +81,7 @@ There are some boilerplated code that one need to write for each intepretor:
 2. Write a `<sumtype>ToFuture` function. This is the interpretor. It return a Fluture's Future that runs side-effecting codes base on the Type.
 3. Export functions which return a FreeMonad for each sum type, by lifting the sum type into a Free Monad.
 
-## Mon Aug 30 15:19:16 MYT 2021
+## Part 1 (Mon Aug 30 15:19:16 MYT 2021)
 
 ### `setRef` and Svelte Store
 
