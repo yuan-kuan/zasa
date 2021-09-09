@@ -17,6 +17,8 @@ import {
   L as ItemL,
   makeBatchDoc,
   addBatch,
+  addTag,
+  removeTag,
 } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
@@ -102,6 +104,44 @@ const presentBatches = (itemId) =>
       ])
     );
 
+const performAddTag = (itemId, tag) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(addTag(tag))
+    .chain(put)
+    .chain(presentItemTags);
+
+const performRemoveTag = (itemId, tag) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(removeTag(tag))
+    .chain(put)
+    .chain(presentItemTags);
+
+const presentItemTags = (itemDoc) =>
+  free
+    .of(itemDoc) //
+    .map(R.view(ItemL.tags))
+    .map(R.defaultTo([]))
+    .chain((tags) =>
+      free.sequence([
+        setRef(itemStore.tags, tags),
+        setRef(
+          itemStore.performRemoveTag,
+          R.map(
+            (tag) => () => addSop(() => performRemoveTag(itemDoc._id, tag))
+          )(tags)
+        ),
+      ])
+    );
+const presentTags = (itemId) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .chain(presentItemTags);
+
 const presentItem = (itemId) =>
   free
     .of(itemId) //
@@ -124,8 +164,12 @@ const goToItem = (itemId) =>
     setRef(itemStore.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
+    setRef(itemStore.performAddTag, (tag) =>
+      addSop(() => performAddTag(itemId, tag))
+    ),
     presentItem(itemId),
     presentBatches(itemId),
+    presentTags(itemId),
   ]);
 
 export { goToItem, goToItemCreation };
