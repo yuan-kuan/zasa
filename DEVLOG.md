@@ -1,3 +1,29 @@
+## Part 4 (Wed Sep 8 21:21:26 MYT 2021)
+
+### Organization of functions
+
+More and more functions are introduced into our code base, that's just normal as life, changes happen and one piles up stuff (or craps) as it goes on.
+
+Anyway, we should do something about the onslaughts of functions (this is FP, we have only functions, a lot of them). The naming of functions are especially important, as that is our only way to let other know what's going on. Second important is where we parking those functions.
+
+1. Naming
+
+One style I managed to stick with, is using verb for function, noun for variable. There are a few convention naming that I used in the code base. e.g. `present` for function that end up with setting a Svelte Store variable, `goto` for function that change the page in a big way, `perform` is similar but it does not change the navigation, e.t.c.
+
+2. File structure
+
+I am keeping all framework and utility functions in root level files: e.g. free_monad.js, router.js, database.js. The reason is simple: I can see shorter import statement.
+
+All business logic files keep under their business function folder, like Grid and Item.
+
+### Single purpose addSop closure
+
+With the introduction of expiry batches in the edit Item page, we come across another style in FP-svelte, the single purpose addSop closure. Particularly, these refer to the functions we passed in via `ItemStore.performBatchInc`, `ItemStore.performBatchDec` and `ItemStore.performDeleteBatch`.
+
+Each batch (item in an batches array) will have their own version of closure setup. Triggering this individual closure will start a specific action, e.g. adding one to batch #2. What different from earlier function call from Svelte component is: we do not need to know what parameter we need to pass in for these single purpose closure, we just need to call the correct one, i.e. same index in different array.
+
+The goal of using single purpose closure is loose the coupling between Svelte component and calling API (if we deemed invoking these closure is API call). Svelte just need to know when and which to invoke the function, but does not need to know what to pass into it. Business logic can change the function name or the signature of it as much as they like, it will not affect Svelte component.
+
 ## Part 3 (Wed Sep 1 14:45:16 MYT 2021)
 
 ### More Dot Chaining
@@ -13,7 +39,7 @@ const performEditName = (itemId, name) =>
     .chain(setRef(itemStore.name));
 ```
 
-Consider that this function will be call once user click on a "Edit Name" button, because we had hooked it up before hand. Now, as developer, you like to follow all the events happen after the click. They are all, in 6 lines:
+Consider that this function will be call once user click on a "Edit Name" button. Now, as developer, you like to follow all the events happen after the click. They are all, in 6 lines:
 
 1. We put `itemId` into a box, the Free Monad box.
 2. We hit the database to get the document for `itemId`. Chain because `get` return a Free Monad.
