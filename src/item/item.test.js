@@ -1,5 +1,11 @@
 import test from 'ava';
-import { addBatch, makeBatchDoc, makeItemDoc } from './item_utils';
+import {
+  addBatch,
+  makeBatchDoc,
+  makeItemDoc,
+  addTag,
+  removeTag,
+} from './item_utils';
 
 test('Item with single word', async (t) => {
   const item = makeItemDoc('Single', 'abcd');
@@ -52,4 +58,31 @@ test('Decrement Batch', async (t) => {
 
   t.deepEqual(decBatch._id, 'b_abc_cba:20200101');
   t.deepEqual(decBatch.count, 1);
+});
+
+test('Add a new tag to item', async (t) => {
+  const item = makeItemDoc('with new tag', 'bo');
+  const taggedItem = addTag('shiny', item);
+
+  t.deepEqual(taggedItem.tags, ['shiny']);
+});
+
+test('tags and ordered ascending', async (t) => {
+  const item = makeItemDoc('with new tag', 'bo');
+  const taggedItem = addTag('shiny', item);
+  const taggedTwiceItem = addTag('freshy', taggedItem);
+  const taggedThriceItem = addTag('lovely', taggedTwiceItem);
+
+  t.deepEqual(taggedItem.tags, ['shiny']);
+  t.deepEqual(taggedTwiceItem.tags, ['freshy', 'shiny']);
+  t.deepEqual(taggedThriceItem.tags, ['freshy', 'lovely', 'shiny']);
+});
+
+test('remove tag kept order', async (t) => {
+  const item = makeItemDoc('with new tag', 'bo');
+  const taggedItem = addTag('shiny', addTag('freshy', addTag('lovely', item)));
+  const lessTaggedItem = removeTag('lovely', taggedItem);
+
+  t.deepEqual(taggedItem.tags, ['freshy', 'lovely', 'shiny']);
+  t.deepEqual(lessTaggedItem.tags, ['freshy', 'shiny']);
 });

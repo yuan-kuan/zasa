@@ -4,11 +4,13 @@
     nameError,
     photoBlob,
     batches,
+    tags,
+    performEditName,
     performAddBatch,
     performDeleteBatch,
     performBatchInc,
     performBatchDec,
-    performEditName,
+    performCreateTag,
   } from './item_store';
 
   let workingName;
@@ -85,6 +87,14 @@
   <p>{$name}</p>
   <button on:click={() => (isEditingName = true)}>Edit</button>
 {/if}
+
+<br />
+<ul>
+  {#each $tags as tag}
+    <li>tag</li>
+  {/each}
+</ul>
+<button class="btn" on:click={$performCreateTag}>Create new tag</button>
 
 <br />
 <ul>

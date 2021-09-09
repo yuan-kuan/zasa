@@ -11,6 +11,7 @@ const L = {
   expiry: R.lensProp('expiry'),
   type: R.lensProp('type'),
   count: R.lensProp('count'),
+  tags: R.lensProp('tags'),
 };
 
 const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
@@ -48,6 +49,14 @@ const getBatches = (itemId) =>
     .map(makeStartEndRangeAllDocOption)
     .chain(pouch.alldocs);
 
+const appendTagAndSort = R.curry((tag, tags) =>
+  R.pipe(R.defaultTo([]), R.append(tag), R.sortBy(R.toLower))(tags)
+);
+
+const addTag = (tag, itemDoc) => R.over(L.tags, appendTagAndSort(tag), itemDoc);
+
+const removeTag = (tag, itemDoc) => R.over(L.tags, R.without([tag]), itemDoc);
+
 const makeItemWithBlob = (itemId, name, blob) =>
   R.pipe(R.set(L.itemId, itemId), R.set(L.name, name), R.set(L.blob, blob))({});
 
@@ -66,11 +75,13 @@ const getItemWithBlob = (id) =>
 const getAllItemWithBlob = () => pouch.getAll().map(R.map(docToItemWithBlob));
 
 export {
+  L,
   addBatch,
   makeBatchDoc,
   makeItemDoc,
-  L,
   getItemWithBlob,
   getAllItemWithBlob,
   getBatches,
+  addTag,
+  removeTag,
 };
