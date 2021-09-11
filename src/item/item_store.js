@@ -12,5 +12,6 @@ export const performAddBatch = createRef();
 export const performBatchInc = createRef([]);
 export const performBatchDec = createRef([]);
 export const performDeleteBatch = createRef([]);
-export const performAddTag = createRef();
+export const performAddNewTag = createRef();
+export const performAddTag = createRef([]);
 export const performRemoveTag = createRef([]);

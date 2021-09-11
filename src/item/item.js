@@ -109,7 +109,7 @@ const presentBatches = (itemId) =>
       ])
     );
 
-const performAddTag = (itemId, tag) =>
+const performAddNewTag = (itemId, tag) =>
   free
     .of(itemId) //
     .chain(get)
@@ -125,12 +125,25 @@ const performRemoveTag = (itemId, tag) =>
     .chain(put)
     .chain(presentItemTags);
 
-const presentTagSelections = () =>
+const presentTagSelections = (itemId, existingTags) =>
   free
     .of(makeFilterSelectionOption()) //
     .chain(query('tagFilter'))
     .map(queryResultToTagSelection)
-    .chain(setRef(itemStore.tagSelections));
+    .map(R.without(existingTags))
+    .chain((selections) =>
+      free.sequence([
+        setRef(itemStore.tagSelections, selections),
+        setRef(
+          itemStore.performAddTag,
+          R.map(
+            (selection) => () =>
+              addSop(() => performAddNewTag(itemId, selection)),
+            selections
+          )
+        ),
+      ])
+    );
 
 const presentItemTags = (itemDoc) =>
   free
@@ -143,9 +156,11 @@ const presentItemTags = (itemDoc) =>
         setRef(
           itemStore.performRemoveTag,
           R.map(
-            (tag) => () => addSop(() => performRemoveTag(itemDoc._id, tag))
+            (tag) => () =>
+              addSop(() => performRemoveTag(R.view(ItemL.id, itemDoc), tag))
           )(tags)
         ),
+        presentTagSelections(R.view(ItemL.id, itemDoc), tags),
       ])
     );
 
@@ -177,13 +192,12 @@ const goToItem = (itemId) =>
     setRef(itemStore.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
-    setRef(itemStore.performAddTag, (tag) =>
-      addSop(() => performAddTag(itemId, tag))
+    setRef(itemStore.performAddNewTag, (tag) =>
+      addSop(() => performAddNewTag(itemId, tag))
     ),
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),
-    presentTagSelections(),
   ]);
 
 export { goToItem, goToItemCreation };

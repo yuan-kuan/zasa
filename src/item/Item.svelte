@@ -11,6 +11,7 @@
     performDeleteBatch,
     performBatchInc,
     performBatchDec,
+    performAddNewTag,
     performAddTag,
     performRemoveTag,
   } from './item_store';
@@ -19,7 +20,7 @@
   let workingTag;
 
   const addNewTag = () => {
-    $performAddTag(workingTag);
+    $performAddNewTag(workingTag);
     isAddingTag = false;
   };
 
@@ -108,11 +109,7 @@
   {/each}
 </ul>
 
-<ul>
-  {#each $tagSelections as selection}
-    <li>{selection}</li>
-  {/each}
-</ul>
+<br />
 
 {#if isAddingTag}
   <input type="text" bind:value={workingTag} />
@@ -120,6 +117,17 @@
 {:else}
   <button class="btn" on:click={() => (isAddingTag = true)}>Add new tag</button>
 {/if}
+
+<br />
+<ul>
+  {#each $tagSelections as selection, index}
+    <li>
+      <button class="btn btn-blue" on:click={$performAddTag[index]}>
+        {selection}
+      </button>
+    </li>
+  {/each}
+</ul>
 
 <br />
 <ul>
