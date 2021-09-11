@@ -5,6 +5,7 @@
     photoBlob,
     batches,
     tags,
+    tagSelections,
     performEditName,
     performAddBatch,
     performDeleteBatch,
@@ -106,6 +107,13 @@
     </li>
   {/each}
 </ul>
+
+<ul>
+  {#each $tagSelections as selection}
+    <li>{selection}</li>
+  {/each}
+</ul>
+
 {#if isAddingTag}
   <input type="text" bind:value={workingTag} />
   <button class="btn btn-blue" on:click={addNewTag}>Done</button>

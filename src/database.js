@@ -14,8 +14,9 @@ const Database = daggy.taggedSum('Database', {
   AllDocs: ['options'],
   Put: ['doc'],
   Attach: ['doc', 'filename', 'blob'],
+  Query: ['index', 'options'],
 });
-const { Get, GetAll, AllDocs, Put, Attach } = Database;
+const { Get, GetAll, AllDocs, Put, Attach, Query } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
@@ -75,6 +76,15 @@ const databaseToFuture = (p) =>
           .catch(reject);
         return () => {};
       }),
+
+    Query: (index, options) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .query(index, options)
+          .then(R.compose(resolve, R.prop('rows')))
+          .catch(reject);
+        return () => {};
+      }),
   });
 
 registerStaticInterpretor([Database, databaseToFuture]);
@@ -85,5 +95,6 @@ const getAll = () => lift(GetAll(null));
 const alldocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
+const query = R.curry((index, options) => lift(Query(index, options)));
 
-export { get, getWithAttachment, getAll, alldocs, put, attach };
+export { get, getWithAttachment, getAll, alldocs, put, attach, query };

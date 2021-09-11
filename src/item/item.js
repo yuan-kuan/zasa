@@ -9,7 +9,7 @@ import { viewMainPage } from '../view/view_store';
 import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
 import * as itemStore from './item_store.js';
-import { attach, put, get } from '../database';
+import { attach, put, get, query } from '../database';
 import {
   getItemWithBlob,
   getBatches,
@@ -22,6 +22,11 @@ import {
 } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
+import {
+  makeFilterSelectionOption,
+  makeFilterWithTagOption,
+  queryResultToTagSelection,
+} from '../grid/grid_utils';
 
 const performCreateItem = (name, blob) =>
   free
@@ -120,6 +125,13 @@ const performRemoveTag = (itemId, tag) =>
     .chain(put)
     .chain(presentItemTags);
 
+const presentTagSelections = () =>
+  free
+    .of(makeFilterSelectionOption()) //
+    .chain(query('tagFilter'))
+    .map(queryResultToTagSelection)
+    .chain(setRef(itemStore.tagSelections));
+
 const presentItemTags = (itemDoc) =>
   free
     .of(itemDoc) //
@@ -136,6 +148,7 @@ const presentItemTags = (itemDoc) =>
         ),
       ])
     );
+
 const presentTags = (itemId) =>
   free
     .of(itemId) //
@@ -170,6 +183,7 @@ const goToItem = (itemId) =>
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),
+    presentTagSelections(),
   ]);
 
 export { goToItem, goToItemCreation };

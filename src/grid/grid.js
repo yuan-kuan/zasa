@@ -10,6 +10,11 @@ import Grid from './Grid.svelte';
 import * as gridStore from './grid_store';
 import { goToItem, goToItemCreation } from '../item/item';
 import { getAllItemWithBlob } from '../item/item_utils';
+import { makeTagFilterDesignDoc } from './grid_utils';
+import { put } from '../database';
+
+const setup = () =>
+  put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of));
 
 const presentGoToItems = (itemWithBlobs) =>
   free
@@ -35,4 +40,4 @@ const goToGrid = (category) =>
     setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
   ]);
 
-export { goToGrid };
+export { goToGrid, setup as gridSetup };
