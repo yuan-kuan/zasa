@@ -1,8 +1,31 @@
 <script>
-  import { categoryName, items, goToItem, goToCreateItem } from './grid_store';
+  import {
+    items,
+    goToItem,
+    goToCreateItem,
+    filteringTags,
+    performRemoveTagFromFilter,
+    tagSelections,
+    performAddTagToFilter,
+  } from './grid_store';
 </script>
 
-<div><p>Category: {$categoryName}</p></div>
+<div>
+  <span>Filter:</span>
+  {#each $filteringTags as filteringTag, index}
+    <button class="btn btn-red" on:click={$performRemoveTagFromFilter[index]}>
+      {filteringTag}
+    </button>
+  {/each}
+  <br />
+  <span>Tag Available</span>
+  {#each $tagSelections as selection, index}
+    <button class="btn btn-blue" on:click={$performAddTagToFilter[index]}>
+      {selection}
+    </button>
+  {/each}
+</div>
+<br />
 <div>
   <ul>
     {#each $items as item, index}
