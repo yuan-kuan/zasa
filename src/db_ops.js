@@ -4,6 +4,8 @@ import * as pouch from './database';
 
 const L = {
   includeDoc: R.lensProp('include_docs'),
+  attachments: R.lensProp('attachments'),
+  binary: R.lensProp('binary'),
   deleted: R.lensProp('_deleted'),
 };
 
@@ -13,6 +15,12 @@ const makeStartEndRangeAllDocOption = (key) =>
     R.set(L.includeDoc, true)
   )(key);
 
+const makeStartEndRangeAllDocOptionAttached = (key) =>
+  R.pipe(
+    R.set(L.attachments, true),
+    R.set(L.binary, true)
+  )(makeStartEndRangeAllDocOption(key));
+
 const remove = (id) =>
   free
     .of(id) //
@@ -20,4 +28,8 @@ const remove = (id) =>
     .map(R.set(L.deleted, true))
     .chain(pouch.put);
 
-export { makeStartEndRangeAllDocOption, remove };
+export {
+  makeStartEndRangeAllDocOption,
+  makeStartEndRangeAllDocOptionAttached,
+  remove,
+};

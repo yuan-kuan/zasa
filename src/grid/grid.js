@@ -16,9 +16,14 @@ import {
   queryResultToItem,
   queryResultToTagSelection,
 } from './grid_utils';
-import { put, query } from '../database';
+import { alldocs, put, query } from '../database';
 import * as kv from '../kv';
 import { tapLog } from '../utils';
+import {
+  makeStartEndRangeAllDocOption,
+  makeStartEndRangeAllDocOptionAttached,
+} from '../db_ops';
+import { docToItemWithBlob } from '../item/item_utils';
 
 const setup = () =>
   put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of));
@@ -29,8 +34,24 @@ const presentGoToItems = (itemWithBlobs) =>
     .map(R.map((ivb) => () => addSop(() => goToItem(ivb.itemId))))
     .chain(setRef(gridStore.goToItem));
 
-const presentFilteredItem = () =>
-  getSavedTagFilter() //
+const presentItems = () =>
+  getSavedTagFilter().chain(
+    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem)
+    // presentFilteredItem
+  );
+
+const presentAllItems = (_) =>
+  free
+    .of(makeStartEndRangeAllDocOptionAttached('i_'))
+    .map(tapLog('option'))
+    .chain(alldocs)
+    .map(tapLog('alldocs'))
+    .map(R.map(docToItemWithBlob))
+    .chain(setRef(gridStore.items));
+
+const presentFilteredItem = (filterTags) =>
+  free
+    .of(filterTags) //
     .map(makeFilterWithTagOption)
     .chain(query('tagFilter'))
     .map(queryResultToItem)
@@ -44,13 +65,13 @@ const performAddTagFilter = (tag) =>
   getSavedTagFilter()
     .map(R.append(tag))
     .chain(kv.set('filteringTags'))
-    .chain((_) => free.sequence([presentFilter(), presentFilteredItem()]));
+    .chain((_) => free.sequence([presentFilter(), presentItems()]));
 
 const performRemoveTagFilter = (tag) =>
   getSavedTagFilter()
     .map(R.without([tag]))
     .chain(kv.set('filteringTags'))
-    .chain((_) => free.sequence([presentFilter(), presentFilteredItem()]));
+    .chain((_) => free.sequence([presentFilter(), presentItems()]));
 
 const presentTagSelection = (selectedTags) =>
   free
@@ -88,7 +109,7 @@ const goToGrid = (category) =>
     viewMainPage(Grid),
     setGridUrl(category),
     presentFilter(),
-    presentFilteredItem(),
+    presentItems(),
     setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
   ]);
 
