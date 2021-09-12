@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { docToItemWithBlob } from '../item/item_utils';
 
 const L = {
   id: R.lensProp('_id'),
@@ -23,8 +24,14 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
-const makeFilterWithTagOption = (tag) => {
-  return { group: true };
+const makeFilterWithTagOption = (tags) => {
+  return {
+    reduce: false,
+    keys: tags,
+    include_docs: true,
+    attachments: true,
+    binary: true,
+  };
 };
 
 const makeFilterSelectionOption = () => {
@@ -33,9 +40,13 @@ const makeFilterSelectionOption = () => {
 
 const queryResultToTagSelection = (rows) => R.pluck('key', rows);
 
+const queryResultToItem = (rows) =>
+  R.pipe(R.pluck('doc'), R.map(docToItemWithBlob))(rows);
+
 export {
   makeTagFilterDesignDoc,
   makeFilterWithTagOption,
   makeFilterSelectionOption,
   queryResultToTagSelection,
+  queryResultToItem,
 };

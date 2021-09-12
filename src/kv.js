@@ -19,7 +19,11 @@ const kvToFuture = (p) =>
 
 registerStaticInterpretor([KV, kvToFuture]);
 
-const get = (key) => lift(Get(key));
-const set = R.curry((key, value) => lift(Set(key, value)));
+const get = R.curry((defaultValue, key) =>
+  lift(Get(key)) //
+    .map(R.defaultTo(JSON.stringify(defaultValue)))
+    .map(JSON.parse)
+);
+const set = R.curry((key, value) => lift(Set(key, JSON.stringify(value))));
 
 export { get, set };

@@ -85,6 +85,7 @@ export {
   makeItemDoc,
   getItemWithBlob,
   getAllItemWithBlob,
+  docToItemWithBlob,
   getBatches,
   addTag,
   removeTag,

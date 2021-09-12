@@ -12,35 +12,43 @@ import { goToItem, goToItemCreation } from '../item/item';
 import { getAllItemWithBlob } from '../item/item_utils';
 import {
   makeFilterSelectionOption,
+  makeFilterWithTagOption,
   makeTagFilterDesignDoc,
+  queryResultToItem,
   queryResultToTagSelection,
 } from './grid_utils';
 import { put, query } from '../database';
 import * as kv from '../kv';
+import { tapLog } from '../utils';
 
 const setup = () =>
   put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of));
 
+const presentFilteredItem = () =>
+  getSavedTagFilter() //
+    .map(makeFilterWithTagOption)
+    .chain(query('tagFilter'))
+    .map(queryResultToItem)
+    .chain((items) =>
+      free.sequence([setRef(gridStore.items, items), presentGoToItems(items)])
+    );
+
 const getSavedTagFilter = () =>
   free
     .of('filteringTags') //
-    .chain(kv.get)
-    .map(R.defaultTo('[]'))
-    .map(JSON.parse);
+    .chain(kv.get([]));
 
 const performAddTagFilter = (tag) =>
   getSavedTagFilter()
     .map(R.append(tag))
-    .map(JSON.stringify)
     .chain(kv.set('filteringTags'))
-    .chain((_) => presentFilter());
+    .chain((_) => free.sequence([presentFilter(), presentFilteredItem()]));
 
 const performRemoveTagFilter = (tag) =>
   getSavedTagFilter()
     .map(R.without([tag]))
-    .map(JSON.stringify)
     .chain(kv.set('filteringTags'))
-    .chain((_) => presentFilter());
+    .chain((_) => free.sequence([presentFilter(), presentFilteredItem()]));
 
 const presentFilter = () =>
   getSavedTagFilter().chain((tags) =>
