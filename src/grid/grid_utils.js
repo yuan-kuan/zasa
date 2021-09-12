@@ -41,7 +41,11 @@ const makeFilterSelectionOption = () => {
 const queryResultToTagSelection = (rows) => R.pluck('key', rows);
 
 const queryResultToItem = (rows) =>
-  R.pipe(R.pluck('doc'), R.map(docToItemWithBlob))(rows);
+  R.pipe(
+    R.uniqBy(R.prop('id')),
+    R.pluck('doc'),
+    R.map(docToItemWithBlob)
+  )(rows);
 
 export {
   makeTagFilterDesignDoc,
