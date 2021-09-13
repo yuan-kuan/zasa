@@ -19,10 +19,7 @@ import {
 import { alldocs, put, query } from '../database';
 import * as kv from '../kv';
 import { tapLog } from '../utils';
-import {
-  makeStartEndRangeAllDocOption,
-  makeStartEndRangeAllDocOptionAttached,
-} from '../db_ops';
+import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
 import { docToItemWithBlob } from '../item/item_utils';
 
 const setup = () =>

@@ -1,6 +1,4 @@
 import * as R from 'ramda';
-import * as free from '../free_monad';
-import * as pouch from '../database';
 import { makeStartEndRangeAllDocOption } from '../db_ops';
 
 const L = {
@@ -42,12 +40,8 @@ const makeBatchDoc = R.curry((itemId, expiryDate) =>
 
 const addBatch = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
 
-const getBatches = (itemId) =>
-  free
-    .of(itemId) //
-    .map(convertItemIdToBatchId)
-    .map(makeStartEndRangeAllDocOption)
-    .chain(pouch.alldocs);
+const makeGetBatchesAllDocOption = (itemId) =>
+  R.pipe(convertItemIdToBatchId, makeStartEndRangeAllDocOption)(itemId);
 
 const appendTagAndSort = R.curry((tag, tags) =>
   R.pipe(R.defaultTo([]), R.append(tag), R.sortBy(R.toLower))(tags)
@@ -73,20 +67,13 @@ const docToItemWithBlob = (doc) => {
   return makeItemWithBlob(doc._id, doc.name, blob);
 };
 
-const getItemWithBlob = (id) =>
-  pouch.getWithAttachment(id).map(docToItemWithBlob);
-
-const getAllItemWithBlob = () => pouch.getAll().map(R.map(docToItemWithBlob));
-
 export {
   L,
   addBatch,
   makeBatchDoc,
   makeItemDoc,
-  getItemWithBlob,
-  getAllItemWithBlob,
   docToItemWithBlob,
-  getBatches,
+  makeGetBatchesAllDocOption,
   addTag,
   removeTag,
 };

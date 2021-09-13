@@ -9,16 +9,24 @@ import { viewMainPage } from '../view/view_store';
 import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
 import * as itemStore from './item_store.js';
-import { attach, put, get, query } from '../database';
+import {
+  attach,
+  put,
+  get,
+  query,
+  alldocs,
+  getWithAttachment,
+} from '../database';
 import {
   getItemWithBlob,
-  getBatches,
   makeItemDoc,
   L as ItemL,
   makeBatchDoc,
   addBatch,
   addTag,
   removeTag,
+  makeGetBatchesAllDocOption,
+  docToItemWithBlob,
 } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
@@ -99,7 +107,8 @@ const makeBatchAdd = (itemId, value, batches) =>
 const presentBatches = (itemId) =>
   free
     .of(itemId) //
-    .chain(getBatches)
+    .map(makeGetBatchesAllDocOption)
+    .chain(alldocs)
     .chain((batches) =>
       free.sequence([
         setRef(itemStore.batches, batches),
@@ -173,7 +182,8 @@ const presentTags = (itemId) =>
 const presentItem = (itemId) =>
   free
     .of(itemId) //
-    .chain(getItemWithBlob)
+    .chain(getWithAttachment)
+    .map(docToItemWithBlob)
     .chain((itemWithBlob) =>
       free.sequence([
         setRef(itemStore.name, itemWithBlob.name),

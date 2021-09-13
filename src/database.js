@@ -49,7 +49,6 @@ const databaseToFuture = (p) =>
         pouchdb
           .allDocs(options)
           .then((result) => {
-            console.log('result :>> ', result);
             resolve(R.compose(R.pluck('doc'), R.prop('rows'))(result));
           })
           .catch(reject);
