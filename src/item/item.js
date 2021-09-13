@@ -18,7 +18,6 @@ import {
   getWithAttachment,
 } from '../database';
 import {
-  getItemWithBlob,
   makeItemDoc,
   L as ItemL,
   makeBatchDoc,
@@ -32,7 +31,6 @@ import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import {
   makeFilterSelectionOption,
-  makeFilterWithTagOption,
   queryResultToTagSelection,
 } from '../grid/grid_utils';
 

@@ -1,5 +1,5 @@
 import daggy from 'daggy';
-import Future, { resolve } from 'fluture';
+import { resolve } from 'fluture';
 import * as R from 'ramda';
 
 import { lift } from './free_monad';
