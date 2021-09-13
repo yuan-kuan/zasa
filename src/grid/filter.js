@@ -1,8 +1,25 @@
 import * as R from 'ramda';
+import daggy from 'daggy';
+
 import { query } from '../database';
 import * as free from '../free_monad';
 import { docToItemWithBlob } from '../item/item_utils';
 import * as kv from '../kv';
+import { registerStaticInterpretor } from '../sop';
+
+const Filter = daggy.taggedSum('Filter', {
+  GetSavedTags: [''],
+  SetSavedTags: ['tags'],
+});
+const { GetSavedTags, SetSavedTags } = Filter;
+
+const filterToFuture = (p) =>
+  p.cata({
+    GetSavedTags: (_) => free.interpete(kv.get([], 'filteringTags')),
+    SetSavedTags: (tags) => free.interpete(kv.set('filteringTags', tags)),
+  });
+
+registerStaticInterpretor([Filter, filterToFuture]);
 
 const L = {
   id: R.lensProp('_id'),
@@ -27,10 +44,11 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
-const getSavedTagFilter = () => kv.get([], 'filteringTags');
+const getSavedTagFilter = () => free.lift(GetSavedTags(null));
+const setSavedTagFilter = (tags) => free.lift(SetSavedTags(tags));
 
 const updateSavedTagFilter = (modifier) =>
-  getSavedTagFilter().map(modifier).chain(kv.set('filteringTags'));
+  getSavedTagFilter().map(modifier).chain(setSavedTagFilter);
 
 const makeFilterSelectionOption = () => {
   return { group: true };

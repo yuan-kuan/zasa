@@ -73,9 +73,9 @@ FreeMonad.prototype.foldMap = function (interpreter, of) {
 const MAX_THREAD = 8;
 
 const FutureCommand = daggy.taggedSum('FutureCommand', {
-  Bichain: ['left', 'right', 'future'],
-  Bimap: ['left', 'right', 'future'],
-  Parallel: ['freeFutures'],
+  Bichain: ['left', 'right', 'freeMonad'],
+  Bimap: ['left', 'right', 'freeMonad'],
+  Parallel: ['freeMonads'],
 });
 const { Bichain, Bimap, Parallel } = FutureCommand;
 
@@ -137,6 +137,9 @@ const bichain = R.curry((left, right, freeMonad) =>
   lift(Bichain(left, right, freeMonad))
 );
 
+const interpete = (freeMonad) => (interpreter, of) =>
+  freeMonad.foldMap(interpreter, of);
+
 export {
   lift,
   of,
@@ -145,5 +148,6 @@ export {
   sequence,
   bimap,
   bichain,
+  interpete,
   futureCommandInterpretor,
 };
