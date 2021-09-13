@@ -9,18 +9,17 @@ import { viewMainPage } from '../view/view_store';
 import Grid from './Grid.svelte';
 import * as gridStore from './grid_store';
 import { goToItem, goToItemCreation } from '../item/item';
-import {
-  makeFilterSelectionOption,
-  makeFilterWithTagOption,
-  makeTagFilterDesignDoc,
-  queryResultToItem,
-  queryResultToTagSelection,
-} from './grid_utils';
-import { alldocs, put, query } from '../database';
-import * as kv from '../kv';
+import { alldocs, put } from '../database';
 import { tapLog } from '../utils';
 import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
 import { docToItemWithBlob } from '../item/item_utils';
+import {
+  getAllTags,
+  getItemsWithTags,
+  getSavedTagFilter,
+  makeTagFilterDesignDoc,
+  updateSavedTagFilter,
+} from './filter';
 
 const setup = () =>
   put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of));
@@ -38,6 +37,7 @@ const presentItems = () =>
 
 const presentAllItems = (_) =>
   free
+    // TODo: i_ is too much detail to be here.
     .of(makeStartEndRangeAllDocOptionAttached('i_'))
     .chain(alldocs)
     .map(R.map(docToItemWithBlob))
@@ -45,36 +45,26 @@ const presentAllItems = (_) =>
 
 const presentFilteredItem = (filterTags) =>
   free
-    .of(filterTags) //
-    .map(makeFilterWithTagOption)
-    .chain(query('tagFilter'))
-    .map(queryResultToItem)
+    .of(filterTags)
+    .chain(getItemsWithTags)
     .chain((items) =>
       free.sequence([setRef(gridStore.items, items), presentGoToItems(items)])
     );
-
-const getSavedTagFilter = () => kv.get([], 'filteringTags');
-
-const modifySavedTagFilter = (modifier) =>
-  getSavedTagFilter().map(modifier).chain(kv.set('filteringTags'));
 
 const presentFilterAndItem = () =>
   free.sequence([presentFilter(), presentItems()]);
 
 const performAddTagFilter = (tag) =>
-  free.sequence([modifySavedTagFilter(R.append(tag)), presentFilterAndItem()]);
+  free.sequence([updateSavedTagFilter(R.append(tag)), presentFilterAndItem()]);
 
 const performRemoveTagFilter = (tag) =>
   free.sequence([
-    modifySavedTagFilter(R.without([tag])),
+    updateSavedTagFilter(R.without([tag])),
     presentFilterAndItem(),
   ]);
 
 const presentTagSelection = (selectedTags) =>
-  free
-    .of(makeFilterSelectionOption()) //
-    .chain(query('tagFilter'))
-    .map(queryResultToTagSelection)
+  getAllTags()
     .map(R.without(selectedTags))
     .chain((selections) =>
       free.sequence([

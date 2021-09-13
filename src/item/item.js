@@ -9,14 +9,7 @@ import { viewMainPage } from '../view/view_store';
 import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
 import * as itemStore from './item_store.js';
-import {
-  attach,
-  put,
-  get,
-  query,
-  alldocs,
-  getWithAttachment,
-} from '../database';
+import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
   makeItemDoc,
   L as ItemL,
@@ -29,10 +22,7 @@ import {
 } from './item_utils';
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
-import {
-  makeFilterSelectionOption,
-  queryResultToTagSelection,
-} from '../grid/grid_utils';
+import { getAllTags } from '../grid/filter';
 
 const performCreateItem = (name, blob) =>
   free
@@ -133,10 +123,7 @@ const performRemoveTag = (itemId, tag) =>
     .chain(presentItemTags);
 
 const presentTagSelections = (itemId, existingTags) =>
-  free
-    .of(makeFilterSelectionOption()) //
-    .chain(query('tagFilter'))
-    .map(queryResultToTagSelection)
+  getAllTags()
     .map(R.without(existingTags))
     .chain((selections) =>
       free.sequence([

@@ -1,5 +1,8 @@
 import * as R from 'ramda';
+import { query } from '../database';
+import * as free from '../free_monad';
 import { docToItemWithBlob } from '../item/item_utils';
+import * as kv from '../kv';
 
 const L = {
   id: R.lensProp('_id'),
@@ -24,6 +27,23 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
+const getSavedTagFilter = () => kv.get([], 'filteringTags');
+
+const updateSavedTagFilter = (modifier) =>
+  getSavedTagFilter().map(modifier).chain(kv.set('filteringTags'));
+
+const makeFilterSelectionOption = () => {
+  return { group: true };
+};
+
+const queryResultToTagSelection = (rows) => R.pluck('key', rows);
+
+const getAllTags = () =>
+  free
+    .of(makeFilterSelectionOption()) //
+    .chain(query('tagFilter'))
+    .map(queryResultToTagSelection);
+
 const makeFilterWithTagOption = (tags) => {
   return {
     reduce: false,
@@ -34,12 +54,6 @@ const makeFilterWithTagOption = (tags) => {
   };
 };
 
-const makeFilterSelectionOption = () => {
-  return { group: true };
-};
-
-const queryResultToTagSelection = (rows) => R.pluck('key', rows);
-
 const queryResultToItem = (rows) =>
   R.pipe(
     R.uniqBy(R.prop('id')),
@@ -47,10 +61,17 @@ const queryResultToItem = (rows) =>
     R.map(docToItemWithBlob)
   )(rows);
 
+const getItemsWithTags = (tags) =>
+  free
+    .of(tags) //
+    .map(makeFilterWithTagOption)
+    .chain(query('tagFilter'))
+    .map(queryResultToItem);
+
 export {
   makeTagFilterDesignDoc,
-  makeFilterWithTagOption,
-  makeFilterSelectionOption,
-  queryResultToTagSelection,
-  queryResultToItem,
+  getSavedTagFilter,
+  updateSavedTagFilter,
+  getAllTags,
+  getItemsWithTags,
 };
