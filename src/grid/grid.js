@@ -34,15 +34,12 @@ const presentGoToItems = (itemWithBlobs) =>
 const presentItems = () =>
   getSavedTagFilter().chain(
     R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem)
-    // presentFilteredItem
   );
 
 const presentAllItems = (_) =>
   free
     .of(makeStartEndRangeAllDocOptionAttached('i_'))
-    .map(tapLog('option'))
     .chain(alldocs)
-    .map(tapLog('alldocs'))
     .map(R.map(docToItemWithBlob))
     .chain(setRef(gridStore.items));
 
@@ -58,17 +55,20 @@ const presentFilteredItem = (filterTags) =>
 
 const getSavedTagFilter = () => kv.get([], 'filteringTags');
 
+const modifySavedTagFilter = (modifier) =>
+  getSavedTagFilter().map(modifier).chain(kv.set('filteringTags'));
+
+const presentFilterAndItem = () =>
+  free.sequence([presentFilter(), presentItems()]);
+
 const performAddTagFilter = (tag) =>
-  getSavedTagFilter()
-    .map(R.append(tag))
-    .chain(kv.set('filteringTags'))
-    .chain((_) => free.sequence([presentFilter(), presentItems()]));
+  free.sequence([modifySavedTagFilter(R.append(tag)), presentFilterAndItem()]);
 
 const performRemoveTagFilter = (tag) =>
-  getSavedTagFilter()
-    .map(R.without([tag]))
-    .chain(kv.set('filteringTags'))
-    .chain((_) => free.sequence([presentFilter(), presentItems()]));
+  free.sequence([
+    modifySavedTagFilter(R.without([tag])),
+    presentFilterAndItem(),
+  ]);
 
 const presentTagSelection = (selectedTags) =>
   free
@@ -105,8 +105,7 @@ const goToGrid = (category) =>
   free.sequence([
     viewMainPage(Grid),
     setGridUrl(category),
-    presentFilter(),
-    presentItems(),
+    presentFilterAndItem(),
     setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
   ]);
 
