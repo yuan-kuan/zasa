@@ -21,6 +21,20 @@ const makeStartEndRangeAllDocOptionAttached = (key) =>
     R.set(L.binary, true)
   )(makeStartEndRangeAllDocOption(key));
 
+const makeReduceByGroupQueryOption = () => {
+  return { group: true };
+};
+
+const makeMapWithKeysForDocAttachmentQueryOption = (keys) => {
+  return {
+    reduce: false,
+    keys: keys,
+    include_docs: true,
+    attachments: true,
+    binary: true,
+  };
+};
+
 const remove = (id) =>
   free
     .of(id) //
@@ -31,5 +45,7 @@ const remove = (id) =>
 export {
   makeStartEndRangeAllDocOption,
   makeStartEndRangeAllDocOptionAttached,
+  makeReduceByGroupQueryOption,
+  makeMapWithKeysForDocAttachmentQueryOption,
   remove,
 };

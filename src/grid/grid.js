@@ -9,7 +9,7 @@ import { viewMainPage } from '../view/view_store';
 import Grid from './Grid.svelte';
 import * as gridStore from './grid_store';
 import { goToItem, goToItemCreation } from '../item/item';
-import { alldocs, put } from '../database';
+import { alldocs } from '../database';
 import { tapLog } from '../utils';
 import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
 import { docToItemWithBlob } from '../item/item_utils';
@@ -17,23 +17,17 @@ import {
   getAllTags,
   getItemsWithTags,
   getSavedTagFilter,
-  makeTagFilterDesignDoc,
+  setupTagFilter,
   updateSavedTagFilter,
 } from './filter';
 
-const setup = () =>
-  put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of));
+const setup = () => setupTagFilter();
 
 const presentGoToItems = (itemWithBlobs) =>
   free
     .of(itemWithBlobs) //
     .map(R.map((ivb) => () => addSop(() => goToItem(ivb.itemId))))
     .chain(setRef(gridStore.goToItem));
-
-const presentItems = () =>
-  getSavedTagFilter().chain(
-    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem)
-  );
 
 const presentAllItems = (_) =>
   free
@@ -50,9 +44,6 @@ const presentFilteredItem = (filterTags) =>
     .chain((items) =>
       free.sequence([setRef(gridStore.items, items), presentGoToItems(items)])
     );
-
-const presentFilterAndItem = () =>
-  free.sequence([presentFilter(), presentItems()]);
 
 const performAddTagFilter = (tag) =>
   free.sequence([updateSavedTagFilter(R.append(tag)), presentFilterAndItem()]);
@@ -79,6 +70,11 @@ const presentTagSelection = (selectedTags) =>
       ])
     );
 
+const presentItems = () =>
+  getSavedTagFilter().chain(
+    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem)
+  );
+
 const presentFilter = () =>
   getSavedTagFilter().chain((tags) =>
     free.sequence([
@@ -90,6 +86,9 @@ const presentFilter = () =>
       ),
     ])
   );
+
+const presentFilterAndItem = () =>
+  free.sequence([presentFilter(), presentItems()]);
 
 const goToGrid = (category) =>
   free.sequence([

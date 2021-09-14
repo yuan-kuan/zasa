@@ -1,25 +1,23 @@
 import * as R from 'ramda';
 import daggy from 'daggy';
 
-import { query } from '../database';
+import { put, query } from '../database';
 import * as free from '../free_monad';
 import { docToItemWithBlob } from '../item/item_utils';
 import * as kv from '../kv';
 import { registerStaticInterpretor } from '../sop';
+import {
+  makeMapWithKeysForDocAttachmentQueryOption,
+  makeReduceByGroupQueryOption,
+} from '../db_ops';
 
 const Filter = daggy.taggedSum('Filter', {
   GetSavedTags: [''],
   SetSavedTags: ['tags'],
+  QueryTagFilter: ['options'],
+  SetupTagFilter: [''],
 });
-const { GetSavedTags, SetSavedTags } = Filter;
-
-const filterToFuture = (p) =>
-  p.cata({
-    GetSavedTags: (_) => free.interpete(kv.get([], 'filteringTags')),
-    SetSavedTags: (tags) => free.interpete(kv.set('filteringTags', tags)),
-  });
-
-registerStaticInterpretor([Filter, filterToFuture]);
+const { GetSavedTags, SetSavedTags, QueryTagFilter, SetupTagFilter } = Filter;
 
 const L = {
   id: R.lensProp('_id'),
@@ -44,33 +42,34 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
+const filterToFuture = (p) =>
+  p.cata({
+    GetSavedTags: (_) => free.interpete(kv.get([], 'filteringTags')),
+    SetSavedTags: (tags) => free.interpete(kv.set('filteringTags', tags)),
+    QueryTagFilter: (options) => free.interpete(query('tagFilter', options)),
+    SetupTagFilter: () =>
+      free.interpete(
+        put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of))
+      ),
+  });
+
+registerStaticInterpretor([Filter, filterToFuture]);
+
 const getSavedTagFilter = () => free.lift(GetSavedTags(null));
 const setSavedTagFilter = (tags) => free.lift(SetSavedTags(tags));
+const queryTagFilter = (options) => free.lift(QueryTagFilter(options));
+const setupTagFilter = () => free.lift(SetupTagFilter(null));
 
 const updateSavedTagFilter = (modifier) =>
   getSavedTagFilter().map(modifier).chain(setSavedTagFilter);
-
-const makeFilterSelectionOption = () => {
-  return { group: true };
-};
 
 const queryResultToTagSelection = (rows) => R.pluck('key', rows);
 
 const getAllTags = () =>
   free
-    .of(makeFilterSelectionOption()) //
-    .chain(query('tagFilter'))
+    .of(makeReduceByGroupQueryOption()) //
+    .chain(queryTagFilter)
     .map(queryResultToTagSelection);
-
-const makeFilterWithTagOption = (tags) => {
-  return {
-    reduce: false,
-    keys: tags,
-    include_docs: true,
-    attachments: true,
-    binary: true,
-  };
-};
 
 const queryResultToItem = (rows) =>
   R.pipe(
@@ -82,12 +81,12 @@ const queryResultToItem = (rows) =>
 const getItemsWithTags = (tags) =>
   free
     .of(tags) //
-    .map(makeFilterWithTagOption)
-    .chain(query('tagFilter'))
+    .map(makeMapWithKeysForDocAttachmentQueryOption)
+    .chain(queryTagFilter)
     .map(queryResultToItem);
 
 export {
-  makeTagFilterDesignDoc,
+  setupTagFilter,
   getSavedTagFilter,
   updateSavedTagFilter,
   getAllTags,
