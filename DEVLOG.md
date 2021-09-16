@@ -1,3 +1,15 @@
+## Part 5 (Tue Sep 14 14:39:04 MYT 2021)
+
+### Second level sum type / free monad in interpetion
+
+Introducing new concept: A sum type interpeting into another lower level sum type.
+
+Hiding hardcoded string, encapsulating implementation from higher level. e.g. SOP do not call database directly, do not know about the detail of PouchDB option, etc.
+
+### Tagging and Filtering made easy
+
+With PouchDB Map/Reduce view and functional programming.
+
 ## Part 4 (Wed Sep 8 21:21:26 MYT 2021)
 
 ### Organization of functions
