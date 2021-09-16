@@ -14,6 +14,7 @@
     performAddNewTag,
     performAddTag,
     performRemoveTag,
+    goToEditPhoto,
   } from './item_store';
 
   let isAddingTag = false;
@@ -67,6 +68,7 @@
     let blob = e.target.files[0];
     if (blob) {
       photoUrl = URL.createObjectURL(blob);
+      $goToEditPhoto(blob);
     }
   }
 

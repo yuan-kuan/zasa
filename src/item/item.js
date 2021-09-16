@@ -8,6 +8,7 @@ import { viewMainPage } from '../view/view_store';
 
 import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
+import PhotoEdit from './PhotoEdit.svelte';
 import * as itemStore from './item_store.js';
 import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
@@ -23,6 +24,12 @@ import {
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from '../grid/filter';
+
+const goToEditPhoto = (blob) =>
+  free.sequence([
+    viewMainPage(PhotoEdit),
+    setRef(itemStore.editingPhotoBlob, blob),
+  ]);
 
 const performCreateItem = (name, blob) =>
   free
@@ -189,6 +196,9 @@ const goToItem = (itemId) =>
     ),
     setRef(itemStore.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))
+    ),
+    setRef(itemStore.goToEditPhoto, (blob) =>
+      addSop(() => goToEditPhoto(blob))
     ),
     presentItem(itemId),
     presentBatches(itemId),
