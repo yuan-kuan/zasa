@@ -14,8 +14,9 @@
     performAddNewTag,
     performAddTag,
     performRemoveTag,
-    goToEditPhoto,
+    performEditPhoto,
   } from './item_store';
+  import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let isAddingTag = false;
   let workingTag;
@@ -64,12 +65,26 @@
       photoUrl = URL.createObjectURL(value);
     }
   });
+
+  let isTakingPhoto = false;
+
+  const photoComplete = (blob) => {
+    console.log('blob in item :>> ', blob);
+    $performEditPhoto(blob);
+    isTakingPhoto = false;
+  };
+
+  const photoCancel = () => (isTakingPhoto = false);
 </script>
 
 <div class="p-1 w-1/3 lg:w-1/4 xl:w-1/6 relative">
   <img class="object-cover h-32 w-full border" src={photoUrl} alt="" />
-  <button on:click={$goToEditPhoto}>Change Photo</button>
+  <button on:click={() => (isTakingPhoto = true)}>Change Photo</button>
 </div>
+
+{#if isTakingPhoto}
+  <PhotoEdit {photoComplete} {photoCancel} />
+{/if}
 
 <br />
 

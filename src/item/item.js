@@ -24,12 +24,6 @@ import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from '../grid/filter';
 
-const goToEditPhoto = (blob) =>
-  free.sequence([
-    viewMainPage(PhotoEdit),
-    setRef(itemStore.editingPhotoBlob, blob),
-  ]);
-
 const performCreateItem = (name, blob) =>
   free
     .of(makeItemDoc) //
@@ -55,6 +49,16 @@ const goToItemCreation = () =>
       addSop(() => performCreateItem(name, photoId))
     ),
   ]);
+
+const performEditPhoto = (itemId, blob) =>
+  free
+    .of(itemId) //
+    .map(tapLog(`blob is ${blob}`))
+    .chain(get)
+    .map(tapLog('item doc before attach'))
+    .chain((doc) => attach(doc, `image`, blob))
+    .map(tapLog('attached'))
+    .chain((_) => goToItem(itemId));
 
 const performEditName = (itemId, name) =>
   free
@@ -196,7 +200,9 @@ const goToItem = (itemId) =>
     setRef(itemStore.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))
     ),
-    setRef(itemStore.goToEditPhoto, () => addSop(() => goToEditPhoto())),
+    setRef(itemStore.performEditPhoto, (blob) =>
+      addSop(() => performEditPhoto(itemId, blob))
+    ),
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),
