@@ -14,6 +14,7 @@
 
   let image, pixelCrop;
 
+  let aspect = 1;
   let crop = { x: 0, y: 0 };
   let zoom = 1;
 
@@ -22,7 +23,9 @@
   };
 
   async function cropImage() {
+    console.log('pixelCrop :>> ', pixelCrop);
     const blob = await getCroppedImg(image, pixelCrop);
+    console.log('after lenght :>> ', blob.size);
     photoComplete(blob);
   }
 
@@ -31,6 +34,7 @@
     let blob = e.target.files[0];
     if (blob) {
       image = URL.createObjectURL(blob);
+      console.log('before lenght :>> ', blob.size);
     }
   }
 </script>
@@ -56,7 +60,13 @@
 
     {#if image}
       <div style="position: relative; width: 100%; height: 50%;">
-        <Cropper {image} bind:crop bind:zoom on:cropcomplete={preview} />
+        <Cropper
+          {image}
+          bind:aspect
+          bind:crop
+          bind:zoom
+          on:cropcomplete={preview}
+        />
       </div>
 
       <br /><button type="button" on:click={cropImage}>Okay!</button>

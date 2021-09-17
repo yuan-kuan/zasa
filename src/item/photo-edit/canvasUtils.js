@@ -3,6 +3,8 @@
  * https://codesandbox.io/s/y09komm059?file=/src/canvasUtils.js
  */
 
+import pica from 'pica';
+
 const createImage = (url) =>
   new Promise((resolve, reject) => {
     const image = new Image();
@@ -59,12 +61,20 @@ export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
     Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
   );
 
+  const resizedCanvas = document.createElement('canvas');
+  resizedCanvas.width = 256;
+  resizedCanvas.height = 256;
+
+  const p = pica();
+  const result = await p.resize(canvas, resizedCanvas);
+
   // As Base64 string
   // return canvas.toDataURL('image/jpeg');
 
   // As a blob
   return new Promise((resolve) => {
-    canvas.toBlob(resolve, 'image/png');
+    result.toBlob(resolve, 'image/jped');
+    // canvas.toBlob(resolve, 'image/png');
   });
 }
 
