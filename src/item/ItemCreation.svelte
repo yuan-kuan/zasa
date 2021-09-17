@@ -1,6 +1,6 @@
 <script>
   import { nameError, performSave } from './item_store';
-  import PhotoEdit from './PhotoEdit.svelte';
+  import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let workingName;
   let blob;

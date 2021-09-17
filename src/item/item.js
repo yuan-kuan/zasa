@@ -8,7 +8,6 @@ import { viewMainPage } from '../view/view_store';
 
 import Item from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
-import PhotoEdit from './PhotoEdit.svelte';
 import * as itemStore from './item_store.js';
 import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
