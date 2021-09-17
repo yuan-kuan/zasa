@@ -35,7 +35,15 @@ const presentAllItems = (_) =>
     .of(makeStartEndRangeAllDocOptionAttached('i_'))
     .chain(alldocs)
     .map(R.map(docToItemWithBlob))
-    .chain(setRef(gridStore.items));
+    .chain((items) =>
+      free.sequence([
+        setRef(gridStore.items, items),
+        free.sequence([
+          setRef(gridStore.items, items),
+          presentGoToItems(items),
+        ]),
+      ])
+    );
 
 const presentFilteredItem = (filterTags) =>
   free
