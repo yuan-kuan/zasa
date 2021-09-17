@@ -197,9 +197,7 @@ const goToItem = (itemId) =>
     setRef(itemStore.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))
     ),
-    setRef(itemStore.goToEditPhoto, (blob) =>
-      addSop(() => goToEditPhoto(blob))
-    ),
+    setRef(itemStore.goToEditPhoto, () => addSop(() => goToEditPhoto())),
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),

@@ -17,3 +17,4 @@ export const performAddNewTag = createRef();
 export const performAddTag = createRef([]);
 export const performRemoveTag = createRef([]);
 export const goToEditPhoto = createRef();
+export const backFromEditPhoto = createRef();

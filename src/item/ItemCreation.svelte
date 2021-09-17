@@ -1,37 +1,28 @@
 <script>
   import { nameError, performSave } from './item_store';
+  import PhotoEdit from './PhotoEdit.svelte';
 
   let workingName;
+  let blob;
+  let photoUrl;
+  let isTakingPhoto = false;
+
+  const photoComplete = (v) => {
+    blob = v;
+    photoUrl = URL.createObjectURL(blob);
+    isTakingPhoto = false;
+  };
+
+  const photoCancel = () => (isTakingPhoto = false);
 
   const saveItem = () => {
     $performSave(workingName, blob);
   };
-
-  let cameraInput;
-  function addPhoto() {
-    cameraInput.click();
-  }
-
-  let photoUrl;
-  let blob;
-  function photoTaken(e) {
-    blob = e.target.files[0];
-    if (blob) {
-      photoUrl = URL.createObjectURL(blob);
-    }
-  }
 </script>
 
-<input
-  style="display: none"
-  bind:this={cameraInput}
-  type="file"
-  accept="image/*"
-  on:change={photoTaken}
-/>
 <div class="p-1 w-1/3 lg:w-1/4 xl:w-1/6 relative">
   <img class="object-cover h-32 w-full border" src={photoUrl} alt="" />
-  <button on:click={addPhoto}>Add Photo</button>
+  <button on:click={() => (isTakingPhoto = true)}>Add Photo</button>
 </div>
 
 <br />
@@ -45,3 +36,7 @@
 
 <br />
 <button on:click={saveItem}>Save</button>
+
+{#if isTakingPhoto}
+  <PhotoEdit {photoComplete} {photoCancel} />
+{/if}
