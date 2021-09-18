@@ -25,26 +25,22 @@
     </button>
   {/each}
 </div>
+
 <br />
-<div>
-  <ul>
-    {#each $items as item, index}
-      <li>
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a on:click={$goToItem[index]}>
-          {item.name}
-          <div class="p-1 w-1/3 lg:w-1/4 xl:w-1/6 relative">
-            {#if item.blob}
-              <img
-                class="object-cover h-32 w-full border"
-                src={URL.createObjectURL(item.blob)}
-                alt=""
-              />
-            {/if}
-          </div>
-        </a>
-      </li>
-    {/each}
-  </ul>
+
+<div class="px-2 grid grid-cols-3 md:grid-cols-6 gap-2">
+  {#each $items as item, index}
+    <div class="relative" on:click={$goToItem[index]}>
+      <!-- {item.name} -->
+      <span class="absolute top-0 left=0 w-full truncate">{item.name}</span>
+      {#if item.blob}
+        <img
+          class="object-cover w-full border"
+          src={URL.createObjectURL(item.blob)}
+          alt=""
+        />
+      {/if}
+    </div>
+  {/each}
 </div>
 <button on:click={$goToCreateItem}>Add Item</button>
