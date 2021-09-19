@@ -32,7 +32,10 @@
   {#each $items as item, index}
     <div class="relative" on:click={$goToItem[index]}>
       <!-- {item.name} -->
-      <span class="absolute top-0 left=0 w-full truncate">{item.name}</span>
+      <span
+        class="absolute top-0 left-1 bg-blue-100 bg-opacity-50 filter drop-shadow-md w-full truncate"
+        >{item.name}</span
+      >
       {#if item.blob}
         <img
           class="object-cover w-full border"
