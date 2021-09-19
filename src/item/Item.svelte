@@ -5,6 +5,7 @@
     photoBlob,
     performEditName,
     performEditPhoto,
+    backFromItemPage,
   } from './item_store';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
   import Tags from './Tags.svelte';
@@ -43,11 +44,13 @@
 
 <div class="container md:mx-auto">
   <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
-    <button class="btn ml-2 underline">&#60; Back</button>
+    <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
+      >&#60; Back</button
+    >
   </header>
 
   <div
-    class="pt-4 w-64 mx-auto relative"
+    class="pt-1 w-64 mx-auto relative"
     on:click={() => (isTakingPhoto = true)}
   >
     <img

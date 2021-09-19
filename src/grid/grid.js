@@ -98,10 +98,10 @@ const presentFilter = () =>
 const presentFilterAndItem = () =>
   free.sequence([presentFilter(), presentItems()]);
 
-const goToGrid = (category) =>
+const goToGrid = () =>
   free.sequence([
     viewMainPage(Grid),
-    setGridUrl(category),
+    setGridUrl(),
     presentFilterAndItem(),
     setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
   ]);

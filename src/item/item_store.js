@@ -17,4 +17,5 @@ export const performDeleteBatch = createRef([]);
 export const performAddNewTag = createRef();
 export const performAddTag = createRef([]);
 export const performRemoveTag = createRef([]);
+export const backFromItemPage = createRef();
 export const backFromEditPhoto = createRef();

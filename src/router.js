@@ -38,21 +38,16 @@ const setUrl = (path, params) => free.lift(Show(path, params));
 const navigationInterpretor = [Navigation, nagivationToFuture];
 registerStaticInterpretor(navigationInterpretor);
 
-const gridPath = '/:category';
+const gridPath = '/';
 const itemPath = '/item/:itemId';
 
-const setGridUrl = (category) => setUrl(gridPath, { category });
+const setGridUrl = () => setUrl(gridPath);
 const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
 const setItemCreationUrl = () => setUrl('/item');
 
 function start() {
   page('/', () => {
-    addSop(() => goToGrid('default'));
-  });
-
-  page(gridPath, (ctx) => {
-    console.log('ctx.params.category :>> ', ctx.params.category);
-    addSop(() => goToGrid(ctx.params.category));
+    addSop(() => goToGrid());
   });
 
   page(itemPath, (ctx) => {

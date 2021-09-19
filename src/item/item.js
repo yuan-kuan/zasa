@@ -23,6 +23,7 @@ import {
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from '../grid/filter';
+import { goToGrid } from '../grid/grid';
 
 const performCreateItem = (name, blob) =>
   free
@@ -203,6 +204,7 @@ const goToItem = (itemId) =>
     setRef(itemStore.performEditPhoto, (blob) =>
       addSop(() => performEditPhoto(itemId, blob))
     ),
+    setRef(itemStore.backFromItemPage, () => addSop(() => goToGrid())),
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),
