@@ -14,10 +14,28 @@
 
   let isAddingBatch = false;
   let workingDate;
+  $: validWorkingDate = workingDate !== undefined && workingDate != '';
+
   let workingCount = 1;
+
+  const startAddNewBatch = () => {
+    workingDate = undefined;
+    workingCount = 1;
+    isAddingBatch = true;
+  };
+
+  const reduceWorkingCount = () => {
+    if (workingCount == 1) {
+      isAddingBatch = false;
+    } else {
+      workingCount--;
+    }
+  };
+
   const addNewBatch = () => {
     // <input type="date"> return a FFFF-MM-DD string, convert it to date
     $performAddBatch(new Date(workingDate), workingCount);
+    isAddingBatch = false;
   };
 
   let confirmingDeleteIndex = -1;
@@ -80,16 +98,48 @@
       {/if}
     </div>
   {/each}
-</div>
 
-<br />
-<p class="text-green-600">Batches</p>
-{#if isAddingBatch}
-  <input type="date" bind:value={workingDate} />
-  <span>{workingCount}</span>
-  <button class="btn btn-blue" on:click={() => workingCount++}>+</button>
-  <br />
-  <button class="btn btn-blue" on:click={addNewBatch}>Done Batch</button>
-{:else}
-  <button on:click={() => (isAddingBatch = true)}>New Batch</button>
-{/if}
+  {#if isAddingBatch}
+    <div class="grid grid-cols-2 py-2 items-center">
+      <span class="mx-4 pt-2 text-right">
+        <input
+          type="date"
+          class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 py-2 text-right rounded leading-tight focus:outline-none focus:shadow-outline"
+          bind:value={workingDate}
+        />
+      </span>
+
+      <div class="h-10 w-48">
+        <div
+          class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1"
+        >
+          <button
+            class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-8 rounded-l cursor-pointer"
+            on:click={reduceWorkingCount}
+          >
+            <span class="m-auto text-2xl">−</span>
+          </button>
+          <span
+            class="outline-none focus:outline-none text-center w-8 bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center justify-center text-gray-700"
+          >
+            {workingCount}
+          </span>
+          <button
+            class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-8 rounded-r cursor-pointer"
+            on:click={() => workingCount++}
+          >
+            <span class="m-auto text-2xl">+</span>
+          </button>
+          {#if validWorkingDate}
+            <button class="btn btn-blue ml-2" on:click={addNewBatch}>Add</button
+            >
+          {/if}
+        </div>
+      </div>
+    </div>
+  {:else}
+    <button class="btn btn-blue px-2 my-2" on:click={startAddNewBatch}
+      >Add Item with different expiry date</button
+    >
+  {/if}
+</div>
