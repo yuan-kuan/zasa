@@ -7,6 +7,11 @@
     performBatchDec,
   } from './item_store';
 
+  const toDateString = (batch) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(batch.expiry).toLocaleDateString('en-GB', options);
+  };
+
   let isAddingBatch = false;
   let workingDate;
   let workingCount = 1;
@@ -32,29 +37,50 @@
   };
 </script>
 
-<ul>
+<div class="flex w-full flex-col items-center">
   {#each $batches as batch, index}
-    <li>
-      {new Date(batch.expiry)}
-      <br />
-      ({batch.count})
+    <div class="grid grid-cols-2 py-2 items-center">
+      <span class="mr-4 pt-2 text-right">
+        {toDateString(batch)}
+      </span>
 
-      <button class="btn btn-blue" on:click={() => incrementBatchCount(index)}
-        >+</button
-      >
-      <span />
       {#if index == confirmingDeleteIndex}
-        <button class="btn btn-red" on:click={$performDeleteBatch[index]}
-          >Delete?</button
-        >
+        <div class="flex h-10 w-32">
+          <button class="btn btn-red" on:click={$performDeleteBatch[index]}
+            >Delete?</button
+          >
+          <button class="btn" on:click={() => (confirmingDeleteIndex = -1)}
+            >Wait...</button
+          >
+        </div>
       {:else}
-        <button class="btn btn-red" on:click={() => decrementBatchCount(index)}
-          >-</button
-        >
+        <div class="h-10 w-32">
+          <div
+            class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1"
+          >
+            <button
+              class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-8 rounded-l cursor-pointer"
+              on:click={() => decrementBatchCount(index)}
+            >
+              <span class="m-auto text-2xl">−</span>
+            </button>
+            <span
+              class="outline-none focus:outline-none text-center w-8 bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center justify-center text-gray-700"
+            >
+              {batch.count}
+            </span>
+            <button
+              class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-8 rounded-r cursor-pointer"
+              on:click={() => incrementBatchCount(index)}
+            >
+              <span class="m-auto text-2xl">+</span>
+            </button>
+          </div>
+        </div>
       {/if}
-    </li>
+    </div>
   {/each}
-</ul>
+</div>
 
 <br />
 <p class="text-green-600">Batches</p>
