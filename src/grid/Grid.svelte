@@ -1,32 +1,9 @@
 <script>
-  import {
-    items,
-    goToItem,
-    goToCreateItem,
-    filteringTags,
-    performRemoveTagFromFilter,
-    tagSelections,
-    performAddTagToFilter,
-  } from './grid_store';
+  import { items, goToItem, goToCreateItem } from './grid_store';
+  import Filter from './Filter.svelte';
 </script>
 
-<div>
-  <span>Filter:</span>
-  {#each $filteringTags as filteringTag, index}
-    <button class="btn btn-red" on:click={$performRemoveTagFromFilter[index]}>
-      {filteringTag}
-    </button>
-  {/each}
-  <br />
-  <span>Tag Available</span>
-  {#each $tagSelections as selection, index}
-    <button class="btn btn-blue" on:click={$performAddTagToFilter[index]}>
-      {selection}
-    </button>
-  {/each}
-</div>
-
-<br />
+<Filter expanded={true} />
 
 <div class="px-2 grid grid-cols-3 md:grid-cols-6 gap-2">
   {#each $items as item, index}
