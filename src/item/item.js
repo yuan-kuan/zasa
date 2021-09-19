@@ -46,6 +46,7 @@ const goToItemCreation = () =>
     setItemCreationUrl(),
     setRef(itemStore.name, ''),
     setRef(itemStore.nameError, null),
+    setRef(itemStore.backFromItemPage, () => addSop(() => goToGrid())),
     setRef(itemStore.performSave, (name, photoId) =>
       addSop(() => performCreateItem(name, photoId))
     ),

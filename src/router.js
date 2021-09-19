@@ -9,7 +9,7 @@ import { registerStaticInterpretor } from './sop';
 
 import { addSop } from './sop';
 import { goToGrid } from './grid/grid';
-import { goToItem } from './item/item';
+import { goToItem, goToItemCreation } from './item/item';
 
 const Navigation = daggy.taggedSum('Navigation', {
   Show: ['path', 'params'],
@@ -39,6 +39,7 @@ const navigationInterpretor = [Navigation, nagivationToFuture];
 registerStaticInterpretor(navigationInterpretor);
 
 const gridPath = '/';
+const itemCreatePath = '/item';
 const itemPath = '/item/:itemId';
 
 const setGridUrl = () => setUrl(gridPath);
@@ -48,6 +49,10 @@ const setItemCreationUrl = () => setUrl('/item');
 function start() {
   page('/', () => {
     addSop(() => goToGrid());
+  });
+
+  page(itemCreatePath, (ctx) => {
+    addSop(() => goToItemCreation());
   });
 
   page(itemPath, (ctx) => {
