@@ -50,6 +50,12 @@
   <div
     class="modal-container bg-white fixed right-0 w-full h-full md:max-w-md lg:max-w-lg xl:max-w-4xl mx-auto rounded shadow-lg z-50 overflow-y-auto"
   >
+    <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
+      <button class="ml-2 p-2 font-light" on:click={photoCancel}
+        >&#60; Back</button
+      >
+    </header>
+
     <input
       style="display: none"
       bind:this={cameraInput}
@@ -59,7 +65,8 @@
     />
 
     {#if image}
-      <div style="position: relative; width: 100%; height: 50%;">
+      <div class="py-2 mx-auto w-full text-center">Adjust your image</div>
+      <div class="relative w-full h-1/2 border-solid border-4 border-blue-200">
         <Cropper
           {image}
           bind:aspect
@@ -69,8 +76,14 @@
         />
       </div>
 
-      <br /><button type="button" on:click={cropImage}>Okay!</button>
+      <div class="flex w-full justify-center pt-2">
+        <button class="btn btn-blue" on:click={cropImage}>Done!</button>
+        <button class="btn" on:click={startCamera}>Retake Photo</button>
+      </div>
+    {:else}
+      <div class="flex w-full justify-center pt-2">
+        <button class="btn" on:click={startCamera}>Retake Photo</button>
+      </div>
     {/if}
-    <button class="btn btn-blue" on:click={startCamera}>Retake Photo</button>
   </div>
 </div>
