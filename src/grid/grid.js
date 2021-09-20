@@ -20,6 +20,7 @@ import {
   setupTagFilter,
   updateSavedTagFilter,
 } from './filter';
+import { goToSettingPage } from '../setting/setting';
 
 const setup = () => setupTagFilter();
 
@@ -104,6 +105,7 @@ const goToGrid = () =>
     setGridUrl(),
     presentFilterAndItem(),
     setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
+    setRef(gridStore.goToSetting, () => addSop(() => goToSettingPage())),
   ]);
 
 export { goToGrid, setup as gridSetup };

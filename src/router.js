@@ -10,6 +10,7 @@ import { registerStaticInterpretor } from './sop';
 import { addSop } from './sop';
 import { goToGrid } from './grid/grid';
 import { goToItem, goToItemCreation } from './item/item';
+import { goToSettingPage } from './setting/setting';
 
 const Navigation = daggy.taggedSum('Navigation', {
   Show: ['path', 'params'],
@@ -41,10 +42,12 @@ registerStaticInterpretor(navigationInterpretor);
 const gridPath = '/';
 const itemCreatePath = '/item';
 const itemPath = '/item/:itemId';
+const settingPath = '/setting';
 
 const setGridUrl = () => setUrl(gridPath);
 const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
 const setItemCreationUrl = () => setUrl('/item');
+const setSettingUrl = () => setUrl(settingPath);
 
 function start() {
   page('/', () => {
@@ -60,10 +63,14 @@ function start() {
     addSop(() => goToItem(ctx.params.itemId));
   });
 
+  page(settingPath, (ctx) => {
+    addSop(() => goToSettingPage());
+  });
+
   page('*', () => {
     console.error('Unknown path');
   });
   page();
 }
 
-export { start, setGridUrl, setItemUrl, setItemCreationUrl };
+export { start, setGridUrl, setItemUrl, setItemCreationUrl, setSettingUrl };

@@ -8,3 +8,5 @@ export const filteringTags = createRef([]);
 export const tagSelections = createRef([]);
 export const performAddTagToFilter = createRef([]);
 export const performRemoveTagFromFilter = createRef([]);
+
+export const goToSetting = createRef();

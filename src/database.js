@@ -14,8 +14,10 @@ const Database = daggy.taggedSum('Database', {
   Put: ['doc'],
   Attach: ['doc', 'filename', 'blob'],
   Query: ['index', 'options'],
+  CleanUp: [''],
+  Destroy: [''],
 });
-const { Get, AllDocs, Put, Attach, Query } = Database;
+const { Get, AllDocs, Put, Attach, Query, CleanUp, Destroy } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
@@ -69,6 +71,29 @@ const databaseToFuture = (p) =>
           .catch(reject);
         return () => {};
       }),
+
+    CleanUp: (_) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .viewCleanup()
+          .then(() => {
+            pouchdb.compact();
+          })
+          .then(resolve)
+          .catch(reject);
+        return () => {};
+      }),
+
+    Destroy: (_) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .destroy()
+          .then(() => {
+            resolve();
+          })
+          .catch(reject);
+        return () => {};
+      }),
   });
 
 registerStaticInterpretor([Database, databaseToFuture]);
@@ -79,5 +104,16 @@ const alldocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 const query = R.curry((index, options) => lift(Query(index, options)));
+const cleanUp = () => lift(CleanUp(null));
+const destroy = () => lift(Destroy(null));
 
-export { get, getWithAttachment, alldocs, put, attach, query };
+export {
+  get,
+  getWithAttachment,
+  alldocs,
+  put,
+  attach,
+  query,
+  cleanUp,
+  destroy,
+};
