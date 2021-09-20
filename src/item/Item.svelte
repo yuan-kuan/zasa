@@ -119,11 +119,9 @@
     </div>
   {/if}
 
-  <br />
-
+  <div class="h-4" />
   <Tags />
-
-  <br />
-
+  <div class="h-4" />
   <Batches />
+  <div class="h-20" />
 </div>
