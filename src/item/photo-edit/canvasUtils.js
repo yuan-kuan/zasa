@@ -65,7 +65,7 @@ export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
   resizedCanvas.width = 256;
   resizedCanvas.height = 256;
 
-  const p = pica();
+  const p = pica({ features: ['js'] });
   const result = await p.resize(canvas, resizedCanvas);
 
   // As Base64 string
