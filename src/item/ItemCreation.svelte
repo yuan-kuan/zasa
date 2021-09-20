@@ -3,6 +3,8 @@
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let workingName;
+  $: preventSave = workingName == undefined || workingName.length == 0;
+
   let blob;
   let photoUrl;
   let isTakingPhoto = false;
@@ -56,9 +58,13 @@
     <input
       class="appearance-none bg-transparent border-b border-blue-500 text-gray-700 w-48 mr-3 py-1 px-2 w-64 leading-tight focus:outline-none text-center"
       type="text"
-      placeholder="Name"
+      placeholder="Name (required)"
       bind:value={workingName}
     />
-    <button class="btn btn-blue mt-6 w-64" on:click={saveItem}>Save</button>
+    <button
+      class="btn btn-blue mt-6 w-64 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      disabled={preventSave}
+      on:click={saveItem}>Save</button
+    >
   </div>
 </div>
