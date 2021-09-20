@@ -73,7 +73,7 @@ export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
 
   // As a blob
   return new Promise((resolve) => {
-    result.toBlob(resolve, 'image/jped');
+    result.toBlob(resolve, 'image/jpeg');
     // canvas.toBlob(resolve, 'image/png');
   });
 }
