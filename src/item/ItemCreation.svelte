@@ -5,6 +5,14 @@
   let workingName;
   $: preventSave = workingName == undefined || workingName.length == 0;
 
+  let saveButton;
+  const nameKeyDown = (e) => {
+    if (e.key == 'Enter') {
+      saveButton.focus();
+      e.preventDefault();
+    }
+  };
+
   let blob;
   let photoUrl;
   let isTakingPhoto = false;
@@ -60,10 +68,12 @@
       type="text"
       placeholder="Name (required)"
       bind:value={workingName}
+      on:keydown={nameKeyDown}
     />
     <button
       class="btn btn-blue mt-6 w-64 disabled:bg-gray-400 disabled:cursor-not-allowed"
       disabled={preventSave}
+      bind:this={saveButton}
       on:click={saveItem}>Save</button
     >
   </div>
