@@ -42,7 +42,6 @@
   let isTakingPhoto = false;
 
   const photoComplete = (blob) => {
-    console.log('blob in item :>> ', blob);
     $performEditPhoto(blob);
     isTakingPhoto = false;
   };

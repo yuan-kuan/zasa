@@ -22,9 +22,12 @@
     pixelCrop = e.detail.pixels;
   };
 
+  let isCropping = false;
   async function cropImage() {
     console.log('pixelCrop :>> ', pixelCrop);
+    isCropping = true;
     const blob = await getCroppedImg(image, pixelCrop);
+    isCropping = false;
     console.log('after lenght :>> ', blob.size);
     photoComplete(blob);
   }
@@ -35,7 +38,6 @@
     if (blob) {
       image = URL.createObjectURL(blob);
       console.log('before lenght :>> ', blob.size);
-      // photoComplete(blob);
     }
   }
 </script>
@@ -78,8 +80,12 @@
       </div>
 
       <div class="flex w-full justify-center pt-2">
-        <button class="btn btn-blue" on:click={cropImage}>Done!</button>
-        <button class="btn" on:click={startCamera}>Retake Photo</button>
+        {#if isCropping}
+          <div>Saving Image... please wait...</div>
+        {:else}
+          <button class="btn btn-blue" on:click={cropImage}>Done!</button>
+          <button class="btn" on:click={startCamera}>Retake Photo</button>
+        {/if}
       </div>
     {:else}
       <div class="flex w-full justify-center pt-2">
