@@ -33,9 +33,9 @@
   function photoTaken(e) {
     let blob = e.target.files[0];
     if (blob) {
-      // image = URL.createObjectURL(blob);
+      image = URL.createObjectURL(blob);
       console.log('before lenght :>> ', blob.size);
-      photoComplete(blob);
+      // photoComplete(blob);
     }
   }
 </script>
