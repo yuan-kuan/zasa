@@ -3,9 +3,9 @@ import { start } from './router';
 import { gridSetup } from './grid/grid';
 import { addSop } from './sop';
 
-start();
-
 addSop(() => gridSetup());
+
+start();
 
 // Kick start Svelte
 const app = new App({
