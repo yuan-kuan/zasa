@@ -44,7 +44,7 @@
       const ibr = ImageBlobReduce();
       console.log('before lenght :>> ', blob.size);
 
-      ibr.toBlob(blob, { max: 256 }).then((resizedBlob) => {
+      ibr.toBlob(blob, { max: 512 }).then((resizedBlob) => {
         image = URL.createObjectURL(resizedBlob);
         beforeSize = resizedBlob.size;
         console.log('after resize lenght :>> ', resizedBlob.size);
