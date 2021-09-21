@@ -54,7 +54,8 @@
     if (blob) {
       filename = blob.name;
       mimeType = blob.type;
-      const ibr = ImageBlobReduce({ pica: pica({ features: ['js'] }) });
+      // const ibr = ImageBlobReduce({ pica: pica({ features: ['js'] }) });
+      const ibr = ImageBlobReduce({ pica: pica() });
       console.log('before lenght :>> ', blob.size);
 
       ibr.toBlob(blob, { max: 512 }).then((resizedBlob) => {
