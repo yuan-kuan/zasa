@@ -70,8 +70,7 @@ export async function getCroppedImg(
     resizedCanvas.width = 256;
     resizedCanvas.height = 256;
 
-    // const p = pica({ features: ['js'] });
-    const p = pica();
+    const p = pica({ features: ['js'] });
     const result = await p.resize(canvas, resizedCanvas);
     return p.toBlob(result);
 
