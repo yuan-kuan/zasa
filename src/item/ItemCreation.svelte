@@ -17,8 +17,13 @@
   let photoUrl;
   let isTakingPhoto = false;
 
+  let mimeType, filename, blobSize;
+
   const photoComplete = (v) => {
     blob = v;
+    mimeType = blob.type;
+    filename = blob.name;
+    blobSize = blob.size;
     photoUrl = URL.createObjectURL(blob);
     isTakingPhoto = false;
   };
@@ -56,6 +61,12 @@
         />
       </svg>
     </div>
+  </div>
+
+  <div class="py-3">
+    <p>type: {mimeType}</p>
+    <p>name: {filename}</p>
+    <p>size: {blobSize}</p>
   </div>
 
   {#if isTakingPhoto}

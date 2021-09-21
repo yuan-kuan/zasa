@@ -12,7 +12,14 @@
 
   const startCamera = () => cameraInput.click();
 
-  let image, pixelCrop, mimeType, resize, filename;
+  let image,
+    pixelCrop,
+    mimeType,
+    resize,
+    filename,
+    beforeSize,
+    afterSize,
+    croppedImage;
 
   let aspect = 1;
   let crop = { x: 0, y: 0 };
@@ -28,8 +35,10 @@
     isCropping = true;
     const blob = await getCroppedImg(image, pixelCrop, mimeType, resize);
     isCropping = false;
+    afterSize = blob.size;
     console.log('after lenght :>> ', blob.size);
-    photoComplete(blob);
+    // photoComplete(blob);
+    croppedImage = URL.createObjectURL(blob);
   }
 
   let cameraInput;
@@ -39,6 +48,7 @@
       filename = blob.name;
       mimeType = blob.type;
       image = URL.createObjectURL(blob);
+      beforeSize = blob.size;
       console.log('before lenght :>> ', blob.size);
     }
   }
@@ -99,6 +109,16 @@
     <div class="mt-3">
       <p>MIME type: {mimeType}</p>
       <p>Filename and ext type: {filename}</p>
+      <p>Before Size: {beforeSize}</p>
+      <p>After Size: {afterSize}</p>
     </div>
+
+    {#if croppedImage}
+      <img
+        class="object-cover h-64 w-64 border-solid border-4 border-blue-400"
+        src={croppedImage}
+        alt=""
+      />
+    {/if}
   </div>
 </div>
