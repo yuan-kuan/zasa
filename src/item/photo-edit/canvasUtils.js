@@ -3,8 +3,6 @@
  * https://codesandbox.io/s/y09komm059?file=/src/canvasUtils.js
  */
 
-import pica from 'pica';
-
 const createImage = (url) =>
   new Promise((resolve, reject) => {
     const image = new Image();

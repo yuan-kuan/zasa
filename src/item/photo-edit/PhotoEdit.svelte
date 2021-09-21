@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
   import Cropper from 'svelte-easy-crop';
   import { getCroppedImg } from './canvasUtils';
+
+  import pica from 'pica';
   import ImageBlobReduce from 'image-blob-reduce';
 
   export let photoComplete;
@@ -13,7 +15,14 @@
 
   const startCamera = () => cameraInput.click();
 
-  let image, pixelCrop, mimeType, filename, beforeSize, afterSize, croppedImage;
+  let image,
+    pixelCrop,
+    mimeType,
+    filename,
+    beforeSize,
+    afterSize,
+    croppedImage,
+    croppedBlob;
 
   let aspect = 1;
   let crop = { x: 0, y: 0 };
@@ -27,13 +36,17 @@
   async function cropImage() {
     console.log('pixelCrop :>> ', pixelCrop);
     isCropping = true;
-    const blob = await getCroppedImg(image, pixelCrop, mimeType);
+    croppedBlob = await getCroppedImg(image, pixelCrop, mimeType);
     isCropping = false;
-    afterSize = blob.size;
-    console.log('after lenght :>> ', blob.size);
+    afterSize = croppedBlob.size;
+    console.log('after lenght :>> ', croppedBlob.size);
     // photoComplete(blob);
-    croppedImage = URL.createObjectURL(blob);
+    croppedImage = URL.createObjectURL(croppedBlob);
   }
+
+  const confirm = () => {
+    photoComplete(croppedBlob);
+  };
 
   let cameraInput;
   function photoTaken(e) {
@@ -41,7 +54,7 @@
     if (blob) {
       filename = blob.name;
       mimeType = blob.type;
-      const ibr = ImageBlobReduce();
+      const ibr = ImageBlobReduce({ pica: pica({ features: ['js'] }) });
       console.log('before lenght :>> ', blob.size);
 
       ibr.toBlob(blob, { max: 512 }).then((resizedBlob) => {
@@ -80,7 +93,7 @@
 
     {#if image}
       <div class="py-2 mx-auto w-full text-center">Adjust your image</div>
-      <div class="relative w-full h-1/2 border-solid border-4 border-blue-200">
+      <div class="relative w-full h-1/3 border-solid border-4 border-blue-200">
         <Cropper
           {image}
           bind:aspect
@@ -112,6 +125,7 @@
     </div>
 
     {#if croppedImage}
+      <button class="btn btn-blue" on:click={confirm}>Confirm!</button>
       <img
         class="object-cover h-64 w-64 border-solid border-4 border-blue-400"
         src={croppedImage}
