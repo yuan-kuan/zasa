@@ -24,7 +24,12 @@ function getRadianAngle(degreeValue) {
  * @param {Object} pixelCrop - pixelCrop Object provided by react-easy-crop
  * @param {number} rotation - optional rotation parameter
  */
-export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
+export async function getCroppedImg(
+  imageSrc,
+  pixelCrop,
+  mimetype,
+  resize = false
+) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -39,7 +44,6 @@ export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
 
   // translate canvas context to a central location on image to allow rotating around the center.
   ctx.translate(safeArea / 2, safeArea / 2);
-  ctx.rotate(getRadianAngle(rotation));
   ctx.translate(-safeArea / 2, -safeArea / 2);
 
   // draw rotated image and store data.
@@ -61,21 +65,27 @@ export async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
     Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
   );
 
-  const resizedCanvas = document.createElement('canvas');
-  resizedCanvas.width = 256;
-  resizedCanvas.height = 256;
+  if (resize) {
+    const resizedCanvas = document.createElement('canvas');
+    resizedCanvas.width = 256;
+    resizedCanvas.height = 256;
 
-  const p = pica({ features: ['js'] });
-  const result = await p.resize(canvas, resizedCanvas);
+    const p = pica({ features: ['js'] });
+    const result = await p.resize(canvas, resizedCanvas);
 
-  // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
+    // As Base64 string
+    // return canvas.toDataURL('image/jpeg');
 
-  // As a blob
-  return new Promise((resolve) => {
-    result.toBlob(resolve, 'image/jpeg');
-    // canvas.toBlob(resolve, 'image/png');
-  });
+    // As a blob
+    return new Promise((resolve) => {
+      result.toBlob(resolve, mimetype);
+      // canvas.toBlob(resolve, 'image/png');
+    });
+  } else {
+    return new Promise((resolve) => {
+      canvas.toBlob(resolve, mimetype);
+    });
+  }
 }
 
 export async function getRotatedImage(imageSrc, rotation = 0) {

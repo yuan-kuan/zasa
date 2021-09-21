@@ -12,7 +12,7 @@
 
   const startCamera = () => cameraInput.click();
 
-  let image, pixelCrop;
+  let image, pixelCrop, mimeType, resize, filename;
 
   let aspect = 1;
   let crop = { x: 0, y: 0 };
@@ -26,7 +26,7 @@
   async function cropImage() {
     console.log('pixelCrop :>> ', pixelCrop);
     isCropping = true;
-    const blob = await getCroppedImg(image, pixelCrop);
+    const blob = await getCroppedImg(image, pixelCrop, mimeType, resize);
     isCropping = false;
     console.log('after lenght :>> ', blob.size);
     photoComplete(blob);
@@ -36,6 +36,8 @@
   function photoTaken(e) {
     let blob = e.target.files[0];
     if (blob) {
+      filename = blob.name;
+      mimeType = blob.type;
       image = URL.createObjectURL(blob);
       console.log('before lenght :>> ', blob.size);
     }
@@ -83,6 +85,7 @@
         {#if isCropping}
           <div>Saving Image... please wait...</div>
         {:else}
+          <input type="checkbox" bind:checked={resize} />
           <button class="btn btn-blue" on:click={cropImage}>Done!</button>
           <button class="btn" on:click={startCamera}>Retake Photo</button>
         {/if}
@@ -92,5 +95,10 @@
         <button class="btn" on:click={startCamera}>Retake Photo</button>
       </div>
     {/if}
+
+    <div class="mt-3">
+      <p>MIME type: {mimeType}</p>
+      <p>Filename and ext type: {filename}</p>
+    </div>
   </div>
 </div>
