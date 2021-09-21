@@ -15,7 +15,7 @@
   let image,
     pixelCrop,
     mimeType,
-    resize,
+    resize = true,
     filename,
     beforeSize,
     afterSize,

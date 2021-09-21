@@ -70,17 +70,15 @@ export async function getCroppedImg(
     resizedCanvas.width = 256;
     resizedCanvas.height = 256;
 
-    const p = pica({ features: ['js'] });
+    // const p = pica({ features: ['js'] });
+    const p = pica();
     const result = await p.resize(canvas, resizedCanvas);
-
-    // As Base64 string
-    // return canvas.toDataURL('image/jpeg');
+    return p.toBlob(result);
 
     // As a blob
-    return new Promise((resolve) => {
-      result.toBlob(resolve, mimetype);
-      // canvas.toBlob(resolve, 'image/png');
-    });
+    // return new Promise((resolve) => {
+    //   // canvas.toBlob(resolve, 'image/png');
+    // });
   } else {
     return new Promise((resolve) => {
       canvas.toBlob(resolve, mimetype);
