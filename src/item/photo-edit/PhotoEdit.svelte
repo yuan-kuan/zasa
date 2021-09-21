@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import Cropper from 'svelte-easy-crop';
   import { getCroppedImg } from './canvasUtils';
+  import ImageBlobReduce from 'image-blob-reduce';
 
   export let photoComplete;
   export let photoCancel;
@@ -12,14 +13,7 @@
 
   const startCamera = () => cameraInput.click();
 
-  let image,
-    pixelCrop,
-    mimeType,
-    resize = true,
-    filename,
-    beforeSize,
-    afterSize,
-    croppedImage;
+  let image, pixelCrop, mimeType, filename, beforeSize, afterSize, croppedImage;
 
   let aspect = 1;
   let crop = { x: 0, y: 0 };
@@ -33,7 +27,7 @@
   async function cropImage() {
     console.log('pixelCrop :>> ', pixelCrop);
     isCropping = true;
-    const blob = await getCroppedImg(image, pixelCrop, mimeType, resize);
+    const blob = await getCroppedImg(image, pixelCrop, mimeType);
     isCropping = false;
     afterSize = blob.size;
     console.log('after lenght :>> ', blob.size);
@@ -47,9 +41,14 @@
     if (blob) {
       filename = blob.name;
       mimeType = blob.type;
-      image = URL.createObjectURL(blob);
-      beforeSize = blob.size;
+      const ibr = ImageBlobReduce();
       console.log('before lenght :>> ', blob.size);
+
+      ibr.toBlob(blob, { max: 256 }).then((resizedBlob) => {
+        image = URL.createObjectURL(resizedBlob);
+        beforeSize = resizedBlob.size;
+        console.log('after resize lenght :>> ', resizedBlob.size);
+      });
     }
   }
 </script>
@@ -95,7 +94,6 @@
         {#if isCropping}
           <div>Saving Image... please wait...</div>
         {:else}
-          <input type="checkbox" bind:checked={resize} />
           <button class="btn btn-blue" on:click={cropImage}>Done!</button>
           <button class="btn" on:click={startCamera}>Retake Photo</button>
         {/if}

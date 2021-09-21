@@ -24,12 +24,7 @@ function getRadianAngle(degreeValue) {
  * @param {Object} pixelCrop - pixelCrop Object provided by react-easy-crop
  * @param {number} rotation - optional rotation parameter
  */
-export async function getCroppedImg(
-  imageSrc,
-  pixelCrop,
-  mimetype,
-  resize = false
-) {
+export async function getCroppedImg(imageSrc, pixelCrop, mimetype) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -65,24 +60,24 @@ export async function getCroppedImg(
     Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
   );
 
-  if (resize) {
-    const resizedCanvas = document.createElement('canvas');
-    resizedCanvas.width = 256;
-    resizedCanvas.height = 256;
+  // if (resize) {
+  //   const resizedCanvas = document.createElement('canvas');
+  //   resizedCanvas.width = 256;
+  //   resizedCanvas.height = 256;
 
-    const p = pica({ features: ['js'] });
-    const result = await p.resize(canvas, resizedCanvas);
-    return p.toBlob(result);
+  //   const p = pica({ features: ['js'] });
+  //   const result = await p.resize(canvas, resizedCanvas);
+  //   return p.toBlob(result);
 
-    // As a blob
-    // return new Promise((resolve) => {
-    //   // canvas.toBlob(resolve, 'image/png');
-    // });
-  } else {
-    return new Promise((resolve) => {
-      canvas.toBlob(resolve, mimetype);
-    });
-  }
+  //   // As a blob
+  //   // return new Promise((resolve) => {
+  //   //   // canvas.toBlob(resolve, 'image/png');
+  //   // });
+  // } else {
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, mimetype);
+  });
+  // }
 }
 
 export async function getRotatedImage(imageSrc, rotation = 0) {

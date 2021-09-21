@@ -29,6 +29,7 @@
     "daggy": "^1.5.0",
     "esm": "^3.2.25",
     "fluture": "^14.0.0",
+    "image-blob-reduce": "^3.0.1",
     "page": "^1.11.6",
     "path-parser": "^6.1.0",
     "pica": "^7.1.0",
