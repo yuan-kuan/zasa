@@ -3,7 +3,7 @@
   import Filter from './Filter.svelte';
 </script>
 
-<Filter expanded={true} />
+<Filter />
 
 <div class="px-2 grid grid-cols-3 md:grid-cols-6 gap-2">
   {#each $items as item, index}

@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import Cropper from 'svelte-easy-crop';
   import { getCroppedImg } from './canvasUtils';
 
@@ -13,16 +13,13 @@
     startCamera();
   });
 
+  onDestroy(() => {
+    URL.revokeObjectURL(image);
+  });
+
   const startCamera = () => cameraInput.click();
 
-  let image,
-    pixelCrop,
-    mimeType,
-    filename,
-    beforeSize,
-    afterSize,
-    croppedImage,
-    croppedBlob;
+  let image, pixelCrop, mimeType;
 
   let aspect = 1;
   let crop = { x: 0, y: 0 };
@@ -34,34 +31,20 @@
 
   let isCropping = false;
   async function cropImage() {
-    console.log('pixelCrop :>> ', pixelCrop);
     isCropping = true;
-    croppedBlob = await getCroppedImg(image, pixelCrop, mimeType);
+    const blob = await getCroppedImg(image, pixelCrop, mimeType);
     isCropping = false;
-    afterSize = croppedBlob.size;
-    console.log('after lenght :>> ', croppedBlob.size);
-    // photoComplete(blob);
-    croppedImage = URL.createObjectURL(croppedBlob);
+    photoComplete(blob);
   }
-
-  const confirm = () => {
-    photoComplete(croppedBlob);
-  };
 
   let cameraInput;
   function photoTaken(e) {
     let blob = e.target.files[0];
     if (blob) {
-      filename = blob.name;
-      mimeType = blob.type;
-      // const ibr = ImageBlobReduce({ pica: pica({ features: ['js'] }) });
       const ibr = ImageBlobReduce({ pica: pica() });
-      console.log('before lenght :>> ', blob.size);
 
       ibr.toBlob(blob, { max: 512 }).then((resizedBlob) => {
         image = URL.createObjectURL(resizedBlob);
-        beforeSize = resizedBlob.size;
-        console.log('after resize lenght :>> ', resizedBlob.size);
       });
     }
   }
@@ -116,22 +99,6 @@
       <div class="flex w-full justify-center pt-2">
         <button class="btn" on:click={startCamera}>Retake Photo</button>
       </div>
-    {/if}
-
-    <div class="mt-3">
-      <p>MIME type: {mimeType}</p>
-      <p>Filename and ext type: {filename}</p>
-      <p>Before Size: {beforeSize}</p>
-      <p>After Size: {afterSize}</p>
-    </div>
-
-    {#if croppedImage}
-      <button class="btn btn-blue" on:click={confirm}>Confirm!</button>
-      <img
-        class="object-cover h-64 w-64 border-solid border-4 border-blue-400"
-        src={croppedImage}
-        alt=""
-      />
     {/if}
   </div>
 </div>
