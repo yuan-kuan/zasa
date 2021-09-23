@@ -77,7 +77,7 @@
 
     {#if image}
       <div class="py-2 mx-auto w-full text-center">Adjust your image</div>
-      <div class="relative w-full h-1/3 border-solid border-4 border-blue-200">
+      <div class="relative w-full h-1/2 border-solid border-4 border-blue-200">
         <Cropper
           {image}
           bind:aspect
