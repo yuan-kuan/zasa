@@ -1,3 +1,5 @@
+// Copied from https://github.com/DrBoolean/freemonadky
+
 const find = (xs, f) => {
   var found;
   for (let x in xs) {
