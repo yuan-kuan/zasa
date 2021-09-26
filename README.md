@@ -26,11 +26,11 @@ This take a web application (later PWA) form to ensure maximum platform support.
 
 The final forms, codes in the `main` branch, can be cryptic to someone new to functional programming. Eventhough they are mostly in plain JavaScript, they are not written in the common way. The suggested ways to study the codes are doing the step by steps, mentioned below. Another way is read up the architecture decisions, read up all the references materials (techniques used in the codes) and then study the code.
 
-### Step by Step follow
+## Step by Step follow
 
-There is a `DEVLOG.md` which detail the development progress at the early days. It divided into multiple parts, and each part has a branch of its own in this repository, e.g. `part-5-tag`. Reading the DEVLOG from the end to follow the journey and slowly learn the concepts used in developing this application.
+There is a `DEVLOG.md` which detail the development progress at the early days. It divided into multiple parts, and each part has a branch of its own in this repository, e.g. `part-5-tag`. Reading the DEVLOG from the end to follow the journey, checkout the `part-#-branch` and learn the concepts used in developing this application progressively.
 
-### References / study materials
+## References / study materials
 
 1. [Professor Frisby's Mostly Adequate Guide to Functional Programming](https://mostly-adequate.gitbook.io/mostly-adequate-guide/).
 
@@ -44,9 +44,9 @@ Even though the application is architectured the way to minimize the relying on 
 
 There are a few js libraries for functional programming, the weapon of choice here is Ramda. Although this architecture favors Professor Frisby's "dot-chainning" method over Ramda's `.pipe` and `.compose` for function chains, this code base still use a lot of Ramda.
 
-### Architecture Decisions
+## Architecture Decisions
 
-#### Free Monad
+### Free Monad
 
 Free Monad is choosen out of many techniques to achieve a functional software architecture. Free Monad can turns anything into a monad, be it a value or a function that return a value or a side-effect. Developer will build up the whole functions chain into a single Free Monad, which will be interpret into side effects later, in a safer place. In Zasa, all Free Monad will be interpreted into a [Fluture's `Future`](https://github.com/fluture-js/Fluture) instance, which will be `fork` in a generator function. More detail in the SOP section below.
 
@@ -68,8 +68,41 @@ const presentFilteredItem = (filterTags) =>
 
 This will be alien to a lot of web developer/software engineer, but take a moment to read the function. While there are a lot of encapsulation, one can easily guess and see what is going on here.
 
-#### Driving the UI with `setRef`
+### Driving the UI with Svelte Store
 
-#### Everything is a Step of Procedures (SOP)
+Our functional core actually dictate a lot of the UI building logic. Some examples:
 
-####
+- Deciding which page is it. Which Svelte Component should be loaded as the main page.
+- Deciding what is the current URL. Changing the path as user navigate, popuplate params.
+- Deciding what goes into the variables. These variables are bound to the template.
+- Deciding all the possible event/callback available in the page. UI just invoke the callback without knowing what is it.
+
+All the "deciding"s are actually setting new value into [Svelte Store](https://svelte.dev/tutorial/writable-stores). Our Svelte components are setup to react to these Svelte Store. The templates are declare in .svelte like usual, with binding to the stores all set and done. Different from other style of using Svelte, our Svelte components do not call function, send event or pull values from other places. They will only react to Svelte Stores.
+
+The obviously question to ask here is: How about handling user interaction or sending back any sort of UI event? The way we do it is setting up [closure](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) and `setRef` them into Svelte Store. At the Svelte Component side, developer just make sure the correct closure is invoked at the right moment. These closure can contain the correct context to call the right function when invoked. e.g. `GoToItem(itemId)`, when there are 10 items displayed, we can pass in a closure for each of them with the `itemId` passed in. The benefit on this is decouple the Svelet Component from the API. UI do not need to know which function, `GoToItem`, to call and what parameter to pass in, `itemId`.
+
+All these side effects will be contained by a Free Monad and interpret at once in the final go. Check out the following code sample:
+
+```'js'
+import Grid from './Grid.svelte';
+
+const goToGrid = () =>
+  free.sequence([
+    viewMainPage(Grid),
+    setGridUrl(),
+    presentFilterAndItem(),
+    setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
+    setRef(gridStore.goToSetting, () => addSop(() => goToSettingPage())),
+  ]);
+```
+
+1. We pass `Grid`, the Svelte Component, into `viewMainPage` function, signalling to show this as main page.
+2. We call a function that will setup the URL to the correct path.
+3. We call a function to setup the filter and items grid.
+
+   3.1. This function is shown in the section above. The notable line is `setRef(gridStore.items, items)`, which pass in the list of Items into a Svelte Store. As you may guess, the Svelte Component will use this information to populate the grid
+
+4. We define two closure and `setRef` them into the Svelte Store.
+5. `goToGrid` will be call by router when user type in the path in the address bar, or user is navigated to the grid from other functions (back from Item page, changed filter, etc).
+
+### Step of Procedures (SOP)
