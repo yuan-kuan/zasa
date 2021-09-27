@@ -106,3 +106,11 @@ const goToGrid = () =>
 5. `goToGrid` will be call by router when user type in the path in the address bar, or user is navigated to the grid from other functions (back from Item page, changed filter, etc).
 
 ### Step of Procedures (SOP)
+
+All these Free Monads need to be interpret to Future and then "someone" need to `fork` these futures into actions. This responsibility belongs to `SOPManager`. Similar to JavaScript's event loop, it lets developers to queue up SOP, run them one by one until there is none and wait for the next one idly. Each SOP is a Free Monad. Running one means interpret them to Future and fork. Queue up new SOP is the only thing develop need to do to keep this system running.
+
+This architecture does not limit or give guidance of how big or small each SOP to be. From the way ZASA application is written, each SOP is from the start until the end of each event. Events range from clicking a link, clicking a button, changing the browser's URL, to uploading an image.
+
+All event starts a new SOP. In the actual codes, this mean executing this line: `addSop(() => functionThatReturnFreeMonad())`.
+
+Some SOP is big, some is small. Big ones is like `goToGrid`, which detailing what URL to display, which Svelte Component to show as main page, do the filtering of items and show them in the grid, prepare the Filter, etc. Small SOP is like `EditName`, which only load up the database, change the record, save it and change the corresponding Svelte Store. What's important is the open ended approach of each SOP. A complete picture of all steps of procedure to perform from the start of the event to the final UI presentation of it.
