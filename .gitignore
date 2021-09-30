@@ -3,3 +3,4 @@
 
 .DS_Store
 zasa-test/*
+.env

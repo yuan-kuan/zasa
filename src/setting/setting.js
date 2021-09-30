@@ -8,12 +8,14 @@ import { setSettingUrl } from '../router';
 import { addSop } from '../sop';
 import { reload } from '../utils';
 import { viewMainPage } from '../view/view_store';
+import { sync } from './backup';
 
 import Setting from './Setting.svelte';
 import * as settingStore from './setting_store';
 
 const performDestroyStorage = () => destroy().chain((_) => reload());
 const performCompactStorage = () => cleanUp();
+const performSyncStorage = (backupCode) => sync(backupCode);
 
 const goToSettingPage = () =>
   free.sequence([
@@ -24,6 +26,9 @@ const goToSettingPage = () =>
     ),
     setRef(settingStore.performDestroyStorage, () =>
       addSop(() => performDestroyStorage())
+    ),
+    setRef(settingStore.performSyncStorage, (code) =>
+      addSop(() => performSyncStorage(code))
     ),
     setRef(settingStore.backFromSettingPage, () => addSop(() => goToGrid())),
   ]);

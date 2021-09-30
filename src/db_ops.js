@@ -42,10 +42,19 @@ const remove = (id) =>
     .map(R.set(L.deleted, true))
     .chain(pouch.put);
 
+const syncWithBackUp = (targetUrl, username, password) =>
+  pouch.sync(targetUrl, {
+    auth: {
+      username, password
+    },
+    filter: (doc) => !doc._id.startsWith('_design'),
+  });
+
 export {
   makeStartEndRangeAllDocOption,
   makeStartEndRangeAllDocOptionAttached,
   makeReduceByGroupQueryOption,
   makeMapWithKeysForDocAttachmentQueryOption,
   remove,
+  syncWithBackUp,
 };
