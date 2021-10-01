@@ -4,6 +4,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "local": "rollup -c -w --environment LOCAL",
     "start": "sirv public -s",
     "test": "ava"
   },

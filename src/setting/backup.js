@@ -10,7 +10,7 @@ const Backup = daggy.taggedSum('Backup', {
 });
 const { Sync } = Backup;
 
-const syncWithCode = (code) =>
+const remoteSyncWithCode = (code) =>
   free.of(code)//
     .map((code) => `${REMOTE_BACKUP_CRED_URL}/${code}`)
     .chain((requestUrl) => fetchJson(requestUrl, { method: 'GET' }))
@@ -19,11 +19,23 @@ const syncWithCode = (code) =>
       (creds) => syncWithBackUp(creds.dbUrl, creds.username, creds.password)
     ))
 
-const backupToFuture = (p) => p.cata({
-  Sync: (code) => free.interpete(syncWithCode(code)),
+const remoteBackupToFuture = (p) => p.cata({
+  Sync: (code) => free.interpete(remoteSyncWithCode(code)),
 });
 
-registerStaticInterpretor([Backup, backupToFuture]);
+const localBackupToFuture = (p) => p.cata({
+  Sync: (code) => free.interpete(syncWithBackUp(`${LOCAL_DB_URL}/${code}`, LOCAL_DB_USERNAME, LOCAL_DB_PASSWORD)),
+});
+
+let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+let isLocalBackup = LOCAL_DB_URL != undefined;
+
+if (!isRemoteBackup && !isLocalBackup) {
+  console.warn('Backup is not setup properly');
+} else {
+  registerStaticInterpretor([Backup,
+    isRemoteBackup ? remoteBackupToFuture : localBackupToFuture]);
+}
 
 const sync = (code) => free.lift(Sync(code));
 
