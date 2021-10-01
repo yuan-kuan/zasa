@@ -14,10 +14,7 @@ const remoteSyncWithCode = (code) =>
   free.of(code)//
     .map((code) => `${REMOTE_BACKUP_CRED_URL}/${code}`)
     .chain((requestUrl) => fetchJson(requestUrl, { method: 'GET' }))
-    .call(free.bichain(
-      (error) => free.of(error).map(tapLog('rejected')),
-      (creds) => syncWithBackUp(creds.dbUrl, creds.username, creds.password)
-    ))
+    .chain((creds) => syncWithBackUp(creds.dbUrl, creds.username, creds.password));
 
 const remoteBackupToFuture = (p) => p.cata({
   Sync: (code) => free.interpete(remoteSyncWithCode(code)),

@@ -15,7 +15,14 @@ import * as settingStore from './setting_store';
 
 const performDestroyStorage = () => destroy().chain((_) => reload());
 const performCompactStorage = () => cleanUp();
-const performSyncStorage = (backupCode) => sync(backupCode);
+const performSyncStorage = (backupCode) =>
+  free.sequence([
+    setRef(settingStore.syncStatus, 'Syncing...'),
+    sync(backupCode).call(free.bichain(
+      (error) => setRef(settingStore.syncStatus, `Sync Error: ${error}`),
+      (_) => setRef(settingStore.syncStatus, `Sync is done!`),
+    ))
+  ])
 
 const goToSettingPage = () =>
   free.sequence([

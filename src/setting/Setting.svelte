@@ -4,12 +4,23 @@
     performDestroyStorage,
     performSyncStorage,
     backFromSettingPage,
+    syncStatus,
   } from './setting_store';
 
   let syncButton;
   let backupCode = '';
+  let isSyncing = false;
+
   $: preventSync = backupCode.length == 0;
-  const sync = () => $performSyncStorage(backupCode);
+  $: {
+    isSyncing = syncStatus == 'Synching...';
+  }
+
+  const sync = () => {
+    isSyncing = true;
+    $performSyncStorage(backupCode);
+  };
+
   const backupKeyDown = (e) => {
     if (e.key == 'Enter') {
       syncButton.focus();
@@ -25,31 +36,48 @@
 </header>
 
 <div class="flex flex-col justify-center pt-4 px-4">
-  <div class="p-2 border-b-1 broder-black">
+  <div class="p-2 border-b border-black">
     <p>Sycn with Remote</p>
     <p>sycn up your current ZASA with remote backup.</p>
     <p>
-      This required a backup code, if you like to have one, email kuan@hey.com
+      This required a backup code, if you like to have one, email me:
+      kuan@hey.com
     </p>
 
-    <input
-      type="text"
-      placeholder="code"
-      bind:value={backupCode}
-      on:keydown={backupKeyDown}
-    />
-    <button
-      class="btn btn-blue mt-4"
-      disabled={preventSync}
-      bind:this={syncButton}
-      on:click={sync}>Sync</button
+    {#if isSyncing}
+      <p>{$syncStatus}</p>
+      <button class="btn " on:click={() => (isSyncing = false)}>Retry</button>
+    {:else}
+      <input
+        type="text"
+        placeholder="code"
+        bind:value={backupCode}
+        on:keydown={backupKeyDown}
+      />
+      <button
+        class="btn btn-blue mt-4"
+        disabled={preventSync}
+        bind:this={syncButton}
+        on:click={sync}>Sync</button
+      >
+    {/if}
+  </div>
+
+  <div class="p-2 border-b border-black">
+    <p>
+      Compact will reduce the size of the database in your browser's storage.
+    </p>
+
+    <button class="btn btn-blue" on:click={$performCleanupStorage}
+      >Compact Storage</button
     >
   </div>
 
-  <button class="btn btn-blue" on:click={$performCleanupStorage}
-    >Compact Storage</button
-  >
-  <button class="btn btn-red mt-4" on:click={$performDestroyStorage}
-    >Destroy Storage</button
-  >
+  <div class="p-2 border-b border-black">
+    <p>Delete everything in this browser (does not affect remote backup).</p>
+
+    <button class="btn btn-red mt-4" on:click={$performDestroyStorage}
+      >Destroy Storage</button
+    >
+  </div>
 </div>
