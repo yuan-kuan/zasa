@@ -125,6 +125,33 @@ Some SOP is big, some are small. Big ones are like `goToGrid`, which detailed wh
 
 What's important is the open-ended approach of each SOP. A complete picture of all steps of the procedure to perform from the start of the event to the final UI presentation of it.
 
+## Backup
+
+ZASA is an offline application that store all data and picture into the browser's local storage. This is the primary usage pattern we envisioned. A remote backup, though, is a very important factor to make users felt safe with all their works (recording these stocks are a lot of work, maintaining them is another beast).
+
+In the production ZASA application, users may acquire a backup code from the author via sending a personal email. With this code, the user can sync their local storage to a remote database. Later, they can download this backup back to the same device, or any other devices. It is a backup, it is also a remote sync point. All the user needs is a backup code.
+
+But, a remote backup can be an expensive business for the authors to maintain for free. It is by design that none of the backup option is available for developers who fork or clone this project. They need to setup the backup plan themselves.
+
+### Local Backup
+
+Developing the backup, or improving it, is better to be done with a local CouchDB instance:
+
+1. Setup a local CouchDB instance
+2. Add a `.env` or `.env.local` file to the project. `.env.local` will be used when developing with `npm run local` command.
+3. Add these 3 variable to the `.env` file:
+
+   ```
+   LOCAL_DB_URL=http://localhost:5984
+   LOCAL_DB_USERNAME=admin
+   LOCAL_DB_PASSWORD=password
+   ```
+
+4. Change the value to the appropiated one
+5. Restart your development build
+
+### Remote Backup
+
 ## Question?
 
 Reach out to me at kuan@hey.com or file an issue. Thank you for checking this out!
