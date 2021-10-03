@@ -2,9 +2,9 @@
 
 ### Second level sum type / free monad in interpetion
 
-Introducing new concept: A sum type interpeting into another lower level sum type.
+Introducing new concept: A sum type interpreting into another lower-level sum type.
 
-Hiding hardcoded string, encapsulating implementation from higher level. e.g. SOP do not call database directly, do not know about the detail of PouchDB option, etc.
+Hiding hardcoded string, encapsulating implementation from a higher level. e.g. SOP does not call database directly, do not know about the detail of PouchDB option, etc.
 
 ### Tagging and Filtering made easy
 
@@ -14,27 +14,27 @@ With PouchDB Map/Reduce view and functional programming.
 
 ### Organization of functions
 
-More and more functions are introduced into our code base, that's just normal as life, changes happen and one piles up stuff (or craps) as it goes on.
+More and more functions are introduced into our codebase, that's just normal as life, changes happen and one is piling up stuff (or craps) as it goes on.
 
-Anyway, we should do something about the onslaughts of functions (this is FP, we have only functions, a lot of them). The naming of functions are especially important, as that is our only way to let other know what's going on. Second important is where we parking those functions.
+Anyway, we should do something about the onslaughts of functions (this is FP, we have only functions, a lot of them). The naming of functions is especially important, as that is our only way to let others know what's going on. The second important is where we parking those functions.
 
 1. Naming
 
-One style I managed to stick with, is using verb for function, noun for variable. There are a few convention naming that I used in the code base. e.g. `present` for function that end up with setting a Svelte Store variable, `goto` for function that change the page in a big way, `perform` is similar but it does not change the navigation, e.t.c.
+One style I managed to stick with, is using a verb for function, a noun for a variable. There are a few naming conventions that I used in the codebase. e.g. `present` for a function that ends up with setting a Svelte Store variable, `goto` for a function that changes the page in a big way, `perform` is similar but it does not change the navigation, e.t.c.
 
 2. File structure
 
-I am keeping all framework and utility functions in root level files: e.g. free_monad.js, router.js, database.js. The reason is simple: I can see shorter import statement.
+I am keeping all framework and utility functions in root level files: e.g. free_monad.js, router.js, database.js. The reason is simple: I can see a shorter import statement.
 
 All business logic files keep under their business function folder, like Grid and Item.
 
 ### Single purpose addSop closure
 
-With the introduction of expiry batches in the edit Item page, we come across another style in FP-svelte, the single purpose addSop closure. Particularly, these refer to the functions we passed in via `ItemStore.performBatchInc`, `ItemStore.performBatchDec` and `ItemStore.performDeleteBatch`.
+With the introduction of expiry batches in the Edit Item page, we come across another style in FP-svelte, the single purpose `addSop` closure. Particularly, these refer to the functions we passed in via `ItemStore.performBatchInc`, `ItemStore.performBatchDec` and `ItemStore.performDeleteBatch`.
 
-Each batch (item in an batches array) will have their own version of closure setup. Triggering this individual closure will start a specific action, e.g. adding one to batch #2. What different from earlier function call from Svelte component is: we do not need to know what parameter we need to pass in for these single purpose closure, we just need to call the correct one, i.e. same index in different array.
+Each batch (item in a batches array) will have its version of closure setup. Triggering this individual closure will start a specific action, e.g. adding one to batch #2. What is different from the earlier function call from the Svelte component is: we do not need to know what parameter we need to pass in for these single-purpose closures, we just need to call the correct one, i.e. same index in a different array.
 
-The goal of using single purpose closure is loose the coupling between Svelte component and calling API (if we deemed invoking these closure is API call). Svelte just need to know when and which to invoke the function, but does not need to know what to pass into it. Business logic can change the function name or the signature of it as much as they like, it will not affect Svelte component.
+The goal of using single-purpose closure is to lose the coupling between the Svelte component and calling API (if we deemed invoking this closure is API call). Svelte just need to know when and which to invoke the function but does not need to know what to pass into it. Business logic can change the function name or the signature of it as much as they like, it will not affect the Svelte component.
 
 ## Part 3 (Wed Sep 1 14:45:16 MYT 2021)
 
@@ -51,16 +51,16 @@ const performEditName = (itemId, name) =>
     .chain(setRef(itemStore.name));
 ```
 
-Consider that this function will be call once user click on a "Edit Name" button. Now, as developer, you like to follow all the events happen after the click. They are all, in 6 lines:
+Consider that this function will be called once the user clicks on the "Edit Name" button. Now, as a developer, you like to follow all the events that happen after the click. They are all, in 6 lines:
 
 1. We put `itemId` into a box, the Free Monad box.
 2. We hit the database to get the document for `itemId`. Chain because `get` return a Free Monad.
-3. We want to update the item document with new `name`: We use `map` and setting the lense with the new name. After step 2, our Free Monad will be containing a PouchDB document, so, we pass it into the `R.set` function to get a new document.
+3. We want to update the item document with a new `name`: We use `map` and setting the lense with the new name. After step 2, our Free Monad will be containing a PouchDB document, so, we pass it into the `R.set` function to get a new document.
 4. Changed doc? Pass it back to the database. `.chain()` and `put`, should be obvious now.
-5. Our special version of `put` return the changed doc, instead of just the `rev` like normal PouchDB. We wrote our own interpretor afterall. So, we read the new name from the updated document, using lense.
+5. Our special version of `put` return the changed doc, instead of just the `rev` like normal PouchDB. We wrote our interpreter after all. So, we read the new name from the updated document, using lense.
 6. Lastly, we update the `itemStore.name` store variable with the new name. This will trigger Svelte and update our HTML next tick.
 
-That complete the cycle. No other side effect or services/component/listener will react to this mouse click. Everything that will and should happen, all lay out in this function.
+That complete the cycle. No other side effect or services/component/listener will react to this mouse click. Everything that will and should happen, all laid out in this function.
 
 ### Free Monad and Dot Chaining
 
@@ -79,84 +79,84 @@ const presentItem = (itemId) =>
     );
 ```
 
-Free Monad is the center of our "universe", the corner stone of our functional architecture. We use them all over the place. All SOPs return a Free Monad, which will be interpreted to corresponding Future, which later will be called `fork()` to execute all codes/actions/commands. All side-effects are protected in Free Monad, and side-effects are inevitable for any software, web application has a ton of side-effects.
+Free Monad is the centre of our "universe", the cornerstone of our functional architecture. We use them all over the place. All SOPs return a Free Monad, which will be interpreted to corresponding Future, which later will be called `fork()` to execute all codes/actions/commands. All side effects are protected in Free Monad, and side effects are inevitable for any software, a web application has a ton of side effects.
 
 Going through the code sample above:
 
 1. We put `itemId` into a Free Monad with `free.of()`.
-2. We `chain` it to `getItemWithBlob(string)`. This basically mean: Invoke `getItemWithBlob` with the content of the caller Free Monad, i.e. a `ItemId`.
+2. We `chain` it to `getItemWithBlob(string)`. This means: Invoke `getItemWithBlob` with the content of the caller Free Monad, i.e. an `ItemId`.
 3. We used `chain` because `getItemWithBlob` return a Free Monad. By chaining it, we get back a FreeMonad containing the result of calling the function.
-4. We then `chain` again to a anynomous function, which again, will return a Free Monad.
-5. In the anonymous function, we use `free.sequence` to serialized two separated `setRef` function (return a Free Monad), into a FreeMonad.
+4. We then `chain` again to an anonymous function, which again, will return a Free Monad.
+5. In the anonymous function, we use `free.sequence` to serialized two separated `setRef` functions (return a Free Monad), into a FreeMonad.
 
-The most important point to make here, is calling `presentItem()` will return a Free Monad. But no side-effects code has been run so far. This Free Monad merely containing the instructions of doing things. It never really do anything, i.e. Never hit the database, never set the Svelte Store reference. All these side-effects will be done only when Free Monad been interpreted and `fork()`, by the `SOPManager.js`.
+The most important point to make here is calling `presentItem()` will return a Free Monad. But no side-effects code has been run so far. This Free Monad merely containing the instructions of doing things. It never really do anything, i.e. Never hit the database, never set the Svelte Store reference. All these side-effects will be done only when Free Monad has been interpreted and `fork()`, by the `SOPManager.js`.
 
-To learn more about Monad, you need to complete this book: https://mostly-adequate.gitbook.io/mostly-adequate-guide/. If you still following this repo after part 2, you should be interested enough in functional programming to finish this book. It is the foundation of fp-svelte.
+To learn more about Monad, you need to complete this book: https://mostly-adequate.gitbook.io/mostly-adequate-guide/. If you still following this repo after part 2, you should be interested enough in functional programming to finish this book. It is the foundation of `fp-svelte`.
 
 ### Aim for Calculation (pure function), test them ASAP
 
-Free Monad functions do not have much to test. They are pure and usually contain no logic before we interprete them and `fork()` the result. As much as possible, we want to make Calculation functions, a pure function that give the same output for the same input. We had come across them couple of time but we never make a good effort to isolate them into another module and protect them with unit test.
+Free Monad functions do not have much to test. They are pure and usually contain no logic before we interpret them and `fork()` the result. As much as possible, we want to make Calculation functions, a pure function that gives the same output for the same input. We had come across a couple of times but we never make a good effort to isolate them into another module and protect them with unit tests.
 
-First candidate is `item.test.js`, which currently contains tests of `makeItemDoc`. As soon as we made business logic module, we should use Test Driven Development on exported functions. This will reduce the slow down of writing bulk tests.
+The first candidate is `item.test.js`, which currently contains tests of `makeItemDoc`. As soon as we made a business logic module, we should use Test-Driven Development on exported functions. This will reduce the slowdown of writing bulk tests.
 
 ## Part 2 (Tue Aug 31 16:25:44 MYT 2021)
 
-### Create item, take photo, store them and show all items in Grid
+### Create items, take a photo, store them and show all items in Grid
 
-To create a new item, we pass up a closure that expect two arguments and will trigger a SOP to `performSaveitem` if Svelte Component invoke it. i.e. Click on the Save button. To save an item with it's photo, one just take the value the of input and blob from file input, pass both of them into the closure.
+To create a new item, we pass up a closure that expects two arguments and will trigger an SOP to `performSaveitem` if Svelte Component invoke it. i.e. Click on the Save button. To save an item with its photo, one just takes the value of input and blob from file input, pass both of them into the closure.
 
-In the `performSaveItem` SOP, we first `create` the item with it's name, chain the result of using this Free Monad to the next `attach` function. `create` and `attach` both return a Free Monad. They do not perform any side-effects, in other word: pure function. To use the result of a Free Monad in function that result another Free Monad, we use `.chain()`. After this database steps, we sequence it with a `goToGrid` Free Monad. Sequence is simply unwrap a `[Free Monad X, Free Monad Y]` to a `Free Monad [X, Y]`. X and Y has no relationship at all beside being a series of isolated steps.
+In the `performSaveItem` SOP, we first `create` the item with its name, chain the result of using this Free Monad to the next `attach` function. `create` and `attach` both return a Free Monad. They do not perform any side effects, in other words: pure function. To use the result of a Free Monad in a function that results in another Free Monad, we use `.chain()`. After this database steps, we sequence it with a `goToGrid` Free Monad. A sequence is simply unwrapping a `[Free Monad X, Free Monad Y]` to a `Free Monad [X, Y]`. X and Y have no relationship at all besides being a series of isolated steps.
 
-In the `goToGrid` SOP, we add new step to read all the item from the database, and set the result to a new ref(Svelte Store). The Grid Component will add a new template to iterate this new ref (which is a list) and display the stored Items.
+In the `goToGrid` SOP, we add a new step to read all the items from the database and set the result to a new ref(Svelte Store). The Grid Component will add a new template to iterate this new ref (which is a list) and display the stored Items.
 
 ### PouchDB with intepretor
 
-For all side-effects, e.g. CRUD of database, network fetch, setting ref(Svelte Store), fp-svelte demand wrapping these effect with a Free Monad. PouchDB store data in browser's IndexedDB, that is definitely a side-effect. To let user safely use Free Monad in logic and push all the side-effect code to the Future (during `fork()`), we need to write the intepretor.
+For all side-effects, e.g. CRUD of a database, network fetch, setting ref(Svelte Store), `fp-svelte` demand wrapping these effects with a Free Monad. PouchDB store data in browser's IndexedDB, that is a side-effect. To let the user safely use Free Monad in logic and push all the side-effect code to the Future (during `fork()`), we need to write the interpreter.
 
-There are some boilerplated code that one need to write for each intepretor:
+There is some boilerplate code that one needs to write for each interpreter:
 
-1. Using `daggy` to create the Sum type. Defining all the posible functions for this sum type.
-2. Write a `<sumtype>ToFuture` function. This is the interpretor. It return a Fluture's Future that runs side-effecting codes base on the Type.
-3. Export functions which return a FreeMonad for each sum type, by lifting the sum type into a Free Monad.
+1. Using `daggy` to create the Sum type. Defining all the possible functions for this sum type.
+2. Write a `<sumtype>ToFuture` function. This is the interpreter. It returns a Fluture's Future that runs side-effecting codes base on the Type.
+3. Export functions that return a FreeMonad for each sum type, by lifting the sum type into a Free Monad.
 
 ## Part 1 (Mon Aug 30 15:19:16 MYT 2021)
 
 ### `setRef` and Svelte Store
 
-Fp-svelte use Svelte Store extensively. Component imports the destinated Store and reactively display the store's value via the template. For user interaction, component will hook it up with Store's values too, which now is a closure, i.e. a enclosed function that will trigger a stored SOP.
+Fp-svelte uses Svelte Store extensively. Component imports the destinated Store and reactively display the store's value via the template. For user interaction, the component will hook it up with Store's values too, which now is a closure, i.e. an enclosed function that will trigger a stored SOP.
 
-SOP is the one responsible to put value into these Svelte Store, via a utility function call `setRef`.
+SOP is the one responsible to put value into these Svelte Store, via a utility function called `setRef`.
 
 ### SOP
 
-All business logics is done in SOPs, which is a plain JS function that return a Free Monad. A SOP usually triggered by an event: navigating event from router, button's click, form submission, p2p data event, etc. It will then complete a series of event/action/side-effects: chaging the Svelte Component, change the URL, update values, download photo, save to database, fetch internet JSON, etc. The idea is to have a complete view of actions after each event.
+All business logic is done in SOPs, which is a plain JS function that returns a Free Monad. An SOP is usually triggered by an event: navigating event from the router, button's click, form submission, p2p data event, etc. It will then complete a series of event/action/side-effects: changing the Svelte Component, change the URL, update values, download photos, save to database, fetch internet JSON, etc. The idea is to have a complete view of actions after each event.
 
-Svelte Component should not contains any business logics.
+Svelte Component should not contain any business logic.
 
 ### Router
 
-Building on top of `page.js`, we introduce a new module to be the router of our SPA. When a user visit our app with a URL, our router will call the coresponding SOP for the user. Our router is responsible to provide a utility function to update the URL too.
+Building on top of `page.js`, we introduce a new module to be the router of our SPA. When a user visits our app with a URL, our router will call the corresponding SOP for the user. Our router is responsible to provide a utility function to update the URL too.
 
-In fp-svelte, we do not navigate with URL directly, i.e. push a new URL to the history stack. When we navigated user from one page to another, we spell all the things to happen in a single SOP, Steps of Procedures. These include changing the Svelte component, adding new URL to histoy stack without triggering browser navigation, setting new values to references/Svelte Stores, etc.
+In `fp-svelte`, we do not navigate with URL directly, i.e. push a new URL to the history stack. When we navigated users from one page to another, we spell all the things to happen in a single SOP, Steps of Procedures. These include changing the Svelte component, adding a new URL to the history stack without triggering browser navigation, setting new values to references/Svelte Stores, etc.
 
-This is the first module we make use of Interpretor and Free Monad. But we do not talk about them now.
+This is the first module we make use of Interpreter and Free Monad. But we do not talk about them now.
 
 ### SPA with PageJS
 
 1. Get `page.js`
 
-   ```'bash'
+   ```bash
    npm install page
    ```
 
 2. Serve application in SPA mode. Add a `-s` to the start in `package.json`
 
-   ```'json'
+   ```json
      "start": "sirv public -s"
    ```
 
 3. Add some routes. Each route in fp-svelte usually end with `addSop(() => FreeMonad)`.
-4. To load a Svelte Component into the page, use the helper function `viewMainPage(SvelteComponent)`. This function return a `FreeMonad`, which is the right thing to use inside a `addSop()`. For example, to load an Item component when user navigated to `/item/apple`, do this:
+4. To load a Svelte Component into the page, use the helper function `viewMainPage(SvelteComponent)`. This function returns a `FreeMonad`, which is the right thing to use inside an `addSop()`. For example, to load an Item component when the user navigated to `/item/apple`, do this:
 
    ```'js'
    page('/item/:id', (ctx) => {
