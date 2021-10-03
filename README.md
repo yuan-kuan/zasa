@@ -2,7 +2,7 @@
 
 This project serves two purposes:
 
-1. Building this web application (later PWA) which allows the user to build records of food or tools with their expiring date and stock count.
+1. Building this progressive web application that allows the user to build records of food or tools with their expiring date and stock count.
 2. Demonstrate how to use [`fp-svelte`](https://github.com/yuan-kuan/fp-tailwindcss-svelte-template) to build a functional architectured web application.
 
 ## The application
@@ -22,7 +22,7 @@ ZASA is a household stock taking application. It let the user build up a record 
 
 ZASA is an offline application. It needs an internet connection when the user visits it the first time, wants to update it with a later version and backup/sync up the database. Other times, it works offline, with all the data and photos store locally in the browser (It will not work with the browser that blocks or does not support local storage & indexed DB).
 
-This takes a web application (later PWA) form to ensure maximum platform support. As long as the device can run a browser, it can install ZASA.
+This takes a progressive web application form to ensure maximum platform support. As long as the device can run a browser, it can install ZASA.
 
 ### To run and develop it
 
@@ -50,7 +50,7 @@ Even though the application is architectured in a way to minimize the reliance o
 
 3. [Ramda Guide](https://randycoulman.com/blog/categories/thinking-in-ramda/).
 
-There are a few js libraries for functional programming, the weapon of choice here is Ramda. Although this architecture favours Professor Frisby's "dot-chainning" method over Ramda's `.pipe` and `.compose` for function chains, this codebase still use a lot of Ramda.
+There are a few js libraries for functional programming, the weapon of choice here is Ramda. Although this project's architecture favours Professor Frisby's "dot-chainning" method over Ramda's `.pipe` and `.compose` for function chains, this codebase still use a lot of Ramda.
 
 ## Architecture Decisions
 
@@ -127,19 +127,19 @@ What's important is the open-ended approach of each SOP. A complete picture of a
 
 ## Backup
 
-ZASA is an offline application that store all data and picture into the browser's local storage. This is the primary usage pattern we envisioned. A remote backup, though, is a very important factor to make users felt safe with all their works (recording these stocks are a lot of work, maintaining them is another beast).
+ZASA is an offline application that store all data and picture in the browser's local storage. This is the primary usage pattern we envisioned. A remote backup, though, is a very important factor to make users felt safe with all their works (recording these stocks are a lot of work, maintaining them is another beast).
 
-In the production ZASA application, users may acquire a backup code from the author via sending a personal email. With this code, the user can sync their local storage to a remote database. Later, they can download this backup back to the same device, or any other devices. It is a backup, it is also a remote sync point. All the user needs is a backup code.
+In the production ZASA application, users may acquire a backup code from the author via sending a personal email. With this code, the user can sync their local storage to a remote database. Later, they can download this backup back to the same device, or any other device. It is more than a backup, it is also a remote sync point. All the user needs is a backup code.
 
-But, a remote backup can be an expensive business for the authors to maintain for free. It is by design that none of the backup option is available for developers who fork or clone this project. They need to setup the backup plan themselves.
+But, a remote backup can be an expensive business for the authors to maintain for free. It is by design that none of the backup options is available for developers who fork or clone this project. They need to set up the backup plan themselves.
 
 ### Local Backup
 
-Developing the backup, or improving it, is better to be done with a local CouchDB instance:
+When the developer is developing the backup or improving it, is better to be done with a local CouchDB instance:
 
 1. Setup a local CouchDB instance
 2. Add a `.env` or `.env.local` file to the project. `.env.local` will be used when developing with `npm run local` command.
-3. Add these 3 variable to the `.env` file:
+3. Add these 3 variables to the `.env` file:
 
    ```
    LOCAL_DB_URL=http://localhost:5984
@@ -147,10 +147,8 @@ Developing the backup, or improving it, is better to be done with a local CouchD
    LOCAL_DB_PASSWORD=password
    ```
 
-4. Change the value to the appropiated one
+4. Change the value to the appropriate one
 5. Restart your development build
-
-### Remote Backup
 
 ## Question?
 
