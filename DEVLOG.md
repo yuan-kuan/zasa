@@ -2,13 +2,17 @@
 
 ### Second level sum type / free monad in interpetion
 
-Introducing new concept: A sum type interpreting into another lower-level sum type.
+So far, we only has one kind of sum type - those we used to encapsulate side effects. e.g. Database, KV, SetRef. The second level sum type that we are introducing now is an encapsulation of complex logics, not necessary just side effects. Filter is complicated enough to use a second level sum type.
 
-Hiding hardcoded string, encapsulating implementation from a higher level. e.g. SOP does not call database directly, do not know about the detail of PouchDB option, etc.
+The Filter sum type encapsulate the logics of working with Tags and Items. The primary reason to use a second level sum type is simplify the caller's code. Instead of forcing high level caller to know all the detail of using Filter, e.g. KV's key name, PouchDB design doc's id, we hid these details away from high level caller.
 
 ### Tagging and Filtering made easy
 
-With PouchDB Map/Reduce view and functional programming.
+Tagging and filtering look easy and simple in ZASA largely thanks to PouchDB, specifically, with CouchBD/PouchDB Map/Reduce View.
+
+There is a map function which create a new view with the `tag` as key and `docId` as value. To filter items by their tags, just query this view with the tags as multiple keys.
+
+The bonus is a reduce with the built-in function `_count` onto this View. It will produce an array of "tag":"count". With this, we can know how many tags in total, and how many of them each.
 
 ## Part 4 (Wed Sep 8 21:21:26 MYT 2021)
 
