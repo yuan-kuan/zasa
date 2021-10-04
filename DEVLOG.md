@@ -1,4 +1,91 @@
+## Part 9
+
+### PWA
+
+For any web application, the following steps are usually all it takes to become an offline ready, PWA.
+
+#### `index.html`
+
+1. Link to the `manifest.json`
+
+   ```html
+   <head>
+     ...
+     <link rel="manifest" href="/manifest.json" />
+     ...
+   </head>
+   ```
+
+2. To behave well in iOS, add these to `<head>` too:
+
+   ```html
+   <meta name="apple-mobile-web-app-capable" content="yes" />
+   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+   <meta name="apple-mobile-web-app-title" content="title" />
+   <link rel="apple-touch-icon" href="/images/logo_144x144.png" />
+   ```
+
+3. Load the service worker. It is recommended to place your service worker file in the same directory as `index.html`:
+
+   ```html
+   <body>
+     <script>
+       if ('serviceWorker' in navigator) {
+         window.addEventListener('load', () => {
+           navigator.serviceWorker
+             .register('/service-worker.js')
+             .then((reg) => {
+               console.log('Service worker registered.', reg);
+             });
+         });
+       }
+     </script>
+   </body>
+   ```
+
+#### `manifest.json`
+
+Create a new `manifest.json` file. Copy ours as a template or any other on the internet.
+
+1. `"start_url"` is usually `"/"`. It matters as it will affect the PWA Lighthouse score.
+2. Most of the different image sizes matter too. Better fill them up.
+
+#### `service_worker.js`
+
+Create the service worker JavaScript file. Copy ours as a template or any other on the internet.
+
+To provide an offline experience, we need to cache the minimal required files to run our web application during the `install` callback. For our Svelte application, we need the `index.html`, `bundle.css`, `bundle.js`, `favicon` and `icon_64.png`.
+
+The service worker will intercept each `fetch` request initiated from the web application. When one of these fetch requests matches with one of our cached entries, we will return the cache resources. Otherwise, we do a proper `fetch` with the same request. In effect, the browser will still `fetch` the necessary files to run the web application offline.
+
 ## Part 8
+
+### Dynamic interpreter with ENV
+
+One of Free Monad's strengths is changing its interpretation without affecting the callers. e.g. using a stubbed remote interpreter during automated testing. We can assign different interpreters during runtime when running in a different environment too.
+
+For users' backup, two modes are provided for the developer. The local database mode is suitable for testing and developing features related to backup. The remote mode is for production, providing real users with backup storage in the cloud.
+
+We have a single sum type `Backup` with a single method `Sync`. The caller uses this Free Monad like any other when calling `Sync`. The difference between local and remote is which interpreter we passed into `registerStaticInterpretor` at the beginning, i.e. when the module `backup.js` is activated:
+
+```js
+// Read the ENV variables
+let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+let isLocalBackup = LOCAL_DB_URL != undefined;
+
+if (!isRemoteBackup && !isLocalBackup) {
+  console.warn('Backup is not setup properly');
+} else {
+  registerStaticInterpretor([
+    Backup,
+    isRemoteBackup ? remoteBackupToFuture : localBackupToFuture,
+  ]);
+}
+```
+
+## Part 7
+
+Nothing we can type here because the power of this part is in the visuals!
 
 ### Dynamic interpreter with ENV
 
