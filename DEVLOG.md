@@ -1,3 +1,59 @@
+## Part 8
+
+### Dynamic interpreter with ENV
+
+One of Free Monad's strengths is changing its interpretation without affecting the callers. e.g. using a stubbed remote interpreter during automated testing. We can assign different interpreters during runtime when running in a different environment too.
+
+For users' backup, two modes are provided for the developer. The local database mode is suitable for testing and developing features related to backup. The remote mode is for production, providing real users with backup storage in the cloud.
+
+We have a single sum type `Backup` with a single method `Sync`. The caller uses this Free Monad like any other when calling `Sync`. The difference between local and remote is which interpreter we passed into `registerStaticInterpretor` at the beginning, i.e. when the module `backup.js` is activated:
+
+```js
+// Read the ENV variables
+let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+let isLocalBackup = LOCAL_DB_URL != undefined;
+
+if (!isRemoteBackup && !isLocalBackup) {
+  console.warn('Backup is not setup properly');
+} else {
+  registerStaticInterpretor([
+    Backup,
+    isRemoteBackup ? remoteBackupToFuture : localBackupToFuture,
+  ]);
+}
+```
+
+## Part 7
+
+Nothing we can type here because the power of this part is in the visuals!## Part 6
+
+### All About Image
+
+Since we are storing image files locally in the browser, in IndexedDB/PouchDB, which made it clear that they are not excellent in storing binary files, we got to be careful with the file sizes. Users are 99% likely to use a mobile phone camera to take the photo, which is usually in the range of 3 to 5 MB. We want to store smaller, way smaller, images than that. The reasons:
+
+1. We just need a good enough photo which helps users recognize the item quickly. As long as the image is not marred to the point of unrecognizable, we can go down a lot in terms of quality, resolution and DPI.
+2. Supporting various aspect ratios are useless since the application already force a square image in all UI. Instead of clipping the image and did a bad job at it, we rather the user crops the photo into a square before letting us save it.
+3. Even though the modern mobile phone has big internal storage, we are still storing these images in a browser's storage, which usually has a limited disk space quota relative to the total free space.
+4. We will let users back up their data into a remote database, and sync it to other devices. The leaner the data, the faster the sync process.
+
+### No new functional codes this time?
+
+We introduced three new technologies (third party libraries) into the project but none of them transformed into functional codes. They are both loaded and used in the Svelte front. Just like we rely on `<input type="image">` to automate the whole photo picking/shotting UX flow, we rely on these three libraries to crop and resize our image to a manageable size before we saving it to the database.
+
+[`svelte-easy-crop`](https://github.com/ValentinH/svelte-easy-crop) is a nice little Svelte Component that applies a simple cropping UI to any image on the page. It works like a charm in all browsers. With its output, we can pass the crop parameters into the next tool to do the actual image cropping.
+
+[`canvasUtils` gist by Valentin Hervieu](https://github.com/ValentinH) is a small piece of code that uses Canvas2D to crop an image. It is a gist in GitHub but works wonderfully. It just does the cropping though, we still need to resize the image to bring down the size.
+
+[`pica`](https://github.com/nodeca/pica) is a well-known image processing JS library. With one line of code, we downscale our original photo to a manageable 256x256 resolution in all browsers, under 1 second.
+
+### Caveats and bumpy road
+
+This branch is lacking a lot of hotfixes that happened later in the `staging` branch. Following are the issues and solutions:
+
+1. iOS Safari has a restrictive memory usage limit when dealing with Canvas2D. I made the mistake to crop the image first and resize it second, which result in a black image in iPhone. `pica` does its magic to work around the limitation, hence resizing first before cropping the image solve the problem.
+
+2. To use `pica`'s WASM and Web Worker mode, we need to provide extra configuration to `terser` in `rollup.config.js`. Otherwise, the web worker code will be missing in the production build.
+
 ## Part 5 (Tue Sep 14 14:39:04 MYT 2021)
 
 ### Second level sum type / free monad in interpetion
