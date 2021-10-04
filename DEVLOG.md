@@ -1,4 +1,31 @@
-## Part 6
+## Part 8
+
+### Dynamic interpreter with ENV
+
+One of Free Monad's strengths is changing its interpretation without affecting the callers. e.g. using a stubbed remote interpreter during automated testing. We can assign different interpreters during runtime when running in a different environment too.
+
+For users' backup, two modes are provided for the developer. The local database mode is suitable for testing and developing features related to backup. The remote mode is for production, providing real users with backup storage in the cloud.
+
+We have a single sum type `Backup` with a single method `Sync`. The caller uses this Free Monad like any other when calling `Sync`. The difference between local and remote is which interpreter we passed into `registerStaticInterpretor` at the beginning, i.e. when the module `backup.js` is activated:
+
+```js
+// Read the ENV variables
+let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+let isLocalBackup = LOCAL_DB_URL != undefined;
+
+if (!isRemoteBackup && !isLocalBackup) {
+  console.warn('Backup is not setup properly');
+} else {
+  registerStaticInterpretor([
+    Backup,
+    isRemoteBackup ? remoteBackupToFuture : localBackupToFuture,
+  ]);
+}
+```
+
+## Part 7
+
+Nothing we can type here because the power of this part is in the visuals!## Part 6
 
 ### All About Image
 
