@@ -1,18 +1,47 @@
+## Part 6
+
+### All About Image
+
+Since we are storing image files locally in the browser, in IndexedDB/PouchDB, which made it clear that they are not excellent in storing binary files, we got to be careful with the file sizes. Users are 99% likely to use a mobile phone camera to take the photo, which is usually in the range of 3 to 5 MB. We want to store smaller, way smaller, images than that. The reasons:
+
+1. We just need a good enough photo which helps users recognize the item quickly. As long as the image is not marred to the point of unrecognizable, we can go down a lot in terms of quality, resolution and DPI.
+2. Supporting various aspect ratios are useless since the application already force a square image in all UI. Instead of clipping the image and did a bad job at it, we rather the user crops the photo into a square before letting us save it.
+3. Even though the modern mobile phone has big internal storage, we are still storing these images in a browser's storage, which usually has a limited disk space quota relative to the total free space.
+4. We will let users back up their data into a remote database, and sync it to other devices. The leaner the data, the faster the sync process.
+
+### No new functional codes this time?
+
+We introduced three new technologies (third party libraries) into the project but none of them transformed into functional codes. They are both loaded and used in the Svelte front. Just like we rely on `<input type="image">` to automate the whole photo picking/shotting UX flow, we rely on these three libraries to crop and resize our image to a manageable size before we saving it to the database.
+
+[`svelte-easy-crop`](https://github.com/ValentinH/svelte-easy-crop) is a nice little Svelte Component that applies a simple cropping UI to any image on the page. It works like a charm in all browsers. With its output, we can pass the crop parameters into the next tool to do the actual image cropping.
+
+[`canvasUtils` gist by Valentin Hervieu](https://github.com/ValentinH) is a small piece of code that uses Canvas2D to crop an image. It is a gist in GitHub but works wonderfully. It just does the cropping though, we still need to resize the image to bring down the size.
+
+[`pica`](https://github.com/nodeca/pica) is a well-known image processing JS library. With one line of code, we downscale our original photo to a manageable 256x256 resolution in all browsers, under 1 second.
+
+### Caveats and bumpy road
+
+This branch is lacking a lot of hotfixes that happened later in the `staging` branch. Following are the issues and solutions:
+
+1. iOS Safari has a restrictive memory usage limit when dealing with Canvas2D. I made the mistake to crop the image first and resize it second, which result in a black image in iPhone. `pica` does its magic to work around the limitation, hence resizing first before cropping the image solve the problem.
+
+2. To use `pica`'s WASM and Web Worker mode, we need to provide extra configuration to `terser` in `rollup.config.js`. Otherwise, the web worker code will be missing in the production build.
+
 ## Part 5 (Tue Sep 14 14:39:04 MYT 2021)
 
 ### Second level sum type / free monad in interpetion
 
-So far, we only has one kind of sum type - those we used to encapsulate side effects. e.g. Database, KV, SetRef. The second level sum type that we are introducing now is an encapsulation of complex logics, not necessary just side effects. Filter is complicated enough to use a second level sum type.
+So far, we only have one kind of sum type - those we used to encapsulate side effects. e.g. Database, KV, SetRef. The second level sum type that we are introducing now is an encapsulation of complex logic, not necessary just side effects. The filter is complicated enough to use a second level sum type.
 
-The Filter sum type encapsulate the logics of working with Tags and Items. The primary reason to use a second level sum type is simplify the caller's code. Instead of forcing high level caller to know all the detail of using Filter, e.g. KV's key name, PouchDB design doc's id, we hid these details away from high level caller.
+The Filter sum type encapsulates the logic of working with Tags and Items. The primary reason to use a second-level sum type is to simplify the caller's code. Instead of forcing the high-level caller to know all the detail of using Filter, e.g. KV's key name, PouchDB design doc's id, we hid these details away from the high-level caller.
 
 ### Tagging and Filtering made easy
 
-Tagging and filtering look easy and simple in ZASA largely thanks to PouchDB, specifically, with CouchBD/PouchDB Map/Reduce View.
+Tagging and filtering look easy and simple in ZASA largely thanks to PouchDB, specifically, with CouchDB/PouchDB Map/Reduce View.
 
-There is a map function which create a new view with the `tag` as key and `docId` as value. To filter items by their tags, just query this view with the tags as multiple keys.
+There is a map function that creates a new view with the `tag` as key and `docId` as value. To filter items by their tags, just query this view with the tags as multiple keys.
 
-The bonus is a reduce with the built-in function `_count` onto this View. It will produce an array of "tag":"count". With this, we can know how many tags in total, and how many of them each.
+The bonus is a reduce function with the built-in function `_count` onto this View. It will produce an array of `"tag":"count"`. With this, we can know how many tags are in total, and how many of them each.
 
 ## Part 4 (Wed Sep 8 21:21:26 MYT 2021)
 
