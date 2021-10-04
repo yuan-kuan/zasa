@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import daggy from 'daggy';
 import * as free from '../free_monad';
 import { registerStaticInterpretor } from '../sop';
@@ -24,6 +23,7 @@ const localBackupToFuture = (p) => p.cata({
   Sync: (code) => free.interpete(syncWithBackUp(`${LOCAL_DB_URL}/${code}`, LOCAL_DB_USERNAME, LOCAL_DB_PASSWORD)),
 });
 
+// Read the ENV variables
 let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
 let isLocalBackup = LOCAL_DB_URL != undefined;
 
