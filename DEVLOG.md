@@ -1,3 +1,63 @@
+## Part 9
+
+### PWA
+
+For any web application, the following steps are usually all it takes to become an offline ready, PWA.
+
+#### `index.html`
+
+1. Link to the `manifest.json`
+
+   ```html
+   <head>
+     ...
+     <link rel="manifest" href="/manifest.json" />
+     ...
+   </head>
+   ```
+
+2. To behave well in iOS, add these to `<head>` too:
+
+   ```html
+   <meta name="apple-mobile-web-app-capable" content="yes" />
+   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+   <meta name="apple-mobile-web-app-title" content="title" />
+   <link rel="apple-touch-icon" href="/images/logo_144x144.png" />
+   ```
+
+3. Load the service worker. It is recommended to place your service worker file in the same directory as `index.html`:
+
+   ```html
+   <body>
+     <script>
+       if ('serviceWorker' in navigator) {
+         window.addEventListener('load', () => {
+           navigator.serviceWorker
+             .register('/service-worker.js')
+             .then((reg) => {
+               console.log('Service worker registered.', reg);
+             });
+         });
+       }
+     </script>
+   </body>
+   ```
+
+#### `manifest.json`
+
+Create a new `manifest.json` file. Copy ours as a template or any other on the internet.
+
+1. `"start_url"` is usually `"/"`. It matters as it will affect the PWA Lighthouse score.
+2. Most of the different image sizes matter too. Better fill them up.
+
+#### `service_worker.js`
+
+Create the service worker JavaScript file. Copy ours as a template or any other on the internet.
+
+To provide an offline experience, we need to cache the minimal required files to run our web application during the `install` callback. For our Svelte application, we need the `index.html`, `bundle.css`, `bundle.js`, `favicon` and `icon_64.png`.
+
+The service worker will intercept each `fetch` request initiated from the web application. When one of these fetch requests matches with one of our cached entries, we will return the cache resources. Otherwise, we do a proper `fetch` with the same request. In effect, the browser will still `fetch` the necessary files to run the web application offline.
+
 ## Part 8
 
 ### Dynamic interpreter with ENV
