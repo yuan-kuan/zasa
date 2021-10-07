@@ -1,12 +1,15 @@
-<script>
-  import {
-    performCleanupStorage,
-    performDestroyStorage,
-    performSyncStorage,
-    backFromSettingPage,
-    syncStatus,
-  } from './setting_store';
+<script context="module">
+  import { createRef } from '../ref';
 
+  export const performCleanupStorage = createRef();
+  export const performDestroyStorage = createRef();
+  export const backFromSettingPage = createRef();
+
+  export const performSyncStorage = createRef();
+  export const syncStatus = createRef('');
+</script>
+
+<script>
   let syncButton;
   let backupCode = '';
   let isSyncing = false;
@@ -37,7 +40,7 @@
 
 <div class="flex flex-col justify-center pt-4 px-4">
   <div class="p-2 border-b border-black">
-    <p>Sycn with Remote</p>
+    <p>Sycn with Remote or Local.</p>
     <p>sycn up your current ZASA with remote backup.</p>
     <p>
       This required a backup code, if you like to have one, email me:

@@ -10,8 +10,7 @@ import { reload } from '../utils';
 import { viewMainPage } from '../view/view_store';
 import { sync } from './backup';
 
-import Setting from './Setting.svelte';
-import * as settingStore from './setting_store';
+import Setting, * as settingStore from './Setting.svelte';
 
 const performDestroyStorage = () => destroy().chain((_) => reload());
 const performCompactStorage = () => cleanUp();
