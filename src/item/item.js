@@ -6,9 +6,11 @@ import { setRef } from '../ref';
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { viewMainPage } from '../view/view_store';
 
-import Item from './Item.svelte';
+import Item, * as itemStore from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
-import * as itemStore from './item_store.js';
+import * as tagStore from './Tags.svelte';
+import * as batchStore from './Batches.svelte';
+import * as itemCreationStore from './ItemCreation.svelte';
 import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
   makeItemDoc,
@@ -44,10 +46,8 @@ const goToItemCreation = () =>
   free.sequence([
     viewMainPage(ItemCreation),
     setItemCreationUrl(),
-    setRef(itemStore.name, ''),
-    setRef(itemStore.nameError, null),
-    setRef(itemStore.backFromItemPage, () => addSop(() => goToGrid())),
-    setRef(itemStore.performSave, (name, photoId) =>
+    setRef(itemCreationStore.backFromItemPage, () => addSop(() => goToGrid())),
+    setRef(itemCreationStore.performSave, (name, photoId) =>
       addSop(() => performCreateItem(name, photoId))
     ),
   ]);
@@ -111,10 +111,10 @@ const presentBatches = (itemId) =>
     .chain(alldocs)
     .chain((batches) =>
       free.sequence([
-        setRef(itemStore.batches, batches),
-        setRef(itemStore.performBatchInc, makeBatchAdd(itemId, 1, batches)),
-        setRef(itemStore.performBatchDec, makeBatchAdd(itemId, -1, batches)),
-        setRef(itemStore.performDeleteBatch, makeDeleteBatch(itemId, batches)),
+        setRef(batchStore.batches, batches),
+        setRef(batchStore.performBatchInc, makeBatchAdd(itemId, 1, batches)),
+        setRef(batchStore.performBatchDec, makeBatchAdd(itemId, -1, batches)),
+        setRef(batchStore.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );
 
@@ -139,9 +139,9 @@ const presentTagSelections = (itemId, existingTags) =>
     .map(R.without(existingTags))
     .chain((selections) =>
       free.sequence([
-        setRef(itemStore.tagSelections, selections),
+        setRef(tagStore.tagSelections, selections),
         setRef(
-          itemStore.performAddTag,
+          tagStore.performAddTag,
           R.map(
             (selection) => () =>
               addSop(() => performAddNewTag(itemId, selection)),
@@ -158,9 +158,9 @@ const presentItemTags = (itemDoc) =>
     .map(R.defaultTo([]))
     .chain((tags) =>
       free.sequence([
-        setRef(itemStore.tags, tags),
+        setRef(tagStore.tags, tags),
         setRef(
-          itemStore.performRemoveTag,
+          tagStore.performRemoveTag,
           R.map(
             (tag) => () =>
               addSop(() => performRemoveTag(R.view(ItemL.id, itemDoc), tag))
@@ -196,10 +196,10 @@ const goToItem = (itemId) =>
     setRef(itemStore.performEditName, (newName) =>
       addSop(() => performEditName(itemId, newName))
     ),
-    setRef(itemStore.performAddBatch, (expiryDate, count) =>
+    setRef(batchStore.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
-    setRef(itemStore.performAddNewTag, (tag) =>
+    setRef(tagStore.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))
     ),
     setRef(itemStore.performEditPhoto, (blob) =>

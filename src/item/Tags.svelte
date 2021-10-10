@@ -1,12 +1,14 @@
-<script>
-  import {
-    tags,
-    tagSelections,
-    performAddNewTag,
-    performAddTag,
-    performRemoveTag,
-  } from './item_store';
+<script context="module">
+  import { createRef } from '../ref';
 
+  export const tags = createRef([]);
+  export const tagSelections = createRef([]);
+  export const performAddNewTag = createRef();
+  export const performAddTag = createRef([]);
+  export const performRemoveTag = createRef([]);
+</script>
+
+<script>
   let isAddingTag = false;
   let isEditingTag = false;
   let workingTag;

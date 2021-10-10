@@ -1,11 +1,13 @@
-<script>
-  import {
-    filteringTags,
-    performRemoveTagFromFilter,
-    tagSelections,
-    performAddTagToFilter,
-  } from './grid_store';
+<script context="module">
+  import { createRef } from '../ref';
 
+  export const filteringTags = createRef([]);
+  export const tagSelections = createRef([]);
+  export const performAddTagToFilter = createRef([]);
+  export const performRemoveTagFromFilter = createRef([]);
+</script>
+
+<script>
   let expanded = false;
 </script>
 

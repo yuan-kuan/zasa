@@ -1,12 +1,14 @@
-<script>
-  import {
-    batches,
-    performAddBatch,
-    performDeleteBatch,
-    performBatchInc,
-    performBatchDec,
-  } from './item_store';
+<script context="module">
+  import { createRef } from '../ref';
 
+  export const batches = createRef([]);
+  export const performAddBatch = createRef();
+  export const performBatchInc = createRef([]);
+  export const performBatchDec = createRef([]);
+  export const performDeleteBatch = createRef([]);
+</script>
+
+<script>
   const toDateString = (batch) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(batch.expiry).toLocaleDateString('en-GB', options);

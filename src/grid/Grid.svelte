@@ -1,5 +1,13 @@
+<script context="module">
+  import { createRef } from '../ref';
+
+  export const items = createRef([]);
+  export const goToItem = createRef([]);
+  export const goToCreateItem = createRef();
+  export const goToSetting = createRef();
+</script>
+
 <script>
-  import { items, goToItem, goToCreateItem, goToSetting } from './grid_store';
   import Filter from './Filter.svelte';
 </script>
 

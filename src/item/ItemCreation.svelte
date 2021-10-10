@@ -1,7 +1,12 @@
+<script context="module">
+  import { createRef } from '../ref';
+
+  export const performSave = createRef();
+  export const backFromItemPage = createRef();
+</script>
+
 <script>
   import { onDestroy } from 'svelte';
-
-  import { nameError, performSave, backFromItemPage } from './item_store';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let workingName;

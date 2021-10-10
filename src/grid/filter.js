@@ -2,14 +2,14 @@ import * as R from 'ramda';
 import daggy from 'daggy';
 
 import { put, query } from '../database';
-import * as free from '../free_monad';
-import { docToItemWithBlob } from '../item/item_utils';
-import * as kv from '../kv';
-import { registerStaticInterpretor } from '../sop';
 import {
   makeMapWithKeysForDocAttachmentQueryOption,
   makeReduceByGroupQueryOption,
 } from '../db_ops';
+import * as free from '../free_monad';
+import * as kv from '../kv';
+import { registerStaticInterpretor } from '../sop';
+import { docToItemWithBlob } from '../item/item_utils';
 
 const Filter = daggy.taggedSum('Filter', {
   GetSavedTags: [''],

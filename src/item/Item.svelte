@@ -1,12 +1,16 @@
+<script context="module">
+  import { createRef } from '../ref';
+  export const name = createRef();
+  export const nameError = createRef();
+  export const photoBlob = createRef();
+  export const editingPhotoBlob = createRef();
+  export const performEditName = createRef();
+  export const performEditPhoto = createRef();
+  export const backFromEditPhoto = createRef();
+  export const backFromItemPage = createRef();
+</script>
+
 <script>
-  import {
-    name,
-    nameError,
-    photoBlob,
-    performEditName,
-    performEditPhoto,
-    backFromItemPage,
-  } from './item_store';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
