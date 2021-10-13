@@ -2,9 +2,11 @@ import * as free from '../free_monad';
 import * as ref from '../ref';
 import { addSop } from '../sop';
 
-export const primaryView = ref.createRef(null);
-export const modalView = ref.createRef(null);
-export const closeModal = ref.createRef(null);
+import {
+  primaryView,
+  modalView,
+  closeModal
+} from './App.svelte';
 
 // Void -> Free SetRef
 const closeModalSop = () => ref.setRef(modalView, '');

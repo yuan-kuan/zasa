@@ -1,6 +1,13 @@
+<script context="module">
+  import { createRef } from '../ref';
+
+  export const primaryView = createRef(null);
+  export const modalView = createRef(null);
+  export const closeModal = createRef(null);
+</script>
+
 <script>
   import Tailwindcss from './Tailwindcss.svelte';
-  import { primaryView, modalView, closeModal } from './view_store';
 
   $: modalViewComponent = $modalView == '' ? null : $modalView;
 </script>
