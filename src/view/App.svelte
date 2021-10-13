@@ -13,7 +13,7 @@
 </script>
 
 <Tailwindcss />
-<main class="bg-gray-200 min-h-screen">
+<main class="bg-white min-h-screen">
   <svelte:component this={$primaryView} />
 
   {#if modalViewComponent}
