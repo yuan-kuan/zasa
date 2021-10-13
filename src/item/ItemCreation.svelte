@@ -15,7 +15,7 @@
   let saveButton;
   const nameKeyDown = (e) => {
     if (e.key == 'Enter') {
-      saveButton.focus();
+      saveItem();
       e.preventDefault();
     }
   };
