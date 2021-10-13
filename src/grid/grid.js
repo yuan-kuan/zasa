@@ -69,6 +69,7 @@ const presentTagSelection = (selectedTags) =>
   getAllTags()
     .chain((tags) =>
       free.sequence([
+        setRef(filterStore.filteringTags, selectedTags),
         setRef(filterStore.allTags, tags),
         setRef(filterStore.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
 

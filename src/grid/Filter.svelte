@@ -13,14 +13,16 @@
   let expanded = false;
   const toggle = () => {
     expanded = !expanded;
-
-    console.log('$allTagsSelected :>> ', $allTagsSelected);
   };
+
+  $: hasFilter = $filteringTags.length != 0;
 </script>
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <a
   class="inline-flex flex-col items-center text-xs font-medium text-white py-3 px-4 flex-grow"
+  class:text-white={!hasFilter}
+  class:text-primary-accent={hasFilter}
   on:click|preventDefault={toggle}
 >
   <svg
@@ -40,6 +42,8 @@
 </a>
 
 {#if expanded}
+  <div class="fixed bottom-0 right-0 w-screen h-screen" on:click={toggle} />
+
   <div class="fixed bottom-20 right-4 ml-2 p-2 rounded-lg bg-white shadow-lg">
     <div class="p-2 border-b">Filter with Tags</div>
     <div class="mt-2 flex flex-row-reverse flex-wrap-reverse items-start">
@@ -49,6 +53,14 @@
           selected={$allTagsSelected[index]}
           on:click={$performToggleTagFilter[index]}
         />
+      {/each}
+    </div>
+  </div>
+{:else}
+  <div class="fixed bottom-12 right-2 ">
+    <div class="flex flex-col-reverse items-start">
+      {#each $filteringTags as tag}
+        <Tag name={tag} dense on:click={toggle} />
       {/each}
     </div>
   </div>
