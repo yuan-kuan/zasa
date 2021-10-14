@@ -8,6 +8,9 @@
 </script>
 
 <script>
+  import { slide } from 'svelte/transition';
+  import { circInOut } from 'svelte/easing';
+
   import Tag from './Tag.svelte';
 
   let expanded = false;
@@ -22,7 +25,7 @@
 <a
   class="inline-flex flex-col items-center text-xs font-medium text-white py-3 px-4 flex-grow"
   class:text-white={!hasFilter}
-  class:text-primary-accent={hasFilter}
+  class:text-secondary-accent={hasFilter}
   on:click|preventDefault={toggle}
 >
   <svg
@@ -44,8 +47,35 @@
 {#if expanded}
   <div class="fixed bottom-0 right-0 w-screen h-screen" on:click={toggle} />
 
-  <div class="fixed bottom-20 right-4 ml-2 p-2 rounded-lg bg-white shadow-lg">
-    <div class="p-2 border-b">Filter with Tags</div>
+  <div
+    class="fixed bottom-20 right-4 ml-2 p-2 rounded-lg bg-white shadow-lg"
+    transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
+  >
+    <div class="p-2 flex justify-between border-b">
+      <span> Filter with Tags </span>
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <a
+        class="inline-flex flex-col items-center text-xs font-medium cursor-auto"
+        on:click|preventDefault={toggle}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+
+        <span class="sr-only">Filter</span>
+      </a>
+    </div>
     <div class="mt-2 flex flex-row-reverse flex-wrap-reverse items-start">
       {#each $allTags as selection, index}
         <Tag
