@@ -52,27 +52,6 @@
     <div class="p-2 flex justify-between border-b">
       <span> Filter with Tags </span>
       <!-- svelte-ignore a11y-missing-attribute -->
-      <a
-        class="inline-flex flex-col items-center text-xs font-medium cursor-auto"
-        on:click|preventDefault={toggle}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-
-        <span class="sr-only">Filter</span>
-      </a>
     </div>
     <div class="mt-2 flex flex-row-reverse flex-wrap-reverse items-start">
       {#each $allTags as selection, index}
@@ -83,6 +62,26 @@
         />
       {/each}
     </div>
+
+    <button
+      class="absolute -top-3 -right-3 rounded-full focus:outline-none bg-white"
+      on:click={toggle}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    </button>
   </div>
 {:else}
   <div class="fixed bottom-12 right-2 ">
