@@ -54,11 +54,11 @@
     />
 
     <div
-      class="fixed mx-2 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+      class="fixed mx-3 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
     >
       <!-- transition:slide={{ delay: 0, duration: 500, easing: circInOut }} -->
 
-      <div class="relative flex p-2 py-4 flex-initial">
+      <div class="relative flex p-2 pt-6 pb-4 mx-4 flex-initial">
         <input
           type="text"
           placeholder="Add new tag here"
@@ -100,6 +100,26 @@
           />
         {/each}
       </div>
+
+      <button
+        class="absolute -top-3 -right-3 rounded-full focus:outline-none bg-white"
+        on:click={closeTagSelection}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-7 w-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      </button>
     </div>
   </div>
 
