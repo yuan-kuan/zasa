@@ -134,18 +134,24 @@ const performRemoveTag = (itemId, tag) =>
     .chain(put)
     .chain(presentItemTags);
 
-const presentTagSelections = (itemId, existingTags) =>
+const presentTagSelections = (itemId, selectedTags) =>
   getAllTags()
-    .map(R.without(existingTags))
-    .chain((selections) =>
+    .chain((tags) =>
       free.sequence([
-        setRef(tagStore.tagSelections, selections),
+        setRef(tagStore.tags, selectedTags),
+        setRef(tagStore.allTags, tags),
+        setRef(tagStore.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
+
         setRef(
-          tagStore.performAddTag,
+          tagStore.performToggleTagFilter,
           R.map(
-            (selection) => () =>
-              addSop(() => performAddNewTag(itemId, selection)),
-            selections
+            (tag) =>
+              R.ifElse(
+                R.flip(R.includes)(selectedTags),
+                (tag) => () => addSop(() => performRemoveTag(itemId, tag)),
+                (tag) => () => addSop(() => performAddNewTag(itemId, tag)),
+              )(tag),
+            tags
           )
         ),
       ])
@@ -158,14 +164,14 @@ const presentItemTags = (itemDoc) =>
     .map(R.defaultTo([]))
     .chain((tags) =>
       free.sequence([
-        setRef(tagStore.tags, tags),
-        setRef(
-          tagStore.performRemoveTag,
-          R.map(
-            (tag) => () =>
-              addSop(() => performRemoveTag(R.view(ItemL.id, itemDoc), tag))
-          )(tags)
-        ),
+        // setRef(tagStore.tags, tags),
+        // setRef(
+        //   tagStore.performRemoveTag,
+        //   R.map(
+        //     (tag) => () =>
+        //       addSop(() => performRemoveTag(R.view(ItemL.id, itemDoc), tag))
+        //   )(tags)
+        // ),
         presentTagSelections(R.view(ItemL.id, itemDoc), tags),
       ])
     );
