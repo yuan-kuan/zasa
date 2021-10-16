@@ -6,6 +6,9 @@
 </script>
 
 <script>
+  import { slide } from 'svelte/transition';
+  import { circInOut } from 'svelte/easing';
+
   import { onDestroy } from 'svelte';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
@@ -41,7 +44,10 @@
   });
 </script>
 
-<div class="container md:mx-auto">
+<div
+  class="container md:mx-auto"
+  transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
+>
   <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
     <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
       >&#60; Back</button

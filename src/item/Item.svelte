@@ -11,6 +11,9 @@
 </script>
 
 <script>
+  import { slide } from 'svelte/transition';
+  import { circInOut } from 'svelte/easing';
+
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
@@ -64,8 +67,11 @@
   const photoCancel = () => (isTakingPhoto = false);
 </script>
 
-<div class="container md:mx-auto">
-  <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
+<div
+  class="container md:mx-auto"
+  transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
+>
+  <header class="sticky top-0 bg-primary bg-opacity-10 w-full z-10">
     <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
       >&#60; Back</button
     >
