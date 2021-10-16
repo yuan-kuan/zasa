@@ -81,7 +81,7 @@
     <div class="relative flex p-2 pt-6 pb-4 mx-4 flex-initial">
       <!-- New tag input -->
       <input
-        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200"
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
         type="text"
         placeholder="Name (required)"
         bind:value={workingName}

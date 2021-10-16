@@ -22,7 +22,6 @@
 
   const addNewTag = () => {
     $performAddNewTag(workingTag);
-    isAddingTag = false;
     workingTag = undefined;
   };
 
@@ -37,6 +36,8 @@
 <div class="flex flex-wrap justify-center items-start">
   {#each $tags as tag}
     <Tag name={tag} selected on:click={openTagSelection} />
+  {:else}
+    <button class="btn" on:click={openTagSelection}>Add Tag</button>
   {/each}
 </div>
 
@@ -53,15 +54,15 @@
     />
 
     <div
-      class="fixed mx-3 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+      class="fixed mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
       transition:scale={{ delay: 0, duration: 500, easing: circInOut }}
     >
-      <div class="relative flex p-2 pt-6 pb-4 mx-4 flex-initial">
+      <div class="relative flex p-2 pt-2 pb-4 mx-4 flex-initial">
         <!-- New tag input -->
         <input
           type="text"
           placeholder="Add new tag here"
-          class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200"
+          class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
           bind:value={workingTag}
           on:keydown={addTagKeyDown}
         />
