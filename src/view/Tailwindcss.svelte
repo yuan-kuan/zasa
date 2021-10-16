@@ -4,19 +4,19 @@
   @tailwind utilities;
 
   .btn {
-    @apply font-bold py-2 px-4 rounded;
+    @apply m-1 border rounded-full font-bold text-sm select-none leading-loose px-3 py-1;
   }
-  .btn-blue {
-    @apply bg-blue-500 text-white;
+  .btn-primary {
+    @apply bg-primary text-white;
   }
-  .btn-red {
-    @apply bg-red-500 text-white;
+  .btn-secondary {
+    @apply bg-secondary text-white;
   }
-  .btn-blue:hover {
-    @apply bg-blue-700;
+  .btn-primary:hover {
+    @apply bg-primary font-semibold;
   }
 
-  .btn-blue:hover:disabled {
+  .btn-primary:hover:disabled {
     @apply bg-gray-400;
   }
 </style>
