@@ -46,9 +46,9 @@
   };
 </script>
 
-<div class="pl-4 leading-3 text-lg">Batch</div>
+<!-- <div class="pl-4 leading-3 text-lg text-primary ">Batch</div> -->
 
-<div class="flex w-full flex-col items-center">
+<div class="flex flex-col pl-4 items-center text-primary ">
   {#each $batches as batch, index}
     <div
       class="grid grid-cols-2 py-2 items-center"
@@ -62,11 +62,12 @@
 
       {#if index == confirmingDeleteIndex}
         <div class="flex h-10 w-32">
-          <button class="btn btn-red" on:click={$performDeleteBatch[index]}
-            >Delete?</button
+          <button
+            class="btn btn-secondary"
+            on:click={$performDeleteBatch[index]}>delete?</button
           >
           <button class="btn" on:click={() => (confirmingDeleteIndex = -1)}
-            >Wait...</button
+            >wait...</button
           >
         </div>
       {:else}
@@ -101,7 +102,7 @@
     <div class="pt-2 ">
       <input
         type="date"
-        class="btn btn-primary text-right"
+        class="btn bg-primary-accent text-right text-primary "
         placeholder="yyyy-mm-dd"
         bind:value={workingDate}
         on:change={addNewBatch}

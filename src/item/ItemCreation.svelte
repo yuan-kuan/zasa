@@ -48,7 +48,7 @@
   class="container md:mx-auto"
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
-  <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
+  <header class="sticky top-0 w-full z-10">
     <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
       >&#60; Back</button
     >
@@ -59,11 +59,11 @@
     on:click={() => (isTakingPhoto = true)}
   >
     <img
-      class="object-cover h-64 w-64 bg-secondary-accent"
+      class="object-cover h-64 w-64 bg-primary-accent"
       src={photoUrl}
       alt=""
     />
-    <div class="absolute bottom-2 right-2 px-2 bg-secondary-accent rounded">
+    <div class="absolute bottom-2 right-2 px-2 bg-primary-accent rounded">
       <svg class="fill-current w-10 h-10" viewBox="0 0 20 20">
         <!-- xmlns="http://www.w3.org/2000/svg" -->
         <path

@@ -68,12 +68,13 @@
 </script>
 
 <div
-  class="container md:mx-auto"
+  class="container md:mx-auto text-primary "
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
-  <header class="sticky top-0 bg-primary bg-opacity-10 w-full z-10">
-    <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
-      >&#60; Back</button
+  <header class="sticky top-0 w-full z-10">
+    <button
+      class="ml-2 p-2 font-light text-primary "
+      on:click={$backFromItemPage}>&#60; Back</button
     >
   </header>
 
@@ -82,11 +83,13 @@
     on:click={() => (isTakingPhoto = true)}
   >
     <img
-      class="object-cover h-64 w-64 bg-secondary-accent"
+      class="object-cover h-64 w-64 bg-primary-accent"
       src={photoUrl}
       alt=""
     />
-    <div class="absolute bottom-2 right-2 px-2 bg-secondary-accent rounded">
+    <div
+      class="absolute bottom-2 right-2 px-2 text-primary  bg-primary-accent opacity-75 rounded-xl"
+    >
       <svg class="fill-current w-10 h-10" viewBox="0 0 20 20">
         <!-- xmlns="http://www.w3.org/2000/svg" -->
         <path
@@ -104,7 +107,7 @@
     {#if isEditingName}
       <!-- New tag input -->
       <input
-        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center text-primary "
         type="text"
         autofocus
         bind:value={workingName}
@@ -120,7 +123,7 @@
     {:else}
       <!-- New tag input -->
       <input
-        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center font-semibold"
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center font-semibold text-primary "
         type="text"
         value={$name}
         readonly
@@ -128,7 +131,7 @@
 
       <!-- Add button -->
       <button
-        class="px-4 py-2 rounded-r-lg bg-white font-bold uppercase border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+        class="px-4 py-2 rounded-r-lg bg-white font-bold uppercase border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200 text-primary"
         on:click={startEditName}
       >
         <svg class="fill-current w-5 h-5" viewBox="0 0 20 20">
@@ -140,9 +143,8 @@
     {/if}
   </div>
 
-  <div class="h-4" />
   <Tags />
-  <div class="h-4" />
+  <div class="h-4 mt-4 mx-10 border-t " />
   <Batches />
   <div class="h-20" />
 </div>

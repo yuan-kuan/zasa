@@ -17,7 +17,7 @@
     <div class="relative" on:click={$goToItem[index]}>
       <!-- {item.name} -->
       <span
-        class="absolute top-0 left-0 px-2 bg-primary-accent bg-opacity-50 filter w-full truncate"
+        class="absolute bottom-0 left-0 px-2 bg-secondary-accent bg-opacity-50 text-sm text-primary filter w-full truncate"
         >{item.name}</span
       >
       {#if item.blob}

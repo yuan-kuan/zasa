@@ -25,7 +25,7 @@
 <a
   class="inline-flex flex-col items-center text-xs font-medium text-white py-3 px-4 flex-grow"
   class:text-white={!hasFilter}
-  class:text-secondary-accent={hasFilter}
+  class:text-neutral={hasFilter}
   on:click|preventDefault={toggle}
 >
   <svg
@@ -50,7 +50,7 @@
     transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
   >
     <div class="p-2 flex justify-between border-b">
-      <span> Filter with Tags </span>
+      <span class="text-primary font-semibold"> Filter with Tags </span>
       <!-- svelte-ignore a11y-missing-attribute -->
     </div>
     <div class="mt-2 flex flex-row-reverse flex-wrap-reverse items-start">
@@ -63,7 +63,7 @@
       {/each}
     </div>
 
-    <button
+    <!-- <button
       class="absolute -top-3 -right-3 rounded-full focus:outline-none bg-white"
       on:click={toggle}
     >
@@ -81,7 +81,7 @@
           d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-    </button>
+    </button> -->
   </div>
 {:else}
   <div class="fixed bottom-12 right-2 ">

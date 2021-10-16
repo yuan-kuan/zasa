@@ -35,9 +35,28 @@
 
 <div class="flex flex-wrap justify-center items-start">
   {#each $tags as tag}
-    <Tag name={tag} selected on:click={openTagSelection} />
+    <Tag name={tag} dense on:click={openTagSelection} />
   {:else}
-    <button class="btn" on:click={openTagSelection}>Add Tag</button>
+    <button
+      class="btn bg-secondary-accent flex items-center text-primary "
+      on:click={openTagSelection}
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+      <span class="pl-1"> add tag </span>
+    </button>
   {/each}
 </div>
 
@@ -57,7 +76,7 @@
       class="fixed mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
       transition:scale={{ delay: 0, duration: 500, easing: circInOut }}
     >
-      <div class="relative flex p-2 pt-2 pb-4 mx-4 flex-initial">
+      <div class="relative flex p-2 pt-2 pb-4 mx-4 flex-initial text-primary ">
         <!-- New tag input -->
         <input
           type="text"
@@ -69,9 +88,9 @@
 
         <!-- Add button -->
         <button
-          class="px-4 py-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+          class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
           disabled={!workingTag}
-          on:click={addNewTag}>Add</button
+          on:click={addNewTag}>add</button
         >
 
         <!-- Potential X clear button inside text input -->
@@ -106,7 +125,7 @@
         {/each}
       </div>
 
-      <button
+      <!-- <button
         class="absolute -top-3 -right-3 rounded-full focus:outline-none bg-white"
         on:click={closeTagSelection}
       >
@@ -124,7 +143,7 @@
             d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-      </button>
+      </button> -->
     </div>
   </div>
 {/if}
