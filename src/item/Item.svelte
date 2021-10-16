@@ -38,6 +38,11 @@
 
   let photoUrl;
   photoBlob.subscribe((value) => {
+    if (photoUrl != undefined) {
+      URL.revokeObjectURL(photoUrl);
+      photoUrl = undefined;
+    }
+
     if (value) {
       photoUrl = URL.createObjectURL(value);
     }
@@ -65,13 +70,11 @@
     on:click={() => (isTakingPhoto = true)}
   >
     <img
-      class="object-cover h-64 w-64 border-solid border-4 border-blue-400"
+      class="object-cover h-64 w-64 bg-secondary-accent"
       src={photoUrl}
       alt=""
     />
-    <div
-      class="absolute bottom-2 right-2 px-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded"
-    >
+    <div class="absolute bottom-2 right-2 px-2 bg-secondary-accent rounded">
       <svg class="fill-current w-10 h-10" viewBox="0 0 20 20">
         <!-- xmlns="http://www.w3.org/2000/svg" -->
         <path
