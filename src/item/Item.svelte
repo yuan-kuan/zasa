@@ -15,6 +15,7 @@
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
 
+  let nameInput;
   let workingName;
   let isEditingName = false;
 
@@ -28,10 +29,15 @@
     $performEditName(workingName);
   };
 
-  let saveNameButton;
+  $: preventEditName = workingName == $name;
+
   const nameKeyDown = (e) => {
     if (e.key == 'Enter') {
-      saveNameButton.focus();
+      if (preventEditName) {
+        isEditingName = false;
+      } else {
+        editName();
+      }
       e.preventDefault();
     }
   };
@@ -88,43 +94,45 @@
     <PhotoEdit {photoComplete} {photoCancel} />
   {/if}
 
-  <br />
-
-  {#if isEditingName}
-    <div class="flex items-center px-4">
+  <div class="mx-auto relative flex justify-center p-2 pt-6 pb-4">
+    {#if isEditingName}
+      <!-- New tag input -->
       <input
-        class="appearance-none bg-transparent border-b border-blue-500 text-gray-700 w-48 mr-3 py-1 px-2 leading-tight focus:outline-none text-right"
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
         type="text"
         autofocus
         bind:value={workingName}
         on:keydown={nameKeyDown}
       />
+
+      <!-- Add button -->
       <button
-        class="flex-shrink-0 bg-blue-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-        on:click={editName}
-        bind:this={saveNameButton}
+        class="px-4 py-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+        disabled={preventEditName}
+        on:click={editName}>Save</button
       >
-        Save
-      </button>
+    {:else}
+      <!-- New tag input -->
+      <input
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center font-semibold"
+        type="text"
+        value={$name}
+        readonly
+      />
+
+      <!-- Add button -->
       <button
-        class="flex-shrink-0 border-transparent border-4 text-yellow-500 hover:text-teal-800 text-sm py-1 px-2 rounded"
-        on:click={() => (isEditingName = false)}
+        class="px-4 py-2 rounded-r-lg bg-white font-bold uppercase border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+        on:click={startEditName}
       >
-        Cancel
+        <svg class="fill-current w-5 h-5" viewBox="0 0 20 20">
+          <path
+            d="M18.303,4.742l-1.454-1.455c-0.171-0.171-0.475-0.171-0.646,0l-3.061,3.064H2.019c-0.251,0-0.457,0.205-0.457,0.456v9.578c0,0.251,0.206,0.456,0.457,0.456h13.683c0.252,0,0.457-0.205,0.457-0.456V7.533l2.144-2.146C18.481,5.208,18.483,4.917,18.303,4.742 M15.258,15.929H2.476V7.263h9.754L9.695,9.792c-0.057,0.057-0.101,0.13-0.119,0.212L9.18,11.36h-3.98c-0.251,0-0.457,0.205-0.457,0.456c0,0.253,0.205,0.456,0.457,0.456h4.336c0.023,0,0.899,0.02,1.498-0.127c0.312-0.077,0.55-0.137,0.55-0.137c0.08-0.018,0.155-0.059,0.212-0.118l3.463-3.443V15.929z M11.241,11.156l-1.078,0.267l0.267-1.076l6.097-6.091l0.808,0.808L11.241,11.156z"
+          />
+        </svg>
       </button>
-    </div>
-  {:else}
-    <div class="flex w-full justify-center pt-1" on:click={startEditName}>
-      <span class="mr-2">
-        {$name}
-      </span>
-      <svg class="fill-current w-5 h-5" viewBox="0 0 20 20">
-        <path
-          d="M18.303,4.742l-1.454-1.455c-0.171-0.171-0.475-0.171-0.646,0l-3.061,3.064H2.019c-0.251,0-0.457,0.205-0.457,0.456v9.578c0,0.251,0.206,0.456,0.457,0.456h13.683c0.252,0,0.457-0.205,0.457-0.456V7.533l2.144-2.146C18.481,5.208,18.483,4.917,18.303,4.742 M15.258,15.929H2.476V7.263h9.754L9.695,9.792c-0.057,0.057-0.101,0.13-0.119,0.212L9.18,11.36h-3.98c-0.251,0-0.457,0.205-0.457,0.456c0,0.253,0.205,0.456,0.457,0.456h4.336c0.023,0,0.899,0.02,1.498-0.127c0.312-0.077,0.55-0.137,0.55-0.137c0.08-0.018,0.155-0.059,0.212-0.118l3.463-3.443V15.929z M11.241,11.156l-1.078,0.267l0.267-1.076l6.097-6.091l0.808,0.808L11.241,11.156z"
-        />
-      </svg>
-    </div>
-  {/if}
+    {/if}
+  </div>
 
   <div class="h-4" />
   <Tags />
