@@ -1,7 +1,15 @@
-<script>
-  import { onDestroy } from 'svelte';
+<script context="module">
+  import { createRef } from '../ref';
 
-  import { nameError, performSave, backFromItemPage } from './item_store';
+  export const performSave = createRef();
+  export const backFromItemPage = createRef();
+</script>
+
+<script>
+  import { slide } from 'svelte/transition';
+  import { circInOut } from 'svelte/easing';
+
+  import { onDestroy } from 'svelte';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let workingName;
@@ -10,7 +18,7 @@
   let saveButton;
   const nameKeyDown = (e) => {
     if (e.key == 'Enter') {
-      saveButton.focus();
+      saveItem();
       e.preventDefault();
     }
   };
@@ -36,8 +44,11 @@
   });
 </script>
 
-<div class="container md:mx-auto">
-  <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
+<div
+  class="container md:mx-auto"
+  transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
+>
+  <header class="sticky top-0 w-full z-10">
     <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
       >&#60; Back</button
     >
@@ -48,13 +59,11 @@
     on:click={() => (isTakingPhoto = true)}
   >
     <img
-      class="object-cover h-64 w-64 border-solid border-4 border-blue-400"
+      class="object-cover h-64 w-64 bg-primary-accent"
       src={photoUrl}
       alt=""
     />
-    <div
-      class="absolute bottom-2 right-2 px-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded"
-    >
+    <div class="absolute bottom-2 right-2 px-2 bg-primary-accent rounded">
       <svg class="fill-current w-10 h-10" viewBox="0 0 20 20">
         <!-- xmlns="http://www.w3.org/2000/svg" -->
         <path
@@ -69,18 +78,23 @@
   {/if}
 
   <div class="flex flex-col items-center pt-6">
-    <input
-      class="appearance-none bg-transparent border-b border-blue-500 text-gray-700 w-48 mr-3 py-1 px-2 w-64 leading-tight focus:outline-none text-center"
-      type="text"
-      placeholder="Name (required)"
-      bind:value={workingName}
-      on:keydown={nameKeyDown}
-    />
-    <button
-      class="btn btn-blue mt-6 w-64 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      disabled={preventSave}
-      bind:this={saveButton}
-      on:click={saveItem}>Save</button
-    >
+    <div class="relative flex p-2 pt-6 pb-4 mx-4 flex-initial">
+      <!-- New tag input -->
+      <input
+        class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
+        type="text"
+        placeholder="Name (required)"
+        bind:value={workingName}
+        on:keydown={nameKeyDown}
+      />
+
+      <!-- Add button -->
+      <button
+        class="px-4 py-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+        disabled={preventSave}
+        bind:this={saveButton}
+        on:click={saveItem}>Save</button
+      >
+    </div>
   </div>
 </div>

@@ -1,12 +1,19 @@
+<script context="module">
+  import { createRef } from '../ref';
+
+  export const primaryView = createRef(null);
+  export const modalView = createRef(null);
+  export const closeModal = createRef(null);
+</script>
+
 <script>
   import Tailwindcss from './Tailwindcss.svelte';
-  import { primaryView, modalView, closeModal } from './view_store';
 
   $: modalViewComponent = $modalView == '' ? null : $modalView;
 </script>
 
 <Tailwindcss />
-<main class="bg-gray-200 min-h-screen">
+<main class="bg-white min-h-screen">
   <svelte:component this={$primaryView} />
 
   {#if modalViewComponent}

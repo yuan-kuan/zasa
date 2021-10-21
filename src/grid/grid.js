@@ -6,8 +6,9 @@ import { setGridUrl } from '../router';
 import { addSop } from '../sop';
 import { viewMainPage } from '../view/view_store';
 
-import Grid from './Grid.svelte';
-import * as gridStore from './grid_store';
+import Grid, * as gridStore from './Grid.svelte';
+import * as filterStore from './Filter.svelte';
+
 import { goToItem, goToItemCreation } from '../item/item';
 import { alldocs } from '../database';
 import { tapLog } from '../utils';
@@ -57,6 +58,7 @@ const presentFilteredItem = (filterTags) =>
 const performAddTagFilter = (tag) =>
   free.sequence([updateSavedTagFilter(R.append(tag)), presentFilterAndItem()]);
 
+
 const performRemoveTagFilter = (tag) =>
   free.sequence([
     updateSavedTagFilter(R.without([tag])),
@@ -65,15 +67,22 @@ const performRemoveTagFilter = (tag) =>
 
 const presentTagSelection = (selectedTags) =>
   getAllTags()
-    .map(R.without(selectedTags))
-    .chain((selections) =>
+    .chain((tags) =>
       free.sequence([
-        setRef(gridStore.tagSelections, selections),
+        setRef(filterStore.filteringTags, selectedTags),
+        setRef(filterStore.allTags, tags),
+        setRef(filterStore.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
+
         setRef(
-          gridStore.performAddTagToFilter,
+          filterStore.performToggleTagFilter,
           R.map(
-            (selection) => () => addSop(() => performAddTagFilter(selection)),
-            selections
+            (tag) =>
+              R.ifElse(
+                R.flip(R.includes)(selectedTags),
+                (tag) => () => addSop(() => performRemoveTagFilter(tag)),
+                (tag) => () => addSop(() => performAddTagFilter(tag)),
+              )(tag),
+            tags
           )
         ),
       ])
@@ -85,16 +94,7 @@ const presentItems = () =>
   );
 
 const presentFilter = () =>
-  getSavedTagFilter().chain((tags) =>
-    free.sequence([
-      presentTagSelection(tags),
-      setRef(gridStore.filteringTags, tags),
-      setRef(
-        gridStore.performRemoveTagFromFilter,
-        R.map((tag) => () => addSop(() => performRemoveTagFilter(tag)), tags)
-      ),
-    ])
-  );
+  getSavedTagFilter().chain(presentTagSelection);
 
 const presentFilterAndItem = () =>
   free.sequence([presentFilter(), presentItems()]);

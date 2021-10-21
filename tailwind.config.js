@@ -14,7 +14,21 @@ module.exports = {
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+
+    extend: {
+      colors: {
+        primary: '#cae00d',
+        'primary-accent': '#e5f086',
+        secondary: '#feb526',
+        'secondary-accent': '#ffd03a',
+        neutral: '#f9f8d0',
+      },
+      textColor: {
+        'primary': '#2a2a2a',
+        'secondary': '#ffed4a',
+        'danger': '#e3342f',
+      }
+    },
   },
   variants: {
     backgroundColor: ['disabled'],
