@@ -8,9 +8,9 @@ import * as free from './free_monad';
 import { registerStaticInterpretor } from './sop';
 
 import { addSop } from './sop';
-import { goToGrid } from './grid/grid';
 import { goToItem, goToItemCreation } from './item/item';
 import { goToSettingPage } from './setting/setting';
+import { goToHome } from './view/home';
 
 const Navigation = daggy.taggedSum('Navigation', {
   Show: ['path', 'params'],
@@ -30,7 +30,7 @@ const nagivationToFuture = (p) =>
         }
 
         resolve(newPath);
-        return () => {};
+        return () => { };
       }),
   });
 
@@ -44,14 +44,14 @@ const itemCreatePath = '/item';
 const itemPath = '/item/:itemId';
 const settingPath = '/setting';
 
-const setGridUrl = () => setUrl(gridPath);
+const setHomeUrl = () => setUrl(gridPath);
 const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
 const setItemCreationUrl = () => setUrl('/item');
 const setSettingUrl = () => setUrl(settingPath);
 
 function start() {
   page('/', () => {
-    addSop(() => goToGrid());
+    addSop(() => goToHome());
   });
 
   page(itemCreatePath, (ctx) => {
@@ -73,4 +73,4 @@ function start() {
   page();
 }
 
-export { start, setGridUrl, setItemUrl, setItemCreationUrl, setSettingUrl };
+export { start, setHomeUrl, setItemUrl, setItemCreationUrl, setSettingUrl };

@@ -2,11 +2,11 @@ import * as R from 'ramda';
 import { cleanUp, destroy } from '../database';
 
 import * as free from '../free_monad';
-import { goToGrid } from '../grid/grid';
 import { setRef } from '../ref';
 import { setSettingUrl } from '../router';
 import { addSop } from '../sop';
 import { reload } from '../utils';
+import { goToHome } from '../view/home';
 import { viewMainPage } from '../view/view_store';
 import { sync } from './backup';
 
@@ -36,7 +36,7 @@ const goToSettingPage = () =>
     setRef(settingStore.performSyncStorage, (code) =>
       addSop(() => performSyncStorage(code))
     ),
-    setRef(settingStore.backFromSettingPage, () => addSop(() => goToGrid())),
+    setRef(settingStore.backFromSettingPage, () => addSop(() => goToHome())),
   ]);
 
 export { goToSettingPage };

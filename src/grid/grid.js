@@ -2,14 +2,13 @@ import * as R from 'ramda';
 
 import * as free from '../free_monad';
 import { setRef } from '../ref';
-import { setGridUrl } from '../router';
 import { addSop } from '../sop';
-import { viewMainPage } from '../view/view_store';
 
-import Grid, * as gridStore from './Grid.svelte';
+import * as gridStore from './Grid.svelte';
 import * as filterStore from './Filter.svelte';
 
-import { goToItem, goToItemCreation } from '../item/item';
+
+import { goToItem } from '../item/item';
 import { alldocs } from '../database';
 import { tapLog } from '../utils';
 import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
@@ -21,7 +20,6 @@ import {
   setupTagFilter,
   updateSavedTagFilter,
 } from './filter';
-import { goToSettingPage } from '../setting/setting';
 
 const setup = () => setupTagFilter();
 
@@ -99,13 +97,9 @@ const presentFilter = () =>
 const presentFilterAndItem = () =>
   free.sequence([presentFilter(), presentItems()]);
 
-const goToGrid = () =>
+const presentGrid = () =>
   free.sequence([
-    viewMainPage(Grid),
-    setGridUrl(),
     presentFilterAndItem(),
-    setRef(gridStore.goToCreateItem, () => addSop(() => goToItemCreation())),
-    setRef(gridStore.goToSetting, () => addSop(() => goToSettingPage())),
   ]);
 
-export { goToGrid, setup as gridSetup };
+export { presentGrid, setup as gridSetup };

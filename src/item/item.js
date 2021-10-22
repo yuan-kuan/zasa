@@ -25,7 +25,7 @@ import {
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from '../grid/filter';
-import { goToGrid } from '../grid/grid';
+import { goToHome } from '../view/home';
 
 const performCreateItem = (name, blob) =>
   free
@@ -46,7 +46,7 @@ const goToItemCreation = () =>
   free.sequence([
     viewMainPage(ItemCreation),
     setItemCreationUrl(),
-    setRef(itemCreationStore.backFromItemPage, () => addSop(() => goToGrid())),
+    setRef(itemCreationStore.backFromItemPage, () => addSop(() => goToHome())),
     setRef(itemCreationStore.performSave, (name, photoId) =>
       addSop(() => performCreateItem(name, photoId))
     ),
@@ -211,7 +211,7 @@ const goToItem = (itemId) =>
     setRef(itemStore.performEditPhoto, (blob) =>
       addSop(() => performEditPhoto(itemId, blob))
     ),
-    setRef(itemStore.backFromItemPage, () => addSop(() => goToGrid())),
+    setRef(itemStore.backFromItemPage, () => addSop(() => goToHome())),
     presentItem(itemId),
     presentBatches(itemId),
     presentTags(itemId),
