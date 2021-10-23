@@ -54,13 +54,13 @@ const presentFilteredItem = (filterTags) =>
     );
 
 const performAddTagFilter = (tag) =>
-  free.sequence([updateSavedTagFilter(R.append(tag)), presentFilterAndItem()]);
+  free.sequence([updateSavedTagFilter(R.append(tag)), presentGrid()]);
 
 
 const performRemoveTagFilter = (tag) =>
   free.sequence([
     updateSavedTagFilter(R.without([tag])),
-    presentFilterAndItem(),
+    presentGrid(),
   ]);
 
 const presentTagSelection = (selectedTags) =>
@@ -86,20 +86,14 @@ const presentTagSelection = (selectedTags) =>
       ])
     );
 
-const presentItems = () =>
-  getSavedTagFilter().chain(
-    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem)
-  );
-
-const presentFilter = () =>
-  getSavedTagFilter().chain(presentTagSelection);
-
-const presentFilterAndItem = () =>
-  free.sequence([presentFilter(), presentItems()]);
+const presentItems = (savedTags) =>
+  free.of(savedTags).chain(
+    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem))
 
 const presentGrid = () =>
-  free.sequence([
-    presentFilterAndItem(),
-  ]);
+  getSavedTagFilter().chain(free.parallelConverge([
+    presentTagSelection,
+    presentItems
+  ]));
 
 export { presentGrid, setup as gridSetup };
