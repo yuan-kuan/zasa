@@ -5,7 +5,7 @@ import { setRef } from '../ref';
 import { addSop } from '../sop';
 
 import * as gridStore from './Grid.svelte';
-import * as filterStore from './Filter.svelte';
+import { FilterStores } from '../stores';
 
 
 import { goToItem } from '../item/item';
@@ -67,12 +67,12 @@ const presentTagSelection = (selectedTags) =>
   getAllTags()
     .chain((tags) =>
       free.sequence([
-        setRef(filterStore.filteringTags, selectedTags),
-        setRef(filterStore.allTags, tags),
-        setRef(filterStore.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
+        setRef(FilterStores.tags, selectedTags),
+        setRef(FilterStores.allTags, tags),
+        setRef(FilterStores.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
 
         setRef(
-          filterStore.performToggleTagFilter,
+          FilterStores.performToggleTagFilter,
           R.map(
             (tag) =>
               R.ifElse(
