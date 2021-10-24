@@ -11,6 +11,8 @@
 <script>
   import { slide } from 'svelte/transition';
 
+  import BatchCounter from './BatchCounter.svelte';
+
   const toDateString = (batch) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(batch.expiry).toLocaleDateString('en-GB', options);
@@ -71,29 +73,11 @@
           >
         </div>
       {:else}
-        <div class="h-10 w-32">
-          <div
-            class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1"
-          >
-            <button
-              class=" bg-transparent text-secondary font-semibold h-full w-8 rounded-l cursor-pointer"
-              on:click={() => decrementBatchCount(index)}
-            >
-              <span class="m-auto text-2xl">−</span>
-            </button>
-            <span
-              class="outline-none focus:outline-none text-center w-8 bg-transparent font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center justify-center"
-            >
-              {batch.count}
-            </span>
-            <button
-              class="bg-transparent text-secondary font-semibold h-full w-8 rounded-r cursor-pointer"
-              on:click={() => incrementBatchCount(index)}
-            >
-              <span class="m-auto text-2xl">+</span>
-            </button>
-          </div>
-        </div>
+        <BatchCounter
+          count={batch.count}
+          on:decrement={() => decrementBatchCount(index)}
+          on:increment={() => incrementBatchCount(index)}
+        />
       {/if}
     </div>
   {/each}
@@ -109,29 +93,7 @@
       />
     </div>
 
-    <div class="h-10 w-32">
-      <div
-        class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1"
-      >
-        <button
-          class=" bg-transparent text-gray-200 font-semibold h-full w-8 rounded-l cursor-pointer"
-          disabled
-        >
-          <span class="m-auto text-2xl">−</span>
-        </button>
-        <span
-          class="outline-none focus:outline-none text-center w-8 bg-transparent text-gray-200 font-semibold text-md  md:text-basecursor-default flex items-center justify-center"
-        >
-          0
-        </span>
-        <button
-          class="bg-transparent text-gray-200 font-semibold h-full w-8 rounded-r cursor-pointer"
-          disabled
-        >
-          <span class="m-auto text-2xl">+</span>
-        </button>
-      </div>
-    </div>
+    <BatchCounter disabled={true} />
   </div>
 </div>
 
