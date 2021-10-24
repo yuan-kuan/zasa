@@ -9,24 +9,44 @@
 </script>
 
 <script>
+  import { Datepicker } from 'svelte-calendar';
   import { slide } from 'svelte/transition';
 
   import BatchCounter from './BatchCounter.svelte';
+  import { onMount } from 'svelte';
+
+  const theme = {
+    calendar: {
+      colors: {
+        background: {
+          highlight: '#ffd03a',
+        },
+      },
+    },
+  };
 
   const toDateString = (batch) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(batch.expiry).toLocaleDateString('en-GB', options);
   };
 
-  let workingDate;
+  let store;
+  onMount(() => {
+    store.subscribe((v) => {
+      if (v.hasChosen) {
+        addNewBatch(v.selected);
+        v.hasChosen = false;
+        store.set(v);
+      }
+    });
+  });
+
   let lastAddedDate;
 
-  const addNewBatch = () => {
+  const addNewBatch = (date) => {
     // <input type="date"> return a FFFF-MM-DD string, convert it to date
-    lastAddedDate = new Date(workingDate);
+    lastAddedDate = new Date(date);
     $performAddBatch(lastAddedDate, 1);
-
-    workingDate = undefined;
   };
 
   const newlyAdded = (batch) => batch.expiry == lastAddedDate?.valueOf();
@@ -84,13 +104,19 @@
 
   <div class="grid grid-cols-2 py-2 items-center new-batch-order">
     <div class="pt-2 ">
-      <input
-        type="date"
-        class="btn bg-primary-accent text-right text-primary "
-        placeholder="yyyy-mm-dd"
-        bind:value={workingDate}
-        on:change={addNewBatch}
-      />
+      <Datepicker bind:store {theme} let:key let:send let:receive>
+        <button
+          class="btn bg-primary-accent text-right text-primary "
+          in:receive|local={{ key }}
+          out:send|local={{ key }}
+        >
+          {#if $store?.hasChosen}
+            Date Chosen. THis is a bug.
+          {:else}
+            Pick a Date
+          {/if}
+        </button>
+      </Datepicker>
     </div>
 
     <BatchCounter disabled={true} />
