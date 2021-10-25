@@ -6,6 +6,8 @@
   import pica from 'pica';
   import ImageBlobReduce from 'image-blob-reduce';
 
+  import BackHeader from '../../view/BackHeader.svelte';
+
   export let photoComplete;
   export let photoCancel;
 
@@ -61,11 +63,12 @@
   <div
     class="modal-container bg-white fixed right-0 w-full h-full md:max-w-md lg:max-w-lg xl:max-w-4xl mx-auto rounded shadow-lg z-50 overflow-y-auto"
   >
-    <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
+    <BackHeader back={photoCancel} />
+    <!-- <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
       <button class="ml-2 p-2 font-light" on:click={photoCancel}
         >&#60; Back</button
       >
-    </header>
+    </header> -->
 
     <input
       style="display: none"

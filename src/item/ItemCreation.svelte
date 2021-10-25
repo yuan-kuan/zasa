@@ -8,8 +8,9 @@
 <script>
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
-
   import { onDestroy } from 'svelte';
+
+  import Backheader from '../view/BackHeader.svelte';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
 
   let workingName;
@@ -48,11 +49,7 @@
   class="container md:mx-auto"
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
-  <header class="sticky top-0 w-full z-10">
-    <button class="ml-2 p-2 font-light" on:click={$backFromItemPage}
-      >&#60; Back</button
-    >
-  </header>
+  <Backheader />
 
   <div
     class="pt-1 w-64 mx-auto relative"

@@ -14,6 +14,7 @@
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
 
+  import Backheader from '../view/BackHeader.svelte';
   import PhotoEdit from './photo-edit/PhotoEdit.svelte';
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
@@ -71,12 +72,7 @@
   class="container md:mx-auto text-primary "
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
-  <header class="sticky top-0 w-full z-10">
-    <button
-      class="ml-2 p-2 font-light text-primary "
-      on:click={$backFromItemPage}>&#60; Back</button
-    >
-  </header>
+  <Backheader />
 
   <div
     class="pt-1 w-64 mx-auto relative"

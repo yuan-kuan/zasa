@@ -14,11 +14,10 @@ const setupHome = () => free.sequence([
   //TODO: set this static NAV closure in ItemCration/ setting module instead?
   setRef(Nav.goToCreateItem, () => addSop(() => goToItemCreation())),
   setRef(Nav.goToSetting, () => addSop(() => goToSettingPage())),
+  setRef(Nav.backToHome, () => addSop(() => goToHome())),
 ]);
 
 const goToHome = () => free.sequence([
-  // TODO: Do not call setup here, this trigger lot of time
-  setupHome(),
   viewMainPage(Home),
   setHomeUrl(),
   presentGrid(),

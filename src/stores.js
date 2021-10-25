@@ -2,7 +2,8 @@ import { createRef } from './ref';
 
 export const Nav = {
   goToCreateItem: createRef(),
-  goToSetting: createRef()
+  goToSetting: createRef(),
+  backToHome: createRef()
 }
 
 export const FilterStores = {
