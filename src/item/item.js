@@ -9,7 +9,7 @@ import { viewMainPage } from '../view/view_store';
 import Item, * as itemStore from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
 import * as tagStore from './Tags.svelte';
-import * as batchStore from './Batches.svelte';
+import { BatchStores } from '../stores';
 import * as itemCreationStore from './ItemCreation.svelte';
 import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
@@ -111,10 +111,10 @@ const presentBatches = (itemId) =>
     .chain(alldocs)
     .chain((batches) =>
       free.sequence([
-        setRef(batchStore.batches, batches),
-        setRef(batchStore.performBatchInc, makeBatchAdd(itemId, 1, batches)),
-        setRef(batchStore.performBatchDec, makeBatchAdd(itemId, -1, batches)),
-        setRef(batchStore.performDeleteBatch, makeDeleteBatch(itemId, batches)),
+        setRef(BatchStores.batches, batches),
+        setRef(BatchStores.performBatchInc, makeBatchAdd(itemId, 1, batches)),
+        setRef(BatchStores.performBatchDec, makeBatchAdd(itemId, -1, batches)),
+        setRef(BatchStores.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );
 
@@ -202,7 +202,7 @@ const goToItem = (itemId) =>
     setRef(itemStore.performEditName, (newName) =>
       addSop(() => performEditName(itemId, newName))
     ),
-    setRef(batchStore.performAddBatch, (expiryDate, count) =>
+    setRef(BatchStores.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
     setRef(tagStore.performAddNewTag, (tag) =>

@@ -1,18 +1,17 @@
-<script context="module">
-  import { createRef } from '../ref';
-
-  export const batches = createRef([]);
-  export const performAddBatch = createRef();
-  export const performBatchInc = createRef([]);
-  export const performBatchDec = createRef([]);
-  export const performDeleteBatch = createRef([]);
-</script>
-
 <script>
   import { slide } from 'svelte/transition';
+  import { BatchStores } from '../stores';
 
   import BatchCreation from './BatchCreation.svelte';
   import Batch from './Batch.svelte';
+
+  const {
+    batches,
+    performAddBatch,
+    performBatchInc,
+    performBatchDec,
+    performDeleteBatch,
+  } = BatchStores;
 
   let lastAddedDate;
 

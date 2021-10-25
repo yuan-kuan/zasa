@@ -11,3 +11,11 @@ export const FilterStores = {
   allTagsSelected: createRef([]),
   performToggleTagFilter: createRef([]),
 }
+
+export const BatchStores = {
+  batches: createRef([]),
+  performAddBatch: createRef(),
+  performBatchInc: createRef([]),
+  performBatchDec: createRef([]),
+  performDeleteBatch: createRef([]),
+}
