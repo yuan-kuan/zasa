@@ -8,8 +8,8 @@
 
   import BackHeader from '../../view/BackHeader.svelte';
 
-  export let photoComplete;
-  export let photoCancel;
+  export let photoCompleted;
+  export let photoCancelled;
 
   onMount(() => {
     startCamera();
@@ -36,7 +36,7 @@
     isCropping = true;
     const blob = await getCroppedImg(image, pixelCrop, mimeType);
     isCropping = false;
-    photoComplete(blob);
+    photoCompleted(blob);
   }
 
   let cameraInput;
@@ -57,18 +57,13 @@
 >
   <div
     class="modal-overlay absolute w-full h-full bg-gray-900 opacity-25"
-    on:click={photoCancel}
+    on:click={photoCancelled}
   />
 
   <div
     class="modal-container bg-white fixed right-0 w-full h-full md:max-w-md lg:max-w-lg xl:max-w-4xl mx-auto rounded shadow-lg z-50 overflow-y-auto"
   >
-    <BackHeader back={photoCancel} />
-    <!-- <header class="sticky top-0 bg-gray-200 bg-opacity-50 w-full z-10">
-      <button class="ml-2 p-2 font-light" on:click={photoCancel}
-        >&#60; Back</button
-      >
-    </header> -->
+    <BackHeader back={photoCancelled} />
 
     <input
       style="display: none"
