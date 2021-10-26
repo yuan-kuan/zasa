@@ -12,6 +12,7 @@
   import { scale, fade } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
 
+  import Modal from '../view/Modal.svelte';
   import Tag from '../grid/Tag.svelte';
 
   let isEditingTag = false;
@@ -61,17 +62,7 @@
 </div>
 
 {#if isEditingTag}
-  <!-- Modal -->
-  <div
-    class="opacity-100 fixed z-30 w-full h-full top-0 right-0 flex items-center justify-center"
-  >
-    <!-- Modal background to get close click -->
-    <div
-      class="fixed bottom-0 right-0 w-screen h-screen bg-gray-900 opacity-10"
-      transition:fade={{ duration: 500 }}
-      on:click={closeTagSelection}
-    />
-
+  <Modal on:click={closeTagSelection}>
     <div
       class="fixed mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
       transition:scale={{ delay: 0, duration: 500, easing: circInOut }}
@@ -145,5 +136,5 @@
         </svg>
       </button> -->
     </div>
-  </div>
+  </Modal>
 {/if}
