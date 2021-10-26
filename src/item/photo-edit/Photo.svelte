@@ -1,19 +1,41 @@
 <script>
+  import { onDestroy } from 'svelte';
+  import { photoBlob } from '../Item.svelte';
+
   import PhotoEdit from './PhotoEdit.svelte';
 
-  export let photoUrl;
-  export let photoCompleted;
+  export let photoChanged;
 
   let isTakingPhoto = false;
+  let photoUrl;
 
-  const onPhotoCompleted = (blob) => {
+  const updatePhotoUrl = (blob) => {
+    if (photoUrl != undefined) {
+      URL.revokeObjectURL(photoUrl);
+      photoUrl = undefined;
+    }
+
+    if (blob) {
+      photoUrl = URL.createObjectURL(blob);
+    }
+  };
+
+  photoBlob.subscribe(updatePhotoUrl);
+
+  const onPhotoChanged = (blob) => {
     isTakingPhoto = false;
-    photoCompleted(blob);
+    updatePhotoUrl(blob);
+    photoChanged(blob);
   };
 
   const onPhotoCancelled = () => {
     isTakingPhoto = false;
   };
+
+  onDestroy(() => {
+    URL.revokeObjectURL(photoUrl);
+    photoUrl = undefined;
+  });
 </script>
 
 <div class="pt-1 w-64 mx-auto relative" on:click={() => (isTakingPhoto = true)}>
@@ -31,8 +53,5 @@
 </div>
 
 {#if isTakingPhoto}
-  <PhotoEdit
-    photoCompleted={onPhotoCompleted}
-    photoCancelled={onPhotoCancelled}
-  />
+  <PhotoEdit photoChanged={onPhotoChanged} photoCancelled={onPhotoCancelled} />
 {/if}

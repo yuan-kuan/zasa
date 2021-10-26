@@ -2,7 +2,7 @@ import * as R from 'ramda';
 
 import * as free from '../free_monad';
 import { addSop } from '../sop';
-import { setRef } from '../ref';
+import { resetRef, setRef } from '../ref';
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { viewMainPage } from '../view/view_store';
 
@@ -46,6 +46,7 @@ const goToItemCreation = () =>
   free.sequence([
     viewMainPage(ItemCreation),
     setItemCreationUrl(),
+    resetRef(itemStore.photoBlob),
     setRef(itemCreationStore.backFromItemPage, () => addSop(() => goToHome())),
     setRef(itemCreationStore.performSave, (name, photoId) =>
       addSop(() => performCreateItem(name, photoId))

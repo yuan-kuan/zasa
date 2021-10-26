@@ -8,7 +8,6 @@
 <script>
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
-  import { onDestroy } from 'svelte';
 
   import Backheader from '../view/BackHeader.svelte';
   import Photo from './photo-edit/Photo.svelte';
@@ -25,20 +24,13 @@
   };
 
   let blob;
-  let photoUrl;
-
-  const photoCompleted = (v) => {
+  const photoChanged = (v) => {
     blob = v;
-    photoUrl = URL.createObjectURL(blob);
   };
 
   const saveItem = () => {
     $performSave(workingName, blob);
   };
-
-  onDestroy(() => {
-    URL.revokeObjectURL(photoUrl);
-  });
 </script>
 
 <div
@@ -47,7 +39,7 @@
 >
   <Backheader />
 
-  <Photo {photoUrl} {photoCompleted} />
+  <Photo {photoChanged} />
 
   <div class="flex flex-col items-center pt-6">
     <div class="relative flex p-2 pt-6 pb-4 mx-4 flex-initial">

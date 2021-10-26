@@ -46,19 +46,7 @@
     }
   };
 
-  let photoUrl;
-  photoBlob.subscribe((value) => {
-    if (photoUrl != undefined) {
-      URL.revokeObjectURL(photoUrl);
-      photoUrl = undefined;
-    }
-
-    if (value) {
-      photoUrl = URL.createObjectURL(value);
-    }
-  });
-
-  const photoCompleted = (blob) => {
+  const photoChanged = (blob) => {
     $performEditPhoto(blob);
   };
 </script>
@@ -69,7 +57,7 @@
 >
   <Backheader />
 
-  <Photo {photoUrl} {photoCompleted} />
+  <Photo {photoChanged} />
 
   <div class="mx-auto relative flex justify-center p-2 pt-6 pb-4">
     {#if isEditingName}

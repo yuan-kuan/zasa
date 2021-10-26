@@ -8,7 +8,7 @@
 
   import BackHeader from '../../view/BackHeader.svelte';
 
-  export let photoCompleted;
+  export let photoChanged;
   export let photoCancelled;
 
   onMount(() => {
@@ -36,7 +36,7 @@
     isCropping = true;
     const blob = await getCroppedImg(image, pixelCrop, mimeType);
     isCropping = false;
-    photoCompleted(blob);
+    photoChanged(blob);
   }
 
   let cameraInput;
