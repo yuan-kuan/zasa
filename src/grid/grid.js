@@ -4,10 +4,7 @@ import * as free from '../free_monad';
 import { setRef } from '../ref';
 import { addSop } from '../sop';
 
-import * as gridStore from './Grid.svelte';
-import { FilterStores } from '../stores';
-
-
+import { FilterStores, GridStores } from '../stores';
 import { goToItem } from '../item/item';
 import { alldocs } from '../database';
 import { tapLog } from '../utils';
@@ -27,7 +24,7 @@ const presentGoToItems = (itemWithBlobs) =>
   free
     .of(itemWithBlobs) //
     .map(R.map((ivb) => () => addSop(() => goToItem(ivb.itemId))))
-    .chain(setRef(gridStore.goToItem));
+    .chain(setRef(GridStores.goToItem));
 
 const presentAllItems = (_) =>
   free
@@ -37,9 +34,9 @@ const presentAllItems = (_) =>
     .map(R.map(docToItemWithBlob))
     .chain((items) =>
       free.sequence([
-        setRef(gridStore.items, items),
+        setRef(GridStores.items, items),
         free.sequence([
-          setRef(gridStore.items, items),
+          setRef(GridStores.items, items),
           presentGoToItems(items),
         ]),
       ])
@@ -50,7 +47,7 @@ const presentFilteredItem = (filterTags) =>
     .of(filterTags)
     .chain(getItemsWithTags)
     .chain((items) =>
-      free.sequence([setRef(gridStore.items, items), presentGoToItems(items)])
+      free.sequence([setRef(GridStores.items, items), presentGoToItems(items)])
     );
 
 const performAddTagFilter = (tag) =>

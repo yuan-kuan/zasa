@@ -1,17 +1,13 @@
-<script context="module">
-  import { createRef } from '../ref';
-
-  export const performSave = createRef();
-  export const backFromItemPage = createRef();
-</script>
-
 <script>
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
+  import { ItemStores } from '../stores';
 
   import Backheader from '../view/BackHeader.svelte';
   import Photo from './photo-edit/Photo.svelte';
   import NameInput from './NameInput.svelte';
+
+  const { performSave } = ItemStores;
 
   let blob;
   const photoChanged = (v) => {

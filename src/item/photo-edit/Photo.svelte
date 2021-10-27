@@ -1,8 +1,10 @@
 <script>
   import { onDestroy } from 'svelte';
-  import { photoBlob } from '../Item.svelte';
+  import { ItemStores } from '../../stores';
 
   import PhotoEdit from './PhotoEdit.svelte';
+
+  const { photoBlob } = ItemStores;
 
   export let photoChanged;
 

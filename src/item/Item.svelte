@@ -1,24 +1,16 @@
-<script context="module">
-  import { createRef } from '../ref';
-  export const name = createRef();
-  export const nameError = createRef();
-  export const photoBlob = createRef();
-  export const editingPhotoBlob = createRef();
-  export const performEditName = createRef();
-  export const performEditPhoto = createRef();
-  export const backFromEditPhoto = createRef();
-  export const backFromItemPage = createRef();
-</script>
-
 <script>
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
+
+  import { ItemStores } from '../stores';
 
   import Backheader from '../view/BackHeader.svelte';
   import Photo from './photo-edit/Photo.svelte';
   import NameInput from './NameInput.svelte';
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
+
+  const { name, performEditName, performEditPhoto } = ItemStores;
 
   const editName = (newName) => {
     $performEditName(newName);

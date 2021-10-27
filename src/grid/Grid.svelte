@@ -1,8 +1,6 @@
-<script context="module">
-  import { createRef } from '../ref';
-
-  export const items = createRef([]);
-  export const goToItem = createRef([]);
+<script>
+  import { GridStores } from '../stores';
+  const { items, goToItem } = GridStores;
 </script>
 
 <!-- Grid -->
