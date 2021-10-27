@@ -1,6 +1,9 @@
 <script>
-  import { tags } from './Tags.svelte';
+  import { TagStores } from '../stores';
+
   import Tag from '../grid/Tag.svelte';
+
+  const { tags } = TagStores;
 </script>
 
 <div class="flex flex-wrap justify-center items-start">

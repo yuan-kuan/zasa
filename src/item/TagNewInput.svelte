@@ -1,5 +1,7 @@
 <script>
-  import { performAddNewTag } from './Tags.svelte';
+  import { TagStores } from '../stores';
+
+  const { performAddNewTag } = TagStores;
 
   let workingTag;
   const addNewTag = () => {

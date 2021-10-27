@@ -13,6 +13,14 @@ export const FilterStores = {
   performToggleTagFilter: createRef([]),
 }
 
+export const TagStores = {
+  allTags: createRef([]),
+  allTagsSelected: createRef([]),
+  performToggleTagFilter: createRef([]),
+  tags: createRef([]),
+  performAddNewTag: createRef(),
+}
+
 export const BatchStores = {
   batches: createRef([]),
   performAddBatch: createRef(),

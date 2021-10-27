@@ -1,9 +1,6 @@
 <script>
-  import {
-    allTags,
-    allTagsSelected,
-    performToggleTagFilter,
-  } from './Tags.svelte';
+  import { TagStores } from '../stores';
+  const { allTags, allTagsSelected, performToggleTagFilter } = TagStores;
 
   import Tag from '../grid/Tag.svelte';
 </script>

@@ -1,13 +1,3 @@
-<script context="module">
-  import { createRef } from '../ref';
-
-  export const allTags = createRef([]);
-  export const allTagsSelected = createRef([]);
-  export const performToggleTagFilter = createRef([]);
-  export const tags = createRef([]);
-  export const performAddNewTag = createRef();
-</script>
-
 <script>
   import { scale } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';

@@ -8,8 +8,7 @@ import { viewMainPage } from '../view/view_store';
 
 import Item, * as itemStore from './Item.svelte';
 import ItemCreation from './ItemCreation.svelte';
-import * as tagStore from './Tags.svelte';
-import { BatchStores } from '../stores';
+import { BatchStores, TagStores } from '../stores';
 import * as itemCreationStore from './ItemCreation.svelte';
 import { attach, put, get, alldocs, getWithAttachment } from '../database';
 import {
@@ -139,12 +138,12 @@ const presentTagSelections = (itemId, selectedTags) =>
   getAllTags()
     .chain((tags) =>
       free.sequence([
-        setRef(tagStore.tags, selectedTags),
-        setRef(tagStore.allTags, tags),
-        setRef(tagStore.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
+        setRef(TagStores.tags, selectedTags),
+        setRef(TagStores.allTags, tags),
+        setRef(TagStores.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
 
         setRef(
-          tagStore.performToggleTagFilter,
+          TagStores.performToggleTagFilter,
           R.map(
             (tag) =>
               R.ifElse(
@@ -206,7 +205,7 @@ const goToItem = (itemId) =>
     setRef(BatchStores.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
-    setRef(tagStore.performAddNewTag, (tag) =>
+    setRef(TagStores.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))
     ),
     setRef(itemStore.performEditPhoto, (blob) =>
