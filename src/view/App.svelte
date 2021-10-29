@@ -1,5 +1,5 @@
 <script context="module">
-  import { createRef } from '../ref';
+  import { createRef } from 'fp/ref';
 
   export const primaryView = createRef(null);
   export const modalView = createRef(null);

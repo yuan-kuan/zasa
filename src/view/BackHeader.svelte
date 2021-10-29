@@ -1,5 +1,5 @@
 <script>
-  import { Nav } from '../stores';
+  import { Nav } from 'app/stores';
   const { backToHome } = Nav;
 
   export let back = $backToHome;

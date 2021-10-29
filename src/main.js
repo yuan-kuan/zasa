@@ -1,8 +1,9 @@
-import App from './view/App.svelte';
-import { start } from './router';
-import { gridSetup } from './grid/grid';
-import { addSop } from './sop';
-import { setupHome } from './view/home';
+import App from 'view/App.svelte';
+
+import { addSop } from 'fp/sop';
+import { start } from 'app/router';
+import { gridSetup } from 'app/sop/grid';
+import { setupHome } from 'app/sop/home';
 
 addSop(() => gridSetup());
 addSop(() => setupHome());

@@ -6,8 +6,8 @@ We can cut out all the extra `*_store.js` files, which mainly is to export Svelt
 
 ```js
 <script context="module">
-  import {createRef} from '../ref'; export const filteringTags = createRef([]);
-  export const tagSelections = createRef([]);
+  import {createRef} from '.fp/free_monad'; export const filteringTags =
+  createRef([]); export const tagSelections = createRef([]);
 </script>
 ```
 

@@ -14,11 +14,9 @@ const FILES_TO_CACHE = [
 ];
 
 self.addEventListener('install', (evt) => {
-  console.log('[ServiceWorker] Install');
 
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Pre-caching offline page');
       return cache.addAll(FILES_TO_CACHE);
     })
   );
@@ -28,12 +26,10 @@ self.addEventListener('install', (evt) => {
 
 self.addEventListener('activate', (evt) => {
   // Remove previous cached data from disk.
-  console.log('[ServiceWorker] Activate');
   evt.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(keyList.map((key) => {
         if (key !== CACHE_NAME) {
-          console.log('[ServiceWorker] Removing old cache', key);
           return caches.delete(key);
         }
       }));
@@ -44,7 +40,6 @@ self.addEventListener('activate', (evt) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  console.log('[ServiceWorker] Fetch', event.request);
 
   event.respondWith(
     fetch(event.request)
