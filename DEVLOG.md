@@ -1,29 +1,12 @@
+## Part 11
+
+### Compenantize Svelte component
+
+### Project Organization
+
 ## Part 10
 
-### Declaring Svelte Stores in Svelte Component
-
-We can cut out all the extra `*_store.js` files, which mainly is to export Svelte Stores for both Svelte Component and the functional core (`.js`), by defining these Svelte Store in Svelte Component file (\*.svelte). This is possible with Svelte context sharing method:
-
-```js
-<script context="module">
-  import {createRef} from '.fp/free_monad'; export const filteringTags =
-  createRef([]); export const tagSelections = createRef([]);
-</script>
-```
-
-After this replacement, there will be no changes to our Svelte Component's template codes at all.
-
-The only change we need to do is in the functional core. We used to use namespace import for these:
-
-```js
-import * as gridStore from './grid_store';
-```
-
-We will retain using the namespace import, but they will be coming from the `.svelte` file now:
-
-```js
-import Grid, * as gridStore from './Grid.svelte';
-```
+### ~~Declaring Svelte Stores in Svelte Component~~
 
 ## Part 9
 
