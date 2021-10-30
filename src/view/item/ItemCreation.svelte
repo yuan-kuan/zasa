@@ -1,13 +1,14 @@
 <script>
   import { slide } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
-  import { ItemStores } from 'app/stores';
+  import { Nav, ItemStores } from 'app/stores';
 
   import Backheader from 'view/BackHeader.svelte';
   import Photo from './photo-edit/Photo.svelte';
   import NameInput from './NameInput.svelte';
 
   const { performSave } = ItemStores;
+  const { backToHome } = Nav;
 
   let blob;
   const photoChanged = (v) => {
@@ -17,6 +18,8 @@
   const saveItem = (newName) => {
     $performSave(newName, blob);
   };
+
+  const cancelled = $backToHome;
 </script>
 
 <div
@@ -25,5 +28,5 @@
 >
   <Backheader />
   <Photo {photoChanged} />
-  <NameInput isEditingName={true} editName={saveItem} />
+  <NameInput isEditingName={true} editName={saveItem} {cancelled} />
 </div>

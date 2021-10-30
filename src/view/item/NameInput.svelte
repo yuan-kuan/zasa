@@ -2,6 +2,7 @@
   export let name = '';
   export let isEditingName = false;
   export let editName;
+  export let cancelled = () => {};
 
   let workingName;
   $: preventEditName =
@@ -14,13 +15,19 @@
 
   const onEditName = () => {
     isEditingName = false;
-    editName(workingName);
+    if (!preventEditName) {
+      editName(workingName);
+    } else {
+      cancelled();
+    }
   };
 
   const nameKeyDown = (e) => {
     if (e.key == 'Enter') {
       if (!preventEditName) {
         editName(workingName);
+      } else {
+        cancelled();
       }
       isEditingName = false;
       e.preventDefault();
@@ -32,7 +39,7 @@
   {#if isEditingName}
     <!-- New tag input -->
     <input
-      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center text-primary "
+      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 focus:border-opacity-40 text-center text-primary "
       type="text"
       placeholder="Name (required)"
       autofocus
@@ -43,21 +50,23 @@
     <!-- Add button -->
     <button
       class="px-4 py-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
-      disabled={preventEditName}
-      on:click={onEditName}>Save</button
+      class:bg-primary={!preventEditName}
+      class:bg-neutral={preventEditName}
+      on:click={onEditName}>{preventEditName ? 'Cancel' : 'Done'}</button
     >
   {:else}
     <!-- New tag input -->
     <input
-      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center font-semibold text-primary "
+      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-opacity-75 border-gray-200 text-center font-semibold text-primary "
       type="text"
       value={name}
+      on:click={startEditName}
       readonly
     />
 
     <!-- Add button -->
     <button
-      class="px-4 py-2 rounded-r-lg bg-white font-bold uppercase border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200 text-primary"
+      class="px-4 py-2 rounded-r-lg bg-white font-bold uppercase border-t border-b border-r border-opacity-75 border-gray-200 disabled:cursor-not-allowed disabled:bg-gray-200 text-primary"
       on:click={startEditName}
     >
       <svg class="fill-current w-5 h-5" viewBox="0 0 20 20">

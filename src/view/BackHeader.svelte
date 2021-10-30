@@ -5,7 +5,7 @@
   const { backToHome } = Nav;
 
   export let back = $backToHome;
-  export let actions;
+  export let actions = null;
 </script>
 
 <header class="sticky top-0 w-full z-10 flex justify-between">
