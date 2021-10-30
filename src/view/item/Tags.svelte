@@ -23,6 +23,12 @@
     >
       <TagNewInput />
       <TagCloud />
+
+      <div class="my-1 mx-10 border-t" />
+      <button
+        class="font-light text-primary underline place-self-end"
+        on:click={closeTagSelection}>close</button
+      >
     </div>
   </Modal>
 {/if}
