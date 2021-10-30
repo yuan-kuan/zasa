@@ -10,6 +10,7 @@ const L = {
   type: R.lensProp('type'),
   count: R.lensProp('count'),
   tags: R.lensProp('tags'),
+  deleted: R.lensProp('_deleted')
 };
 
 const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');

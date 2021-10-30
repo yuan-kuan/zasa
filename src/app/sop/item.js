@@ -24,6 +24,7 @@ import {
 import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from './filter';
+import { goToHome } from './home';
 
 const performCreateItem = (name, blob) =>
   free
@@ -50,14 +51,18 @@ const goToItemCreation = () =>
     ),
   ]);
 
+const performDeleteItem = (itemId) =>
+  free.of(itemId) //
+    .chain(get)
+    .map(R.set(ItemL.deleted, true))
+    .chain(put)
+    .chain(goToHome);
+
 const performEditPhoto = (itemId, blob) =>
   free
     .of(itemId) //
-    .map(tapLog(`blob is ${blob}`))
     .chain(get)
-    .map(tapLog('item doc before attach'))
     .chain((doc) => attach(doc, `image`, blob))
-    .map(tapLog('attached'))
     .chain((_) => goToItem(itemId));
 
 const performEditName = (itemId, name) =>
@@ -162,14 +167,7 @@ const presentItemTags = (itemDoc) =>
     .map(R.defaultTo([]))
     .chain((tags) =>
       free.sequence([
-        // setRef(tagStore.tags, tags),
-        // setRef(
-        //   tagStore.performRemoveTag,
-        //   R.map(
-        //     (tag) => () =>
-        //       addSop(() => performRemoveTag(R.view(ItemL.id, itemDoc), tag))
-        //   )(tags)
-        // ),
+
         presentTagSelections(R.view(ItemL.id, itemDoc), tags),
       ])
     );
@@ -208,6 +206,9 @@ const goToItem = (itemId) =>
     ),
     setRef(ItemStores.performEditPhoto, (blob) =>
       addSop(() => performEditPhoto(itemId, blob))
+    ),
+    setRef(ItemStores.performDeleteItem, () =>
+      addSop(() => performDeleteItem(itemId))
     ),
     presentItem(itemId),
     presentBatches(itemId),

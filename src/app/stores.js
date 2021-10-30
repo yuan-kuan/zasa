@@ -25,6 +25,7 @@ export const ItemStores = {
   editingPhotoBlob: createRef(),
   performEditName: createRef(),
   performEditPhoto: createRef(),
+  performDeleteItem: createRef(),
   backFromEditPhoto: createRef(),
   performSave: createRef(),
 }

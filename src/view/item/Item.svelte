@@ -10,7 +10,8 @@
   import Tags from './Tags.svelte';
   import Batches from './Batches.svelte';
 
-  const { name, performEditName, performEditPhoto } = ItemStores;
+  const { name, performEditName, performEditPhoto, performDeleteItem } =
+    ItemStores;
 
   const editName = (newName) => {
     $performEditName(newName);
@@ -34,4 +35,6 @@
   <Batches />
   <!-- Tail buffer -->
   <div class="h-20" />
+
+  <button class="btn" on:click={$performDeleteItem}>Delete</button>
 </div>
