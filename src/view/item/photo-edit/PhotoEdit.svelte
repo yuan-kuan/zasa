@@ -89,7 +89,7 @@
         {#if isCropping}
           <div>Saving Image... please wait...</div>
         {:else}
-          <button class="btn btn-blue" on:click={cropImage}>Done!</button>
+          <button class="btn btn-primary" on:click={cropImage}>Done!</button>
           <button class="btn" on:click={startCamera}>Retake Photo</button>
         {/if}
       </div>
