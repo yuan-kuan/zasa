@@ -26,7 +26,16 @@
   class="container md:mx-auto text-primary "
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
-  <Backheader />
+  <Backheader
+    actions={[
+      {
+        classes: 'btn-secondary',
+        label: 'Delete',
+        action: $performDeleteItem,
+      },
+    ]}
+  />
+
   <Photo {photoChanged} />
   <NameInput name={$name} {editName} />
   <Tags />
@@ -35,6 +44,4 @@
   <Batches />
   <!-- Tail buffer -->
   <div class="h-20" />
-
-  <button class="btn" on:click={$performDeleteItem}>Delete</button>
 </div>
