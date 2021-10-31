@@ -1,10 +1,14 @@
 import daggy from 'daggy';
 import Future from 'fluture';
 import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
 import * as R from 'ramda';
 
 import { lift } from 'fp/free_monad';
 import { registerStaticInterpretor } from 'fp/sop';
+
+// eslint-disable-next-line no-undef
+PouchDB.plugin(PouchDBFind);
 
 const pouchdb = new PouchDB('zasa-test');
 
@@ -14,11 +18,13 @@ const Database = daggy.taggedSum('Database', {
   Put: ['doc'],
   Attach: ['doc', 'filename', 'blob'],
   Query: ['index', 'options'],
+  CreateIndex: ['index'],
+  Find: ['options'],
   CleanUp: [''],
   Destroy: [''],
   Sync: ['targetUrl', 'options'],
 });
-const { Get, AllDocs, Put, Attach, Query, CleanUp, Destroy, Sync } = Database;
+const { Get, AllDocs, Put, Attach, Query, CleanUp, CreateIndex, Find, Destroy, Sync } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
@@ -72,6 +78,22 @@ const databaseToFuture = (p) =>
           .catch(reject);
         return () => { };
       }),
+    CreateIndex: (index) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .createIndex(index)
+          .then(resolve)
+          .catch(reject);
+        return () => { };
+      }),
+    Find: (options) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .find(options)
+          .then(R.compose(resolve, R.prop('docs')))
+          .catch(reject);
+        return () => { };
+      }),
 
     CleanUp: (_) =>
       Future((reject, resolve) => {
@@ -111,6 +133,8 @@ const alldocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 const query = R.curry((index, options) => lift(Query(index, options)));
+const createIndex = (index) => lift(CreateIndex(index));
+const find = (options) => lift(Find(options));
 const cleanUp = () => lift(CleanUp(null));
 const destroy = () => lift(Destroy(null));
 const sync = (targetUrl, options) => lift(Sync(targetUrl, options));
@@ -122,6 +146,8 @@ export {
   put,
   attach,
   query,
+  createIndex,
+  find,
   cleanUp,
   destroy,
   sync,

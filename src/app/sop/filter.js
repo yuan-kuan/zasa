@@ -4,7 +4,8 @@ import daggy from 'daggy';
 import { registerStaticInterpretor } from 'fp/sop';
 import * as free from 'fp/free_monad';
 
-import { put, query } from '../database';
+import { createIndex, find, put, query } from '../database';
+import { tapLog } from '../utils';
 import {
   makeMapWithKeysForDocAttachmentQueryOption,
   makeReduceByGroupQueryOption,
@@ -16,9 +17,10 @@ const Filter = daggy.taggedSum('Filter', {
   GetSavedTags: [''],
   SetSavedTags: ['tags'],
   QueryTagFilter: ['options'],
+  FindExpiringItem: ['expiry'],
   SetupTagFilter: [''],
 });
-const { GetSavedTags, SetSavedTags, QueryTagFilter, SetupTagFilter } = Filter;
+const { GetSavedTags, SetSavedTags, QueryTagFilter, FindExpiringItem, SetupTagFilter } = Filter;
 
 const L = {
   id: R.lensProp('_id'),
@@ -43,15 +45,45 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
+const makeExpiryIndexDoc = () => {
+  return {
+    index: {
+      fields: ['expiry'],
+      name: 'sort_expiry'
+    }
+  }
+}
+
+const makeSortByExpiryOptions = (expiry) => {
+  return {
+    selector: {
+      type: {
+        $eq: 'b'
+      },
+      expiry: {
+        $lt: expiry
+      }
+    },
+    sort: [
+      "expiry"
+    ]
+  };
+}
+
 const filterToFuture = (p) =>
   p.cata({
     GetSavedTags: (_) => free.interpete(kv.get([], 'filteringTags')),
     SetSavedTags: (tags) => free.interpete(kv.set('filteringTags', tags)),
     QueryTagFilter: (options) => free.interpete(query('tagFilter', options)),
+    FindExpiringItem: (expiry) => free.interpete(find(makeSortByExpiryOptions(expiry))),
     SetupTagFilter: () =>
       free.interpete(
-        put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of))
+        free.sequence([
+          put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
+          createIndex(makeExpiryIndexDoc())
+        ])
       ),
+
   });
 
 registerStaticInterpretor([Filter, filterToFuture]);
@@ -59,6 +91,7 @@ registerStaticInterpretor([Filter, filterToFuture]);
 const getSavedTagFilter = () => free.lift(GetSavedTags(null));
 const setSavedTagFilter = (tags) => free.lift(SetSavedTags(tags));
 const queryTagFilter = (options) => free.lift(QueryTagFilter(options));
+const findExpiringItem = (expiry) => free.lift(FindExpiringItem(expiry));
 const setupTagFilter = () => free.lift(SetupTagFilter(null));
 
 const updateSavedTagFilter = (modifier) =>
@@ -86,10 +119,17 @@ const getItemsWithTags = (tags) =>
     .chain(queryTagFilter)
     .map(queryResultToItem);
 
+const getItemsExpiringBefore = (expiry) =>
+  free.of(expiry) //
+    .map(tapLog('expiry number'))
+    .chain(findExpiringItem)
+    .map(tapLog('expiry items'));
+
 export {
   setupTagFilter,
   getSavedTagFilter,
   updateSavedTagFilter,
   getAllTags,
   getItemsWithTags,
+  getItemsExpiringBefore,
 };
