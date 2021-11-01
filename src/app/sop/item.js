@@ -10,7 +10,7 @@ import ItemCreation from 'view/item/ItemCreation.svelte';
 
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
-import { attach, put, get, alldocs, getWithAttachment } from '../database';
+import { attach, put, get, alldocs, getWithAttachment, bulkDocs } from '../database';
 import {
   makeItemDoc,
   L as ItemL,
@@ -51,11 +51,30 @@ const goToItemCreation = () =>
     ),
   ]);
 
-const performDeleteItem = (itemId) =>
-  free.of(itemId) //
+const findBatchesOfItem = (itemId) =>
+  free
+    .of(itemId) //
+    .map(makeGetBatchesAllDocOption)
+    .chain(alldocs);
+
+const deleteSingleDoc = (docId) =>
+  free.of(docId)
     .chain(get)
     .map(R.set(ItemL.deleted, true))
-    .chain(put)
+    .chain(put);
+
+const markDelectedDocs = (docs) =>
+  R.map(
+    R.set(ItemL.deleted, true)
+  )(docs);
+
+const performDeleteItem = (itemId) =>
+  free.parallel([
+    deleteSingleDoc(itemId),
+    findBatchesOfItem(itemId)
+      .map(markDelectedDocs)
+      .chain(bulkDocs)
+  ])
     .chain(goToHome);
 
 const performEditPhoto = (itemId, blob) =>
@@ -108,10 +127,7 @@ const makeBatchAdd = (itemId, value, batches) =>
   )(batches);
 
 const presentBatches = (itemId) =>
-  free
-    .of(itemId) //
-    .map(makeGetBatchesAllDocOption)
-    .chain(alldocs)
+  findBatchesOfItem(itemId)
     .chain((batches) =>
       free.sequence([
         setRef(BatchStores.batches, batches),

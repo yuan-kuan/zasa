@@ -16,6 +16,7 @@ const Database = daggy.taggedSum('Database', {
   Get: ['id', 'withAttachment'],
   AllDocs: ['options'],
   Put: ['doc'],
+  BulkDocs: ['docs'],
   Attach: ['doc', 'filename', 'blob'],
   Query: ['index', 'options'],
   CreateIndex: ['index'],
@@ -24,7 +25,7 @@ const Database = daggy.taggedSum('Database', {
   Destroy: [''],
   Sync: ['targetUrl', 'options'],
 });
-const { Get, AllDocs, Put, Attach, Query, CleanUp, CreateIndex, Find, Destroy, Sync } = Database;
+const { Get, AllDocs, Put, BulkDocs, Attach, Query, CleanUp, CreateIndex, Find, Destroy, Sync } = Database;
 
 const databaseToFuture = (p) =>
   p.cata({
@@ -56,6 +57,16 @@ const databaseToFuture = (p) =>
             doc._rev = rev;
             resolve(doc);
           })
+          .catch(reject);
+
+        return () => { };
+      }),
+
+    BulkDocs: (docs) =>
+      Future((reject, resolve) => {
+        pouchdb
+          .bulkDocs(docs)
+          .then(resolve)
           .catch(reject);
 
         return () => { };
@@ -131,6 +142,7 @@ const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
 const alldocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
+const bulkDocs = (docs) => lift(BulkDocs(docs));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
 const query = R.curry((index, options) => lift(Query(index, options)));
 const createIndex = (index) => lift(CreateIndex(index));
@@ -144,6 +156,7 @@ export {
   getWithAttachment,
   alldocs,
   put,
+  bulkDocs,
   attach,
   query,
   createIndex,

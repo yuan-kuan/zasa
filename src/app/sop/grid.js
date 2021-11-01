@@ -12,7 +12,7 @@ import { goToItem } from './item';
 import { docToItemWithBlob } from './item_utils';
 import {
   getAllTags,
-  getItemsExpiringAt,
+  getItemsExpiringBefore,
   getItemsWithTags,
   getSavedTagFilter,
   setupTagFilter,
@@ -51,7 +51,7 @@ const presentFilteredItem = (filterTags) =>
       free.sequence([setRef(GridStores.items, items), presentGoToItems(items)])
     );
 
-const presentExpiringItems = (_) => getItemsExpiringAt((new Date(2023, 0)).valueOf());
+const presentExpiringItems = (_) => getItemsExpiringBefore((new Date(2023, 0)).valueOf());
 
 const performAddTagFilter = (tag) =>
   free.sequence([updateSavedTagFilter(R.append(tag)), presentGrid()]);
@@ -88,8 +88,8 @@ const presentTagSelection = (selectedTags) =>
 
 const presentItems = (savedTags) =>
   free.of(savedTags).chain(
-    // R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem))
-    R.ifElse(R.isEmpty, presentExpiringItems, presentFilteredItem))
+    R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem))
+// R.ifElse(R.isEmpty, presentExpiringItems, presentFilteredItem))
 
 const presentGrid = () =>
   getSavedTagFilter().chain(free.parallelConverge([
