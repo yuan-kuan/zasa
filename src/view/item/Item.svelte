@@ -8,6 +8,7 @@
   import Photo from './photo-edit/Photo.svelte';
   import NameInput from './NameInput.svelte';
   import Tags from './Tags.svelte';
+  import Reminder from './Reminder.svelte';
   import Batches from './Batches.svelte';
 
   const { name, performEditName, performEditPhoto, performDeleteItem } =
@@ -39,6 +40,7 @@
   <Photo {photoChanged} />
   <NameInput name={$name} {editName} />
   <Tags />
+  <Reminder />
   <!-- Line divider -->
   <div class="h-4 mt-4 mx-10 border-t " />
   <Batches />
