@@ -4,6 +4,7 @@
   export let editName;
   export let cancelled = () => {};
 
+  let clickedToActivate = false;
   let workingName;
   $: preventEditName =
     workingName == name || workingName == undefined || workingName.length == 0;
@@ -11,6 +12,13 @@
   const startEditName = () => {
     workingName = name;
     isEditingName = true;
+    clickedToActivate = true;
+  };
+
+  const initInput = (inputElement) => {
+    if (clickedToActivate) {
+      inputElement?.focus();
+    }
   };
 
   const onEditName = () => {
@@ -39,11 +47,11 @@
   {#if isEditingName}
     <!-- New tag input -->
     <input
-      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 focus:border-opacity-40 text-center text-primary "
+      class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 focus:ring-0 focus:border-opacity-40 text-center text-primary "
       type="text"
       placeholder="Name (required)"
-      autofocus
       bind:value={workingName}
+      use:initInput
       on:keydown={nameKeyDown}
     />
 
