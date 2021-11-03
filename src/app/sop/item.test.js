@@ -33,18 +33,21 @@ test('Name with spaces in front or back will be trim', async (t) => {
 });
 
 test('Batch create with item id and YMD, start with 0 count', async (t) => {
-  const d = new Date('2020-04-27T01:00:00');
-  const batch = makeBatchDoc('i_abc_cba', d);
+  const expiry = new Date('2020-04-27T01:00:00');
+  const remindDays = 30;
+  const remindDate = new Date('2020-05-27T01:00:00');
+  const batch = makeBatchDoc('i_abc_cba', expiry, remindDays);
 
   t.deepEqual(batch.type, 'b');
   t.deepEqual(batch._id, 'b_abc_cba:20200427');
-  t.deepEqual(batch.expiry, d.valueOf());
+  t.deepEqual(batch.expiry, expiry.valueOf());
+  t.deepEqual(batch.remind, remindDate.valueOf());
   t.deepEqual(batch.count, 0);
 });
 
 test('Increment Batch', async (t) => {
   const d = new Date('2020-01-01T01:00:00');
-  const batch = makeBatchDoc('i_abc_cba', d);
+  const batch = makeBatchDoc('i_abc_cba', d, 30);
   let incBatch = addBatch(2, batch);
 
   t.deepEqual(incBatch._id, 'b_abc_cba:20200101');
@@ -52,12 +55,23 @@ test('Increment Batch', async (t) => {
 });
 
 test('Decrement Batch', async (t) => {
-  const batch = makeBatchDoc('i_abc_cba', new Date('2020-01-01T01:00:00'));
+  const batch = makeBatchDoc('i_abc_cba', new Date('2020-01-01T01:00:00'), 30);
   let incBatch = addBatch(2, batch);
   let decBatch = addBatch(-1, incBatch);
 
   t.deepEqual(decBatch._id, 'b_abc_cba:20200101');
   t.deepEqual(decBatch.count, 1);
+});
+
+test('Update Batch remind date', async (t) => {
+  const expiry = new Date('2020-01-01T01:00:00');
+  const batch = makeBatchDoc('i_abc_cba', expiry, 30);
+  let updatedBatch = updateRemindDay(14, batch);
+
+  const newRemind = new Date('2020-01-15T01:00:00');
+
+  t.deepEqual(updatedBatch.expiry, expiry.valueOf());
+  t.deepEqual(updatedBatch.remind, newRemind.valueOf());
 });
 
 test('Add a new tag to item', async (t) => {
