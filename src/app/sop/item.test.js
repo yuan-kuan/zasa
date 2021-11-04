@@ -1,102 +1,103 @@
-import test from 'ava';
 import {
   addBatch,
   makeBatchDoc,
+  updateRemindDay,
   makeItemDoc,
   addTag,
   removeTag,
 } from './item_utils';
 
-test('Item with single word', async (t) => {
+
+test('Item with single word', () => {
   const item = makeItemDoc('Single', 'abcd');
 
-  t.deepEqual(item._id, 'i_single-abcd');
-  t.deepEqual(item.name, 'Single');
+  expect(item._id).toBe('i_single-abcd');
+  expect(item.name).toBe('Single');
 });
 
-test('Item with two and three words', async (t) => {
+test('Item with two and three words', () => {
   const item2 = makeItemDoc('dOuble do', '02');
   const item3 = makeItemDoc('TiplE Tri iRR', '0202');
 
-  t.deepEqual(item2._id, 'i_double-do-02');
-  t.deepEqual(item2.name, 'dOuble do');
+  expect(item2._id).toBe('i_double-do-02');
+  expect(item2.name).toBe('dOuble do');
 
-  t.deepEqual(item3._id, 'i_tiple-tri-irr-0202');
-  t.deepEqual(item3.name, 'TiplE Tri iRR');
+  expect(item3._id).toBe('i_tiple-tri-irr-0202');
+  expect(item3.name).toBe('TiplE Tri iRR');
 });
 
-test('Name with spaces in front or back will be trim', async (t) => {
+test('Name with spaces in front or back will be trim', () => {
   const item = makeItemDoc('  space space ', 'ad12');
 
-  t.deepEqual(item._id, 'i_space-space-ad12');
-  t.deepEqual(item.name, 'space space');
+  expect(item._id).toBe('i_space-space-ad12');
+  expect(item.name).toBe('space space');
 });
 
-test('Batch create with item id and YMD, start with 0 count', async (t) => {
+test('Batch create with item id and YMD, start with 0 count', () => {
   const expiry = new Date('2020-04-27T01:00:00');
   const remindDays = 30;
   const remindDate = new Date('2020-05-27T01:00:00');
   const batch = makeBatchDoc('i_abc_cba', expiry, remindDays);
 
-  t.deepEqual(batch.type, 'b');
-  t.deepEqual(batch._id, 'b_abc_cba:20200427');
-  t.deepEqual(batch.expiry, expiry.valueOf());
-  t.deepEqual(batch.remind, remindDate.valueOf());
-  t.deepEqual(batch.count, 0);
+  expect(batch.type).toBe('b');
+  expect(batch._id).toBe('b_abc_cba:20200427');
+  expect(batch.expiry).toBe(expiry.valueOf());
+  expect(batch.remind).toBe(remindDate.valueOf());
+  expect(batch.count).toBe(0);
 });
 
-test('Increment Batch', async (t) => {
+test('Increment Batch', () => {
   const d = new Date('2020-01-01T01:00:00');
   const batch = makeBatchDoc('i_abc_cba', d, 30);
   let incBatch = addBatch(2, batch);
 
-  t.deepEqual(incBatch._id, 'b_abc_cba:20200101');
-  t.deepEqual(incBatch.count, 2);
+  expect(incBatch._id).toBe('b_abc_cba:20200101');
+  expect(incBatch.count).toBe(2);
 });
 
-test('Decrement Batch', async (t) => {
+test('Decrement Batch', () => {
   const batch = makeBatchDoc('i_abc_cba', new Date('2020-01-01T01:00:00'), 30);
   let incBatch = addBatch(2, batch);
   let decBatch = addBatch(-1, incBatch);
 
-  t.deepEqual(decBatch._id, 'b_abc_cba:20200101');
-  t.deepEqual(decBatch.count, 1);
+  expect(decBatch._id).toBe('b_abc_cba:20200101');
+  expect(decBatch.count).toBe(1);
 });
 
-test('Update Batch remind date', async (t) => {
+test('Update Batch remind date', () => {
   const expiry = new Date('2020-01-01T01:00:00');
   const batch = makeBatchDoc('i_abc_cba', expiry, 30);
   let updatedBatch = updateRemindDay(14, batch);
 
   const newRemind = new Date('2020-01-15T01:00:00');
 
-  t.deepEqual(updatedBatch.expiry, expiry.valueOf());
-  t.deepEqual(updatedBatch.remind, newRemind.valueOf());
+  expect(updatedBatch.expiry).toBe(expiry.valueOf());
+  expect(updatedBatch.remind).toBe(newRemind.valueOf());
 });
 
-test('Add a new tag to item', async (t) => {
+test('Add a new tag to item', () => {
   const item = makeItemDoc('with new tag', 'bo');
   const taggedItem = addTag('shiny', item);
 
-  t.deepEqual(taggedItem.tags, ['shiny']);
+  expect(taggedItem.tags).toStrictEqual(['shiny']);
 });
 
-test('tags and ordered ascending', async (t) => {
+test('tags and ordered ascending', () => {
   const item = makeItemDoc('with new tag', 'bo');
   const taggedItem = addTag('shiny', item);
   const taggedTwiceItem = addTag('freshy', taggedItem);
   const taggedThriceItem = addTag('lovely', taggedTwiceItem);
 
-  t.deepEqual(taggedItem.tags, ['shiny']);
-  t.deepEqual(taggedTwiceItem.tags, ['freshy', 'shiny']);
-  t.deepEqual(taggedThriceItem.tags, ['freshy', 'lovely', 'shiny']);
+  expect(taggedItem.tags).toStrictEqual(['shiny']);
+  expect(taggedTwiceItem.tags).toStrictEqual(['freshy', 'shiny']);
+  expect(taggedThriceItem.tags).toStrictEqual(['freshy', 'lovely', 'shiny']);
 });
 
-test('remove tag kept order', async (t) => {
+test('remove tag kept order', () => {
   const item = makeItemDoc('with new tag', 'bo');
   const taggedItem = addTag('shiny', addTag('freshy', addTag('lovely', item)));
   const lessTaggedItem = removeTag('lovely', taggedItem);
 
-  t.deepEqual(taggedItem.tags, ['freshy', 'lovely', 'shiny']);
-  t.deepEqual(lessTaggedItem.tags, ['freshy', 'shiny']);
+  expect(taggedItem.tags).toStrictEqual(['freshy', 'lovely', 'shiny']);
+  expect(lessTaggedItem.tags).toStrictEqual(['freshy', 'shiny']);
 });

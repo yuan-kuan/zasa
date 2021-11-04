@@ -31,11 +31,11 @@ const ymdOnly = (date) =>
     [(d) => d.getFullYear(), (d) => d.getMonth() + 1, (d) => d.getDate()]
   )(date);
 
-const makeBatchDoc = R.curry((itemId, expiryDate, remindDays) =>
+const makeBatchDoc = R.curry((itemId, expiryDate, days) =>
   R.pipe(
     R.set(L.id, `${convertItemIdToBatchId(itemId)}:${ymdOnly(expiryDate)}`),
     R.set(L.expiry, expiryDate.valueOf()),
-    R.set(L.remindDays, expiryDate.setDate(expiryDate.getDate() + remindDays).valueOf),
+    R.set(L.remind, expiryDate.valueOf() + days * 24 * 60 * 60 * 1000),
     R.set(L.type, 'b'),
     R.set(L.count, 0)
   )({})
@@ -45,7 +45,7 @@ const addBatch = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
 
 const updateRemindDay = R.curry((days, batchDoc) =>
   R.set(
-    L.remindDays,
+    L.remind,
     R.compose((d) => d.setDate(d.getDate() + days).valueOf(), (v) => new Date(v), R.view(L.expiry))(batchDoc),
     batchDoc));
 
