@@ -23,11 +23,13 @@ export const ItemStores = {
   nameError: createRef(),
   photoBlob: createRef(),
   editingPhotoBlob: createRef(),
+  remindDays: createRef(),
   performEditName: createRef(),
   performEditPhoto: createRef(),
   performDeleteItem: createRef(),
   backFromEditPhoto: createRef(),
   performSave: createRef(),
+  performEditRemindDays: createRef(),
 }
 
 export const TagStores = {

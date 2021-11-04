@@ -10,16 +10,9 @@ import { tapLog } from '../utils';
 import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
 import { goToItem } from './item';
 import { docToItemWithBlob } from './item_utils';
-import {
-  getAllTags,
-  getItemsExpiringBefore,
-  getItemsWithTags,
-  getSavedTagFilter,
-  setupTagFilter,
-  updateSavedTagFilter,
-} from './filter';
+import * as filter from './filter';
 
-const setup = () => setupTagFilter();
+const setup = () => filter.setupTagFilter();
 
 const presentGoToItems = (itemWithBlobs) =>
   free
@@ -46,25 +39,25 @@ const presentAllItems = (_) =>
 const presentFilteredItem = (filterTags) =>
   free
     .of(filterTags)
-    .chain(getItemsWithTags)
+    .chain(filter.getItemsWithTags)
     .chain((items) =>
       free.sequence([setRef(GridStores.items, items), presentGoToItems(items)])
     );
 
-const presentExpiringItems = (_) => getItemsExpiringBefore((new Date(2023, 0)).valueOf());
+const presentExpiringItems = (_) => filter.getItemsExpiringBefore((new Date(2023, 0)).valueOf());
 
 const performAddTagFilter = (tag) =>
-  free.sequence([updateSavedTagFilter(R.append(tag)), presentGrid()]);
+  free.sequence([filter.updateSavedTagFilter(R.append(tag)), presentGrid()]);
 
 
 const performRemoveTagFilter = (tag) =>
   free.sequence([
-    updateSavedTagFilter(R.without([tag])),
+    filter.updateSavedTagFilter(R.without([tag])),
     presentGrid(),
   ]);
 
 const presentTagSelection = (selectedTags) =>
-  getAllTags()
+  filter.getAllTags()
     .chain((tags) =>
       free.sequence([
         setRef(FilterStores.tags, selectedTags),
@@ -92,7 +85,7 @@ const presentItems = (savedTags) =>
 // R.ifElse(R.isEmpty, presentExpiringItems, presentFilteredItem))
 
 const presentGrid = () =>
-  getSavedTagFilter().chain(free.parallelConverge([
+  filter.getSavedTagFilter().chain(free.parallelConverge([
     presentTagSelection,
     presentItems
   ]));

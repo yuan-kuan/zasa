@@ -10,7 +10,7 @@ import ItemCreation from 'view/item/ItemCreation.svelte';
 
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
-import { attach, put, get, alldocs, getWithAttachment, bulkDocs } from '../database';
+import * as database from '../database';
 import {
   makeItemDoc,
   L as ItemL,
@@ -31,10 +31,10 @@ const performCreateItem = (name, blob) =>
     .of(makeItemDoc) //
     .ap(free.of(name))
     .ap(randomFourCharacter())
-    .chain(put)
+    .chain(database.put)
     .chain((doc) => {
       if (blob) {
-        return attach(doc, `image`, blob).map((_) => doc._id);
+        return database.attach(doc, `image`, blob).map((_) => doc._id);
       } else {
         return free.of(doc._id);
       }
@@ -55,13 +55,13 @@ const findBatchesOfItem = (itemId) =>
   free
     .of(itemId) //
     .map(makeGetBatchesAllDocOption)
-    .chain(alldocs);
+    .chain(database.alldocs);
 
 const deleteSingleDoc = (docId) =>
   free.of(docId)
-    .chain(get)
+    .chain(database.get)
     .map(R.set(ItemL.deleted, true))
-    .chain(put);
+    .chain(database.put);
 
 const markDelectedDocs = (docs) =>
   R.map(
@@ -73,31 +73,47 @@ const performDeleteItem = (itemId) =>
     deleteSingleDoc(itemId),
     findBatchesOfItem(itemId)
       .map(markDelectedDocs)
-      .chain(bulkDocs)
+      .chain(database.bulkDocs)
   ])
     .chain(goToHome);
 
 const performEditPhoto = (itemId, blob) =>
   free
     .of(itemId) //
-    .chain(get)
-    .chain((doc) => attach(doc, `image`, blob))
+    .chain(database.get)
+    .chain((doc) => database.attach(doc, `image`, blob))
     .chain((_) => goToItem(itemId));
 
 const performEditName = (itemId, name) =>
   free
     .of(itemId) //
-    .chain(get)
+    .chain(database.get)
     .map(R.set(ItemL.name, name))
-    .chain(put)
+    .chain(database.put)
     .map(R.view(ItemL.name))
     .chain(setRef(ItemStores.name));
+
+const performEditRemindDays = (itemId, days) =>
+  free.of(itemId) //
+    .chain(database.get)
+    .map(R.set(ItemL.remindDays, days))
+    .chain(database.put)
+    .map(R.view(ItemL.remindDays))
+    .chain(setRef(ItemStores.remindDays));
+//TODO: change all batches too
+
+
+const presentRemind = (itemId) =>
+  free.of(itemId) //
+    .chain(database.get)
+    .map(R.view(ItemL.remindDays))
+    .chain(setRef(ItemStores.remindDays));
 
 const performAddBatch = (itemId, expiryDate, count) => {
   return free
     .of(makeBatchDoc(itemId, expiryDate)) //
     .map(addBatch(count))
-    .chain(put)
+    .chain(database.put)
     .chain((_) => presentBatches(itemId));
 };
 
@@ -115,9 +131,9 @@ const makeDeleteBatch = (itemId, batches) =>
 const performBatchCounting = (itemId, batchId, value) =>
   free
     .of(batchId) //
-    .chain(get)
+    .chain(database.get)
     .map(addBatch(value))
-    .chain(put)
+    .chain(database.put)
     .chain((_) => presentBatches(itemId));
 
 const makeBatchAdd = (itemId, value, batches) =>
@@ -140,18 +156,20 @@ const presentBatches = (itemId) =>
 const performAddNewTag = (itemId, tag) =>
   free
     .of(itemId) //
-    .chain(get)
+    .chain(database.get)
     .map(addTag(tag))
-    .chain(put)
-    .chain(presentItemTags);
+    .chain(database.put)
+    .map(R.view(ItemL.id))
+    .chain(presentTags);
 
 const performRemoveTag = (itemId, tag) =>
   free
     .of(itemId) //
-    .chain(get)
+    .chain(database.get)
     .map(removeTag(tag))
-    .chain(put)
-    .chain(presentItemTags);
+    .chain(database.put)
+    .map(R.view(ItemL.id))
+    .chain(presentTags);
 
 const presentTagSelections = (itemId, selectedTags) =>
   getAllTags()
@@ -176,28 +194,18 @@ const presentTagSelections = (itemId, selectedTags) =>
       ])
     );
 
-const presentItemTags = (itemDoc) =>
-  free
-    .of(itemDoc) //
-    .map(R.view(ItemL.tags))
-    .map(R.defaultTo([]))
-    .chain((tags) =>
-      free.sequence([
-
-        presentTagSelections(R.view(ItemL.id, itemDoc), tags),
-      ])
-    );
-
 const presentTags = (itemId) =>
   free
     .of(itemId) //
-    .chain(get)
-    .chain(presentItemTags);
+    .chain(database.get)
+    .map(R.view(ItemL.tags))
+    .map(R.defaultTo([]))
+    .chain((tags) => presentTagSelections(itemId, tags));
 
 const presentItem = (itemId) =>
   free
     .of(itemId) //
-    .chain(getWithAttachment)
+    .chain(database.getWithAttachment)
     .map(docToItemWithBlob)
     .chain((itemWithBlob) =>
       free.sequence([
@@ -214,6 +222,9 @@ const goToItem = (itemId) =>
     setRef(ItemStores.performEditName, (newName) =>
       addSop(() => performEditName(itemId, newName))
     ),
+    setRef(ItemStores.performEditRemindDays, (newDays) =>
+      addSop(() => performEditRemindDays(itemId, newDays))
+    ),
     setRef(BatchStores.performAddBatch, (expiryDate, count) =>
       addSop(() => performAddBatch(itemId, expiryDate, count))
     ),
@@ -227,8 +238,9 @@ const goToItem = (itemId) =>
       addSop(() => performDeleteItem(itemId))
     ),
     presentItem(itemId),
-    presentBatches(itemId),
+    presentRemind(itemId),
     presentTags(itemId),
+    presentBatches(itemId),
   ]);
 
 export { goToItem, goToItemCreation };

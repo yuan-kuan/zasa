@@ -6,6 +6,7 @@ const L = {
   itemId: R.lensProp('itemId'),
   name: R.lensProp('name'),
   blob: R.lensProp('blob'),
+  remindDays: R.lensProp('remindDays'),
   expiry: R.lensProp('expiry'),
   remind: R.lensProp('remind'),
   type: R.lensProp('type'),

@@ -121,9 +121,7 @@ const getItemsWithTags = (tags) =>
 
 const getItemsExpiringBefore = (expiry) =>
   free.of(expiry) //
-    .map(tapLog('expiry number'))
     .chain(findExpiringItem)
-    .map(tapLog('expiry items'));
 
 export {
   setupTagFilter,
