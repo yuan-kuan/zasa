@@ -15,30 +15,13 @@ const L = {
   deleted: R.lensProp('_deleted')
 };
 
-const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
-
 const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
 const makeItemDoc = R.curry((name, postHash) =>
   R.pipe(
     R.set(L.id, R.compose((sc) => `i_${sc}-${postHash}`, toSnakeCase)(name)),
     R.set(L.name, R.trim(name)),
-    R.set(L.type, 'i')
-  )({})
-);
-
-const ymdOnly = (date) =>
-  R.converge(
-    (y, m, d) => y * 10000 + m * 100 + d,
-    [(d) => d.getFullYear(), (d) => d.getMonth() + 1, (d) => d.getDate()]
-  )(date);
-
-const makeBatchDoc = R.curry((itemId, expiryDate, days) =>
-  R.pipe(
-    R.set(L.id, `${convertItemIdToBatchId(itemId)}:${ymdOnly(expiryDate)}`),
-    R.set(L.expiry, expiryDate.valueOf()),
-    R.set(L.remind, expiryDate.valueOf() + days * 24 * 60 * 60 * 1000),
-    R.set(L.type, 'b'),
-    R.set(L.count, 0)
+    R.set(L.type, 'i'),
+    R.set(L.remindDays, 30)
   )({})
 );
 
@@ -49,9 +32,6 @@ const updateRemindDay = R.curry((days, batchDoc) =>
     L.remind,
     R.compose((d) => d.setDate(d.getDate() + days).valueOf(), (v) => new Date(v), R.view(L.expiry))(batchDoc),
     batchDoc));
-
-const makeGetBatchesAllDocOption = (itemId) =>
-  R.pipe(convertItemIdToBatchId, makeStartEndRangeAllDocOption)(itemId);
 
 const appendTagAndSort = R.curry((tag, tags) =>
   R.pipe(R.defaultTo([]), R.append(tag), R.sortBy(R.toLower))(tags)
@@ -80,11 +60,9 @@ const docToItemWithBlob = (doc) => {
 export {
   L,
   addBatch,
-  makeBatchDoc,
   updateRemindDay,
   makeItemDoc,
   docToItemWithBlob,
-  makeGetBatchesAllDocOption,
   addTag,
   removeTag,
 };

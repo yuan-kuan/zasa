@@ -25,10 +25,11 @@ import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from './filter';
 import { goToHome } from './home';
-import { create, getItemWithPhoto } from './item_ops';
+import * as item from './item_ops';
+import * as batch from './batch_ops';
 
 const performCreateItem = (name, blob) =>
-  create(name, blob)
+  item.create(name, blob)
     .chain(goToItem);
 
 const goToItemCreation = () =>
@@ -40,12 +41,6 @@ const goToItemCreation = () =>
       addSop(() => performCreateItem(name, photoId))
     ),
   ]);
-
-const findBatchesOfItem = (itemId) =>
-  free
-    .of(itemId) //
-    .map(makeGetBatchesAllDocOption)
-    .chain(database.alldocs);
 
 const deleteSingleDoc = (docId) =>
   free.of(docId)
@@ -61,27 +56,20 @@ const markDelectedDocs = (docs) =>
 const performDeleteItem = (itemId) =>
   free.parallel([
     deleteSingleDoc(itemId),
-    findBatchesOfItem(itemId)
+    findbatchesofitem(itemId)
       .map(markDelectedDocs)
       .chain(database.bulkDocs)
   ])
     .chain(goToHome);
 
 const performEditPhoto = (itemId, blob) =>
-  free
-    .of(itemId) //
-    .chain(database.get)
-    .chain((doc) => database.attach(doc, `image`, blob))
-    .chain((_) => goToItem(itemId));
+  free.sequence([
+    item.editPhoto(itemId, blob),
+    goToItem(itemId)
+  ]);
 
 const performEditName = (itemId, name) =>
-  free
-    .of(itemId) //
-    .chain(database.get)
-    .map(R.set(ItemL.name, name))
-    .chain(database.put)
-    .map(R.view(ItemL.name))
-    .chain(setRef(ItemStores.name));
+  item.editName(itemId, name).chain(setRef(ItemStores.name));
 
 const performEditRemindDays = (itemId, days) =>
   free.of(itemId) //
@@ -133,7 +121,7 @@ const makeBatchAdd = (itemId, value, batches) =>
   )(batches);
 
 const presentBatches = (itemId) =>
-  findBatchesOfItem(itemId)
+  batch.getAll(itemId)
     .chain((batches) =>
       free.sequence([
         setRef(BatchStores.batches, batches),
@@ -193,7 +181,7 @@ const presentTags = (itemId) =>
     .chain((tags) => presentTagSelections(itemId, tags));
 
 const presentItem = (itemId) =>
-  getItemWithPhoto(itemId).chain((itemWithBlob) =>
+  item.getItemWithPhoto(itemId).chain((itemWithBlob) =>
     free.sequence([
       setRef(ItemStores.name, itemWithBlob.name),
       setRef(ItemStores.photoBlob, itemWithBlob.blob),

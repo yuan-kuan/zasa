@@ -1,7 +1,9 @@
+import * as R from 'ramda';
 import * as free from 'fp/free';
-import { attach, getWithAttachment, put } from 'app/database';
+import { attach, getWithAttachment, get, put } from 'app/database';
 import { randomFourCharacter } from 'app/utils';
-import { docToItemWithBlob, makeItemDoc } from './item_utils';
+import { L, docToItemWithBlob, makeItemDoc } from './item_utils';
+import { updateAllRemind } from './batch_ops';
 
 const create = (name, blob) =>
   free
@@ -23,5 +25,25 @@ const getItemWithPhoto = (itemId) =>
     .chain(getWithAttachment)
     .map(docToItemWithBlob);
 
+const editPhoto = (itemId, blob) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .chain((doc) => attach(doc, `image`, blob));
 
-export { create, getItemWithPhoto };
+const editName = (itemId, name) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(R.set(L.name, name))
+    .chain(put)
+    .map(R.view(L.name))
+
+const editRemindDays = (itemId, days) => free
+  .of(itemId) //
+  .chain(get)
+  .map(R.set(L.remindDays, days))
+  .chain(put)
+  .chain((_) => updateAllRemind(itemId))
+
+export { create, getItemWithPhoto, editPhoto, editName, editRemindDays };
