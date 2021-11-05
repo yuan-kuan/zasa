@@ -1,0 +1,31 @@
+import { fork, promise, resolve } from 'fluture';
+import { dispatch } from 'fp/interpretor';
+import * as database from 'app/database';
+import * as utils from 'app/utils';
+import { create, getItemWithPhoto } from './item_ops';
+
+test('Create item with name only', async () => {
+  const fm = create('testName', null)
+    .chain(getItemWithPhoto);
+
+  const future = fm.foldMap(dispatch([
+    database.dispatcher, utils.dispatcher
+  ]), resolve);
+
+  const result = await promise(future)
+  expect(result).toHaveProperty('name', 'testName');
+  expect(result.blob).toBeFalsy();
+});
+
+test('Create item with name and photo', async () => {
+  const fm = create('testName', Buffer('Hello Blob'))
+    .chain(getItemWithPhoto);
+
+  const future = fm.foldMap(dispatch([
+    database.dispatcher, utils.dispatcher
+  ]), resolve);
+
+  const result = await promise(future)
+  expect(result).toHaveProperty('name', 'testName');
+  expect(result).toHaveProperty('blob', Buffer('Hello Blob'));
+});

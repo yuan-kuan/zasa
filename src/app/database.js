@@ -136,7 +136,8 @@ const databaseToFuture = (p) =>
       }),
   });
 
-registerStaticInterpretor([Database, databaseToFuture]);
+const dispatcher = [Database, databaseToFuture]
+registerStaticInterpretor(dispatcher);
 
 const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
@@ -152,6 +153,7 @@ const destroy = () => lift(Destroy(null));
 const sync = (targetUrl, options) => lift(Sync(targetUrl, options));
 
 export {
+  dispatcher,
   get,
   getWithAttachment,
   alldocs,

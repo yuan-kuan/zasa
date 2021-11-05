@@ -28,7 +28,8 @@ const utilsToFuture = (p) =>
     }),
   });
 
-registerStaticInterpretor([Utils, utilsToFuture]);
+const dispatcher = [Utils, utilsToFuture];
+registerStaticInterpretor(dispatcher);
 
 const random = () => lift(Random(null));
 const reload = () => lift(Reload(null));
@@ -46,4 +47,4 @@ const randomFourCharacter = () => random().map(atMostFourChar);
 const tapLog = (label) =>
   R.tap((o) => console.log(`${label}: ${JSON.stringify(o)}`));
 
-export { atMostFourChar, randomFourCharacter, tapLog, reload, fetchJson };
+export { dispatcher, atMostFourChar, randomFourCharacter, tapLog, reload, fetchJson };

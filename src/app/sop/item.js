@@ -25,20 +25,10 @@ import { randomFourCharacter, tapLog } from '../utils';
 import { remove } from '../db_ops';
 import { getAllTags } from './filter';
 import { goToHome } from './home';
+import { create, getItemWithPhoto } from './item_ops';
 
 const performCreateItem = (name, blob) =>
-  free
-    .of(makeItemDoc) //
-    .ap(free.of(name))
-    .ap(randomFourCharacter())
-    .chain(database.put)
-    .chain((doc) => {
-      if (blob) {
-        return database.attach(doc, `image`, blob).map((_) => doc._id);
-      } else {
-        return free.of(doc._id);
-      }
-    })
+  create(name, blob)
     .chain(goToItem);
 
 const goToItemCreation = () =>
@@ -203,16 +193,12 @@ const presentTags = (itemId) =>
     .chain((tags) => presentTagSelections(itemId, tags));
 
 const presentItem = (itemId) =>
-  free
-    .of(itemId) //
-    .chain(database.getWithAttachment)
-    .map(docToItemWithBlob)
-    .chain((itemWithBlob) =>
-      free.sequence([
-        setRef(ItemStores.name, itemWithBlob.name),
-        setRef(ItemStores.photoBlob, itemWithBlob.blob),
-      ])
-    );
+  getItemWithPhoto(itemId).chain((itemWithBlob) =>
+    free.sequence([
+      setRef(ItemStores.name, itemWithBlob.name),
+      setRef(ItemStores.photoBlob, itemWithBlob.blob),
+    ])
+  );
 
 const goToItem = (itemId) =>
   free.sequence([
