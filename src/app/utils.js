@@ -2,7 +2,7 @@ import daggy from 'daggy';
 import { Future, resolve } from 'fluture';
 import * as R from 'ramda';
 
-import { lift } from 'fp/free_monad';
+import { lift } from 'fp/free';
 
 const Utils = daggy.taggedSum('Utils', {
   Random: [''],

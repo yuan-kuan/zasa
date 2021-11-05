@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as R from 'ramda';
 
-import { lift } from 'fp/free_monad';
+import { lift } from 'fp/free';
 
 // eslint-disable-next-line no-undef
 PouchDB.plugin(PouchDBFind);

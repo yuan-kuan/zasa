@@ -4,7 +4,7 @@ import { Future, resolve } from 'fluture';
 import * as R from 'ramda';
 import { writable } from 'svelte/store';
 
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import { registerDerefInterpretor } from 'fp/sop';
 
 const createRef = (defaultValue) => {

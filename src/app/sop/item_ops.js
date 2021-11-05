@@ -1,4 +1,4 @@
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import { attach, getWithAttachment, put } from 'app/database';
 import { randomFourCharacter } from 'app/utils';
 import { docToItemWithBlob, makeItemDoc } from './item_utils';

@@ -3,7 +3,7 @@ import Future from 'fluture';
 import page from 'page';
 import { Path } from 'path-parser';
 
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import { addSop } from 'fp/sop';
 
 import { goToItem, goToItemCreation } from 'app/sop/item';

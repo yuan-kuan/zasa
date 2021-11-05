@@ -4,8 +4,6 @@ import daggy from 'daggy';
 import * as fluture from 'fluture';
 import * as R from 'ramda';
 
-import { registerStaticInterpretor } from 'fp/sop';
-
 const FreeMonad = daggy.taggedSum('FreeMonad', {
   Impure: ['x', 'f'],
   Pure: ['x'],
@@ -72,17 +70,17 @@ FreeMonad.prototype.foldMap = function (interpreter, of) {
 
 const MAX_THREAD = 8;
 
-const FutureCommand = daggy.taggedSum('FutureCommand', {
+const FreeUtils = daggy.taggedSum('FutureCommand', {
   Bichain: ['left', 'right', 'freeMonad'],
   Bimap: ['left', 'right', 'freeMonad'],
   Parallel: ['freeMonads'],
 });
-const { Bichain, Bimap, Parallel } = FutureCommand;
+const { Bichain, Bimap, Parallel } = FreeUtils;
 
 // This interpretor return a function that expect `interpreter` and `of`, when
 // called with the arguments (which usually pass in by caller `foldMap`), this
 // will return a Future.
-const futureCommandToFuture = (p) =>
+const freeUtilsToFuture = (p) =>
   p.cata({
     Bichain: (left, right, freeMonad) => (interpreter, of) =>
       fluture.bichain((result) => left(result).foldMap(interpreter, of))(
@@ -101,8 +99,6 @@ const futureCommandToFuture = (p) =>
     },
   });
 
-const futureCommandInterpretor = [FutureCommand, futureCommandToFuture];
-registerStaticInterpretor(futureCommandInterpretor);
 
 // [Free(Future)] -> Free(Future)
 // This take in an array of free monads (which must interprete into Future).
@@ -140,6 +136,7 @@ const bichain = R.curry((left, right, freeMonad) =>
 const interpete = (freeMonad) => (interpreter, of) =>
   freeMonad.foldMap(interpreter, of);
 
+export const freeUtilsInterpretor = [FreeUtils, freeUtilsToFuture];
 export {
   lift,
   of,
@@ -149,5 +146,4 @@ export {
   bimap,
   bichain,
   interpete,
-  futureCommandInterpretor,
 };

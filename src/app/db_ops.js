@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import * as pouch from './database';
 
 const L = {

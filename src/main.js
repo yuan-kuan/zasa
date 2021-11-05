@@ -1,6 +1,8 @@
 import App from 'view/App.svelte';
 
 import { addSop, registerStaticInterpretor } from 'fp/sop';
+import { freeUtilsInterpretor } from 'fp/free';
+
 import { navigationInterpretor, start } from 'app/router';
 import { gridSetup } from 'app/sop/grid';
 import { setupHome } from 'app/sop/home';
@@ -9,6 +11,9 @@ import { kvInterpretor } from 'app/kv';
 import { utilsInterpretor } from 'app/utils';
 import { setupBackupInterpretor } from 'app/sop/backup';
 import { filterInterpretor } from 'app/sop/filter';
+
+// Use Free Utils
+registerStaticInterpretor(freeUtilsInterpretor);
 
 // Setup SOP manager
 registerStaticInterpretor(setupDatabaseInterpretor());

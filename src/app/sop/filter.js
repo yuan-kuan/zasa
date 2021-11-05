@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import daggy from 'daggy';
 
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 
 import { createIndex, find, put, query } from '../database';
 import { tapLog } from '../utils';

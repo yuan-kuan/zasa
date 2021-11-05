@@ -1,6 +1,6 @@
 import daggy from 'daggy';
 
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 
 import { fetchJson, tapLog } from '../utils';
 import { syncWithBackUp } from '../db_ops';

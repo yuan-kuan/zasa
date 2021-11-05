@@ -1,7 +1,7 @@
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import { setRef } from 'fp/ref';
 import { addSop } from 'fp/sop';
-import { viewMainPage } from 'fp/view_store';
+import { viewMainPage } from 'fp/view';
 
 import Home from 'view/Home.svelte';
 

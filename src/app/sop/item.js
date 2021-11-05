@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 
-import * as free from 'fp/free_monad';
+import * as free from 'fp/free';
 import { addSop } from 'fp/sop';
 import { resetRef, setRef } from 'fp/ref';
-import { viewMainPage } from 'fp/view_store';
+import { viewMainPage } from 'fp/view';
 
 import Item from 'view/item/Item.svelte';
 import ItemCreation from 'view/item/ItemCreation.svelte';

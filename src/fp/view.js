@@ -1,4 +1,4 @@
-import * as free from './free_monad';
+import * as free from './free';
 import * as ref from './ref';
 import { addSop } from './sop';
 

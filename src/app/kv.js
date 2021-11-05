@@ -2,7 +2,7 @@ import daggy from 'daggy';
 import * as R from 'ramda';
 import { resolve } from 'fluture';
 
-import { lift } from 'fp/free_monad';
+import { lift } from 'fp/free';
 
 const KV = daggy.taggedSum('KV', {
   Get: ['key'],
