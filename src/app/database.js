@@ -10,8 +10,6 @@ import { registerStaticInterpretor } from 'fp/sop';
 // eslint-disable-next-line no-undef
 PouchDB.plugin(PouchDBFind);
 
-const pouchdb = new PouchDB('zasa-test');
-
 const Database = daggy.taggedSum('Database', {
   Get: ['id', 'withAttachment'],
   AllDocs: ['options'],
@@ -27,7 +25,7 @@ const Database = daggy.taggedSum('Database', {
 });
 const { Get, AllDocs, Put, BulkDocs, Attach, Query, CleanUp, CreateIndex, Find, Destroy, Sync } = Database;
 
-const databaseToFuture = (p) =>
+const databaseToFuture = (pouchdb) => (p) =>
   p.cata({
     Get: (id, withAttachment) =>
       Future((reject, resolve) => {
@@ -136,8 +134,17 @@ const databaseToFuture = (p) =>
       }),
   });
 
-const dispatcher = [Database, databaseToFuture]
-registerStaticInterpretor(dispatcher);
+const setupDatabaseDispatcher = (memoryPouchdb) => {
+  var pouchdb;
+  if (memoryPouchdb) {
+    pouchdb = memoryPouchdb;
+  } else {
+    //TODO: Migrate old user pouch to remote and rename this
+    pouchdb = new PouchDB('zasa-test');
+  }
+
+  return [Database, databaseToFuture(pouchdb)];
+}
 
 const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
@@ -153,7 +160,7 @@ const destroy = () => lift(Destroy(null));
 const sync = (targetUrl, options) => lift(Sync(targetUrl, options));
 
 export {
-  dispatcher,
+  setupDatabaseDispatcher,
   get,
   getWithAttachment,
   alldocs,
