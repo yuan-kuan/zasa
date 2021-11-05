@@ -1,13 +1,22 @@
 import App from 'view/App.svelte';
 
 import { addSop, registerStaticInterpretor } from 'fp/sop';
-import { start } from 'app/router';
+import { navigationInterpretor, start } from 'app/router';
 import { gridSetup } from 'app/sop/grid';
 import { setupHome } from 'app/sop/home';
-import { dispatcher, setupDatabaseDispatcher } from 'app/database';
+import { setupDatabaseInterpretor } from 'app/database';
+import { kvInterpretor } from 'app/kv';
+import { utilsInterpretor } from 'app/utils';
+import { setupBackupInterpretor } from 'app/sop/backup';
+import { filterInterpretor } from 'app/sop/filter';
 
 // Setup SOP manager
-registerStaticInterpretor(setupDatabaseDispatcher());
+registerStaticInterpretor(setupDatabaseInterpretor());
+registerStaticInterpretor(kvInterpretor);
+registerStaticInterpretor(navigationInterpretor);
+registerStaticInterpretor(utilsInterpretor);
+registerStaticInterpretor(setupBackupInterpretor());
+registerStaticInterpretor(filterInterpretor);
 
 addSop(() => gridSetup());
 addSop(() => setupHome());

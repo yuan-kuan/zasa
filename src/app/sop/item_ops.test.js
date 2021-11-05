@@ -11,10 +11,10 @@ const MemPouch = PouchDB.defaults({
   adapter: 'memory',
 });
 
-const dbDispatcher = database.setupDatabaseDispatcher(MemPouch('item-test'));
+const dbDispatcher = database.setupDatabaseInterpretor(MemPouch('item-test'));
 
 const interpret = (freeMonad) => freeMonad.foldMap(dispatch([
-  dbDispatcher, utils.dispatcher
+  dbDispatcher, utils.utilsInterpretor
 ]), resolve);
 
 test('Create item with name only', async () => {

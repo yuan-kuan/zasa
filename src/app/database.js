@@ -5,7 +5,6 @@ import PouchDBFind from 'pouchdb-find';
 import * as R from 'ramda';
 
 import { lift } from 'fp/free_monad';
-import { registerStaticInterpretor } from 'fp/sop';
 
 // eslint-disable-next-line no-undef
 PouchDB.plugin(PouchDBFind);
@@ -134,7 +133,7 @@ const databaseToFuture = (pouchdb) => (p) =>
       }),
   });
 
-const setupDatabaseDispatcher = (memoryPouchdb) => {
+const setupDatabaseInterpretor = (memoryPouchdb) => {
   var pouchdb;
   if (memoryPouchdb) {
     pouchdb = memoryPouchdb;
@@ -160,7 +159,7 @@ const destroy = () => lift(Destroy(null));
 const sync = (targetUrl, options) => lift(Sync(targetUrl, options));
 
 export {
-  setupDatabaseDispatcher,
+  setupDatabaseInterpretor,
   get,
   getWithAttachment,
   alldocs,

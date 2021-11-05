@@ -3,7 +3,6 @@ import { Future, resolve } from 'fluture';
 import * as R from 'ramda';
 
 import { lift } from 'fp/free_monad';
-import { registerStaticInterpretor } from 'fp/sop';
 
 const Utils = daggy.taggedSum('Utils', {
   Random: [''],
@@ -28,9 +27,6 @@ const utilsToFuture = (p) =>
     }),
   });
 
-const dispatcher = [Utils, utilsToFuture];
-registerStaticInterpretor(dispatcher);
-
 const random = () => lift(Random(null));
 const reload = () => lift(Reload(null));
 const fetchJson = (url, options) => lift(FetchJson(url, options));
@@ -47,4 +43,5 @@ const randomFourCharacter = () => random().map(atMostFourChar);
 const tapLog = (label) =>
   R.tap((o) => console.log(`${label}: ${JSON.stringify(o)}`));
 
-export { dispatcher, atMostFourChar, randomFourCharacter, tapLog, reload, fetchJson };
+export const utilsInterpretor = [Utils, utilsToFuture];
+export { atMostFourChar, randomFourCharacter, tapLog, reload, fetchJson };

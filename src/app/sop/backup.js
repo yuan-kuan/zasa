@@ -1,7 +1,6 @@
 import daggy from 'daggy';
 
 import * as free from 'fp/free_monad';
-import { registerStaticInterpretor } from 'fp/sop';
 
 import { fetchJson, tapLog } from '../utils';
 import { syncWithBackUp } from '../db_ops';
@@ -25,17 +24,24 @@ const localBackupToFuture = (p) => p.cata({
   Sync: (code) => free.interpete(syncWithBackUp(`${LOCAL_DB_URL}/${code}`, LOCAL_DB_USERNAME, LOCAL_DB_PASSWORD)),
 });
 
-// Read the ENV variables
-let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
-let isLocalBackup = LOCAL_DB_URL != undefined;
+const emptyBackupToFuture = (p) => p.cata({
+  Sync: (_) => free.of(null),
+});
 
-if (!isRemoteBackup && !isLocalBackup) {
-  console.warn('Backup is not setup properly');
-} else {
-  registerStaticInterpretor([Backup,
-    isRemoteBackup ? remoteBackupToFuture : localBackupToFuture]);
+const setupBackupInterpretor = () => {
+  // Read the ENV variables
+  let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+  let isLocalBackup = LOCAL_DB_URL != undefined;
+
+  if (!isRemoteBackup && !isLocalBackup) {
+    console.warn('Backup is not setup properly');
+    return [Backup, emptyBackupToFuture];
+  } else {
+    return [Backup,
+      isRemoteBackup ? remoteBackupToFuture : localBackupToFuture];
+  }
 }
 
 const sync = (code) => free.lift(Sync(code));
 
-export { sync };
+export { setupBackupInterpretor, sync };

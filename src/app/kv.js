@@ -3,7 +3,6 @@ import * as R from 'ramda';
 import { resolve } from 'fluture';
 
 import { lift } from 'fp/free_monad';
-import { registerStaticInterpretor } from 'fp/sop';
 
 const KV = daggy.taggedSum('KV', {
   Get: ['key'],
@@ -17,7 +16,6 @@ const kvToFuture = (p) =>
     Set: (key, value) => resolve(window.localStorage.setItem(key, value)),
   });
 
-registerStaticInterpretor([KV, kvToFuture]);
 
 const get = R.curry((defaultValue, key) =>
   lift(Get(key)) //
@@ -26,4 +24,5 @@ const get = R.curry((defaultValue, key) =>
 );
 const set = R.curry((key, value) => lift(Set(key, JSON.stringify(value))));
 
+export const kvInterpretor = [KV, kvToFuture];
 export { get, set };

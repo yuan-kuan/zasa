@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 import daggy from 'daggy';
 
-import { registerStaticInterpretor } from 'fp/sop';
 import * as free from 'fp/free_monad';
 
 import { createIndex, find, put, query } from '../database';
@@ -86,7 +85,6 @@ const filterToFuture = (p) =>
 
   });
 
-registerStaticInterpretor([Filter, filterToFuture]);
 
 const getSavedTagFilter = () => free.lift(GetSavedTags(null));
 const setSavedTagFilter = (tags) => free.lift(SetSavedTags(tags));
@@ -123,6 +121,7 @@ const getItemsExpiringBefore = (expiry) =>
   free.of(expiry) //
     .chain(findExpiringItem)
 
+export const filterInterpretor = [Filter, filterToFuture];
 export {
   setupTagFilter,
   getSavedTagFilter,

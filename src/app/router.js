@@ -2,10 +2,9 @@ import daggy from 'daggy';
 import Future from 'fluture';
 import page from 'page';
 import { Path } from 'path-parser';
-import * as R from 'ramda';
 
 import * as free from 'fp/free_monad';
-import { registerStaticInterpretor, addSop } from 'fp/sop';
+import { addSop } from 'fp/sop';
 
 import { goToItem, goToItemCreation } from 'app/sop/item';
 import { goToSettingPage } from 'app/sop/setting';
@@ -33,8 +32,6 @@ const nagivationToFuture = (p) =>
 
 const setUrl = (path, params) => free.lift(Show(path, params));
 
-const navigationInterpretor = [Navigation, nagivationToFuture];
-registerStaticInterpretor(navigationInterpretor);
 
 const gridPath = '/';
 const itemCreatePath = '/item';
@@ -69,4 +66,5 @@ function start() {
   page();
 }
 
+export const navigationInterpretor = [Navigation, nagivationToFuture];
 export { start, setHomeUrl, setItemUrl, setItemCreationUrl, setSettingUrl };
