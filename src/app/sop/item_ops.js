@@ -1,9 +1,10 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
 import { attach, getWithAttachment, get, put } from 'app/database';
+import * as db_ops from 'app/db_ops';
 import { randomFourCharacter } from 'app/utils';
 import { L, docToItemWithBlob, makeItemDoc } from './item_utils';
-import { updateAllRemind } from './batch_ops';
+import { getAll, updateAllRemind } from './batch_ops';
 
 const create = (name, blob) =>
   free
@@ -18,6 +19,14 @@ const create = (name, blob) =>
         return free.of(doc._id);
       }
     })
+
+
+const remove = (itemId) =>
+  free.parallel([
+    db_ops.remove(itemId),
+    getAll(itemId).chain(db_ops.removeAll)
+  ])
+
 
 const getItemWithPhoto = (itemId) =>
   free
@@ -46,4 +55,4 @@ const editRemindDays = (itemId, days) => free
   .chain(put)
   .chain((_) => updateAllRemind(itemId))
 
-export { create, getItemWithPhoto, editPhoto, editName, editRemindDays };
+export { create, remove, getItemWithPhoto, editPhoto, editName, editRemindDays };

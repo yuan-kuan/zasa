@@ -42,6 +42,12 @@ const remove = (id) =>
     .map(R.set(L.deleted, true))
     .chain(pouch.put);
 
+
+const removeAll = (docs) =>
+  free.of(docs)
+    .map(R.map(R.set(L.deleted, true)))
+    .chain(pouch.bulkDocs);
+
 const syncWithBackUp = (targetUrl, username, password) =>
   pouch.sync(targetUrl, {
     auth: {
@@ -56,5 +62,6 @@ export {
   makeReduceByGroupQueryOption,
   makeMapWithKeysForDocAttachmentQueryOption,
   remove,
+  removeAll,
   syncWithBackUp,
 };

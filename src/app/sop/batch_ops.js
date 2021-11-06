@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
-import { makeStartEndRangeAllDocOption } from 'app/db_ops';
+import * as db_ops from 'app/db_ops';
 import { alldocs, bulkDocs, get, put } from 'app/database';
 import { tapLog } from 'app/utils';
 
@@ -19,7 +19,7 @@ const msAfterDays = (date, days) => date.valueOf() + days * 24 * 60 * 60 * 1000
 const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
 
 const makeGetBatchesAllDocOption = (itemId) =>
-  R.pipe(convertItemIdToBatchId, makeStartEndRangeAllDocOption)(itemId);
+  R.pipe(convertItemIdToBatchId, db_ops.makeStartEndRangeAllDocOption)(itemId);
 
 const getAll = (itemId) => free
   .of(itemId) //
@@ -55,7 +55,10 @@ const create = (itemId, expiryDate) =>
     .map(makeBatchDoc(itemId, expiryDate))
     .chain(put)
 
-const addBatch = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
+const remove = (batchDoc) =>
+  free.of(batchDoc)
+    .map(R.view(L.id))
+    .chain(db_ops.remove);
 
 const updateBatchRemind = R.curry((days, batchDoc) =>
   R.set(L.remind, msAfterDays(batchDoc.expiry, days), batchDoc));
@@ -69,4 +72,8 @@ const updateAllRemind = (itemId) =>
     .ap(getAll(itemId))
     .chain(bulkDocs)
 
-export { getAll, create, updateAllRemind };
+const addCount = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
+const incAndSaveCount = (batchDoc) => R.compose(put, addCount(1))(batchDoc);
+const decAndSaveCount = (batchDoc) => R.compose(put, addCount(-1))(batchDoc);
+
+export { getAll, create, remove, updateAllRemind, incAndSaveCount, decAndSaveCount };
