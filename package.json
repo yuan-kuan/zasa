@@ -59,7 +59,8 @@
     "moduleNameMapper": {
       "fp/(.*)": "<rootDir>/src/fp/$1",
       "view/(.*)": "<rootDir>/src/view/$1",
-      "app/(.*)": "<rootDir>/src/app/$1"
+      "app/(.*)": "<rootDir>/src/app/$1",
+      "test/(.*)": "<rootDir>/src/test/$1"
     }
   }
 }

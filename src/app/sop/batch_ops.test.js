@@ -1,25 +1,12 @@
-import { promise, resolve } from 'fluture';
-import PouchDB from 'pouchdb';
 import * as R from 'ramda';
 
-import { dispatch } from 'fp/interpretor';
+import { createTestInterpetor } from 'test/utils';
 import * as free from 'fp/free';
 
-import * as database from 'app/database';
-import * as utils from 'app/utils';
 import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
 
-PouchDB.plugin(require('pouchdb-adapter-memory'));
-const MemPouch = PouchDB.defaults({
-  adapter: 'memory',
-});
-
-const dbDispatcher = database.setupDatabaseInterpretor(MemPouch('item-test'));
-
-const interpret = (freeMonad) => freeMonad.foldMap(dispatch([
-  dbDispatcher, utils.utilsInterpretor, free.freeUtilsInterpretor
-]), resolve);
+const interpret = createTestInterpetor(true);
 
 test('Create a batch with correct date and count of 1', async () => {
   const expiry = new Date('2020-04-27T01:00:00');
@@ -32,7 +19,7 @@ test('Create a batch with correct date and count of 1', async () => {
     // Free.Sequence result in an array, we are interested in the last one.
     .map(R.last);
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveLength(1);
   expect(result[0]).toHaveProperty('expiry', expiry.valueOf());
   expect(result[0]).toHaveProperty('count', 1);
@@ -48,7 +35,7 @@ test('Create batch with remind date calculated from item, new item has 30 days',
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result[0]).toHaveProperty('remind', (new Date('2020-05-27T01:00:00')).valueOf());
 });
 
@@ -63,7 +50,7 @@ test('Create batch with a 14 remind days item', async () => {
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result[0]).toHaveProperty('remind', (new Date('2020-04-15T01:00:00')).valueOf());
 });
 
@@ -83,7 +70,7 @@ test('Create 3 batches, order them by expiry', async () => {
       ]))
     .map(R.last);
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveLength(3);
   expect(result[0]).toHaveProperty('expiry', expiry1.valueOf());
   expect(result[0]).toHaveProperty('remind', (new Date('2020-05-27T01:00:00')).valueOf());
@@ -110,7 +97,7 @@ test('Changing item remind days should update all batches remind', async () => {
       ]))
     .map(R.last);
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveLength(3);
   // Expect expiry dates are unchanged
   expect(result[0]).toHaveProperty('expiry', expiry1.valueOf());
@@ -138,7 +125,7 @@ test('Increment the count of a batch', async () => {
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveProperty('count', 3);
 });
 
@@ -160,7 +147,7 @@ test('Decrement the count of a batch', async () => {
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveProperty('count', 2);
 });
 
@@ -183,7 +170,7 @@ test('Remove a batch', async () => {
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveLength(1);
   expect(result[0]).toHaveProperty('expiry', expiry2.valueOf());
   expect(result[0]).toHaveProperty('count', 1);
@@ -203,6 +190,6 @@ test('Remove an item should remove all batch too', async () => {
     .map(R.last);
 
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result).toHaveLength(0);
 });
