@@ -12,24 +12,17 @@ import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
 import * as database from '../database';
 import {
-  makeItemDoc,
   L as ItemL,
-  makeBatchDoc,
-  addBatch,
   addTag,
   removeTag,
-  makeGetBatchesAllDocOption,
-  docToItemWithBlob,
 } from './item_utils';
-import { randomFourCharacter, tapLog } from '../utils';
-import { remove } from '../db_ops';
 import { getAllTags } from './filter';
 import { goToHome } from './home';
-import * as item from './item_ops';
-import * as batch from './batch_ops';
+import * as item_ops from './item_ops';
+import * as batch_ops from './batch_ops';
 
 const performCreateItem = (name, blob) =>
-  item.create(name, blob)
+  item_ops.create(name, blob)
     .chain(goToItem);
 
 const goToItemCreation = () =>
@@ -42,44 +35,25 @@ const goToItemCreation = () =>
     ),
   ]);
 
-const deleteSingleDoc = (docId) =>
-  free.of(docId)
-    .chain(database.get)
-    .map(R.set(ItemL.deleted, true))
-    .chain(database.put);
-
-const markDelectedDocs = (docs) =>
-  R.map(
-    R.set(ItemL.deleted, true)
-  )(docs);
-
 const performDeleteItem = (itemId) =>
-  free.parallel([
-    deleteSingleDoc(itemId),
-    findbatchesofitem(itemId)
-      .map(markDelectedDocs)
-      .chain(database.bulkDocs)
-  ])
-    .chain(goToHome);
+  free.sequence([
+    item_ops.remove(itemId),
+    goToHome
+  ]);
 
 const performEditPhoto = (itemId, blob) =>
   free.sequence([
-    item.editPhoto(itemId, blob),
+    item_ops.editPhoto(itemId, blob),
     goToItem(itemId)
   ]);
 
 const performEditName = (itemId, name) =>
-  item.editName(itemId, name).chain(setRef(ItemStores.name));
+  item_ops.editName(itemId, name).chain(setRef(ItemStores.name));
 
 const performEditRemindDays = (itemId, days) =>
-  free.of(itemId) //
-    .chain(database.get)
-    .map(R.set(ItemL.remindDays, days))
-    .chain(database.put)
+  item_ops.editRemindDays(itemId, days)
     .map(R.view(ItemL.remindDays))
     .chain(setRef(ItemStores.remindDays));
-//TODO: change all batches too
-
 
 const presentRemind = (itemId) =>
   free.of(itemId) //
@@ -87,46 +61,39 @@ const presentRemind = (itemId) =>
     .map(R.view(ItemL.remindDays))
     .chain(setRef(ItemStores.remindDays));
 
-const performAddBatch = (itemId, expiryDate, count) => {
-  return free
-    .of(makeBatchDoc(itemId, expiryDate)) //
-    .map(addBatch(count))
-    .chain(database.put)
-    .chain((_) => presentBatches(itemId));
-};
+const performCreateBatch = (itemId, expiryDate) =>
+  free.sequence([
+    batch_ops.create(itemId, expiryDate),
+    presentBatches(itemId)
+  ]);
 
 const performDeleteBatch = (itemId, batchId) =>
-  free
-    .of(batchId) //
-    .chain(remove)
-    .chain((_) => presentBatches(itemId));
+  free.sequence([
+    batch_ops.remove(batchId),
+    presentBatches(itemId)
+  ]);
 
 const makeDeleteBatch = (itemId, batches) =>
   R.map((batch) => () => addSop(() => performDeleteBatch(itemId, batch._id)))(
     batches
   );
 
-const performBatchCounting = (itemId, batchId, value) =>
-  free
-    .of(batchId) //
-    .chain(database.get)
-    .map(addBatch(value))
-    .chain(database.put)
-    .chain((_) => presentBatches(itemId));
-
-const makeBatchAdd = (itemId, value, batches) =>
+const performBatchCounting = (itemId, batches, operation) =>
   R.map(
     (batch) => () =>
-      addSop(() => performBatchCounting(itemId, batch._id, value))
+      addSop(() => free.sequence([
+        operation(batch),
+        presentBatches(itemId)
+      ]))
   )(batches);
 
 const presentBatches = (itemId) =>
-  batch.getAll(itemId)
+  batch_ops.getAll(itemId)
     .chain((batches) =>
       free.sequence([
         setRef(BatchStores.batches, batches),
-        setRef(BatchStores.performBatchInc, makeBatchAdd(itemId, 1, batches)),
-        setRef(BatchStores.performBatchDec, makeBatchAdd(itemId, -1, batches)),
+        setRef(BatchStores.performBatchInc, performBatchCounting(itemId, batches, batch_ops.incAndSaveCount)),
+        setRef(BatchStores.performBatchDec, performBatchCounting(itemId, batches, batch_ops.decAndSaveCount)),
         setRef(BatchStores.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );
@@ -181,7 +148,7 @@ const presentTags = (itemId) =>
     .chain((tags) => presentTagSelections(itemId, tags));
 
 const presentItem = (itemId) =>
-  item.getItemWithPhoto(itemId).chain((itemWithBlob) =>
+  item_ops.getItemWithPhoto(itemId).chain((itemWithBlob) =>
     free.sequence([
       setRef(ItemStores.name, itemWithBlob.name),
       setRef(ItemStores.photoBlob, itemWithBlob.blob),
@@ -200,7 +167,7 @@ const goToItem = (itemId) =>
       addSop(() => performEditRemindDays(itemId, newDays))
     ),
     setRef(BatchStores.performAddBatch, (expiryDate, count) =>
-      addSop(() => performAddBatch(itemId, expiryDate, count))
+      addSop(() => performCreateBatch(itemId, expiryDate, count))
     ),
     setRef(TagStores.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))

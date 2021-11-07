@@ -175,6 +175,7 @@ test('Remove a batch', async () => {
         batch_ops.getAll(itemId).chain(
           R.pipe(
             R.head(),
+            R.prop('_id'),
             batch_ops.remove
           )),
         batch_ops.getAll(itemId)

@@ -55,9 +55,8 @@ const create = (itemId, expiryDate) =>
     .map(makeBatchDoc(itemId, expiryDate))
     .chain(put)
 
-const remove = (batchDoc) =>
-  free.of(batchDoc)
-    .map(R.view(L.id))
+const remove = (batchId) =>
+  free.of(batchId)
     .chain(db_ops.remove);
 
 const removeAll = (itemId) =>
