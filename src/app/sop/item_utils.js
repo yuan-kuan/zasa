@@ -33,17 +33,6 @@ const updateRemindDay = R.curry((days, batchDoc) =>
     R.compose((d) => d.setDate(d.getDate() + days).valueOf(), (v) => new Date(v), R.view(L.expiry))(batchDoc),
     batchDoc));
 
-const appendTagAndSort = R.curry((tag, tags) =>
-  R.pipe(R.defaultTo([]), R.append(tag), R.sortBy(R.toLower))(tags)
-);
-
-const addTag = R.curry((tag, itemDoc) =>
-  R.over(L.tags, appendTagAndSort(tag), itemDoc)
-);
-
-const removeTag = R.curry((tag, itemDoc) =>
-  R.over(L.tags, R.without([tag]), itemDoc)
-);
 
 const makeItemWithBlob = (itemId, name, blob) =>
   R.pipe(R.set(L.itemId, itemId), R.set(L.name, name), R.set(L.blob, blob))({});
@@ -63,6 +52,5 @@ export {
   updateRemindDay,
   makeItemDoc,
   docToItemWithBlob,
-  addTag,
-  removeTag,
+
 };

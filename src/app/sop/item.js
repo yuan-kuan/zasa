@@ -20,6 +20,8 @@ import { getAllTags } from './filter';
 import { goToHome } from './home';
 import * as item_ops from './item_ops';
 import * as batch_ops from './batch_ops';
+import * as tag_ops from './tag_ops';
+import { tapLog } from 'app/utils';
 
 const performCreateItem = (name, blob) =>
   item_ops.create(name, blob)
@@ -99,53 +101,39 @@ const presentBatches = (itemId) =>
     );
 
 const performAddNewTag = (itemId, tag) =>
-  free
-    .of(itemId) //
-    .chain(database.get)
-    .map(addTag(tag))
-    .chain(database.put)
-    .map(R.view(ItemL.id))
-    .chain(presentTags);
+  free.sequence([
+    tag_ops.add(itemId, tag),
+    presentTags(itemId)
+  ]);
 
 const performRemoveTag = (itemId, tag) =>
-  free
-    .of(itemId) //
-    .chain(database.get)
-    .map(removeTag(tag))
-    .chain(database.put)
-    .map(R.view(ItemL.id))
-    .chain(presentTags);
-
-const presentTagSelections = (itemId, selectedTags) =>
-  getAllTags()
-    .chain((tags) =>
-      free.sequence([
-        setRef(TagStores.tags, selectedTags),
-        setRef(TagStores.allTags, tags),
-        setRef(TagStores.allTagsSelected, R.map((tag) => R.includes(tag, selectedTags), tags)),
-
-        setRef(
-          TagStores.performToggleTagFilter,
-          R.map(
-            (tag) =>
-              R.ifElse(
-                R.flip(R.includes)(selectedTags),
-                (tag) => () => addSop(() => performRemoveTag(itemId, tag)),
-                (tag) => () => addSop(() => performAddNewTag(itemId, tag)),
-              )(tag),
-            tags
-          )
-        ),
-      ])
-    );
+  free.sequence([
+    tag_ops.remove(itemId, tag),
+    presentTags(itemId)
+  ]);
 
 const presentTags = (itemId) =>
   free
-    .of(itemId) //
-    .chain(database.get)
-    .map(R.view(ItemL.tags))
-    .map(R.defaultTo([]))
-    .chain((tags) => presentTagSelections(itemId, tags));
+    // Convert the two arguments to a list
+    .of(R.curryN(2, R.unapply(R.identity)))
+    .ap(getAllTags())
+    .ap(tag_ops.getItemTags(itemId))
+    .chain(([allTags, itemTags]) => free.sequence([
+      setRef(TagStores.tags, itemTags),
+      setRef(TagStores.allTags, allTags),
+      setRef(TagStores.allTagsSelected, R.map((tag) => R.includes(tag, itemTags), allTags)),
+      setRef(
+        TagStores.performToggleTagFilter,
+        R.map(
+          (tag) => R.ifElse(
+            R.flip(R.includes)(itemTags),
+            (tag) => () => addSop(() => performRemoveTag(itemId, tag)),
+            (tag) => () => addSop(() => performAddNewTag(itemId, tag))
+          )(tag),
+          allTags
+        )
+      ),
+    ]))
 
 const presentItem = (itemId) =>
   item_ops.getItemWithPhoto(itemId).chain((itemWithBlob) =>
