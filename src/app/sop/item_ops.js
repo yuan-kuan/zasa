@@ -4,7 +4,7 @@ import { attach, getWithAttachment, get, put } from 'app/database';
 import * as db_ops from 'app/db_ops';
 import { randomFourCharacter } from 'app/utils';
 import { L, docToItemWithBlob, makeItemDoc } from './item_utils';
-import { getAll, updateAllRemind } from './batch_ops';
+import * as batch_ops from './batch_ops';
 
 const create = (name, blob) =>
   free
@@ -20,13 +20,11 @@ const create = (name, blob) =>
       }
     })
 
-
 const remove = (itemId) =>
   free.parallel([
     db_ops.remove(itemId),
-    getAll(itemId).chain(db_ops.removeAll)
+    batch_ops.removeAll(itemId)
   ])
-
 
 const getItemWithPhoto = (itemId) =>
   free
@@ -53,6 +51,6 @@ const editRemindDays = (itemId, days) => free
   .chain(get)
   .map(R.set(L.remindDays, days))
   .chain(put)
-  .chain((_) => updateAllRemind(itemId))
+  .chain((_) => batch_ops.updateAllRemind(itemId))
 
 export { create, remove, getItemWithPhoto, editPhoto, editName, editRemindDays };

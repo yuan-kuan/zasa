@@ -60,6 +60,11 @@ const remove = (batchDoc) =>
     .map(R.view(L.id))
     .chain(db_ops.remove);
 
+const removeAll = (itemId) =>
+  free.of(itemId)
+    .chain(getAll)
+    .chain(db_ops.removeAll)
+
 const updateBatchRemind = R.curry((days, batchDoc) =>
   R.set(L.remind, msAfterDays(batchDoc.expiry, days), batchDoc));
 
@@ -76,4 +81,4 @@ const addCount = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
 const incAndSaveCount = (batchDoc) => R.compose(put, addCount(1))(batchDoc);
 const decAndSaveCount = (batchDoc) => R.compose(put, addCount(-1))(batchDoc);
 
-export { getAll, create, remove, updateAllRemind, incAndSaveCount, decAndSaveCount };
+export { getAll, create, remove, removeAll, updateAllRemind, incAndSaveCount, decAndSaveCount };
