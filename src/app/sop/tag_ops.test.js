@@ -1,12 +1,16 @@
 import * as R from 'ramda';
 
-import { createTestInterpetor } from 'test/utils';
+import { createTestHelper } from 'test/utils';
 import * as free from 'fp/free';
 
 import * as item_ops from './item_ops';
 import * as tag_ops from './tag_ops';
 
-const interpret = createTestInterpetor(true);
+const testHelper = createTestHelper(true);
+let interpret;
+beforeEach(() => {
+  interpret = testHelper.setup();
+});
 
 test('New item starts with no tags', async () => {
   const result = await interpret(

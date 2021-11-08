@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
 import { promise, resolve } from 'fluture';
 
-import { utilsInterpretor } from 'app/utils';
+import { atMostFourChar, utilsInterpretor } from 'app/utils';
 import { freeUtilsInterpretor } from 'fp/free';
 import { setupDatabaseInterpretor } from 'app/database';
 import { dispatch } from 'fp/interpretor';
@@ -12,14 +12,28 @@ const MemPouch = PouchDB.defaults({
 });
 
 /// Boolean -> ( Free Monad -> Promise )
-export const createTestInterpetor = (useDb = false) => {
-  const interpretors = [utilsInterpretor, freeUtilsInterpretor];
-  if (useDb) {
-    interpretors.push(setupDatabaseInterpretor(MemPouch('item-test')));
-  }
+export const createTestHelper = (useDb = false) => {
+  const defaultInterpretors = [utilsInterpretor, freeUtilsInterpretor];
 
-  return (freeMonad) => {
-    return promise(freeMonad.foldMap(dispatch(interpretors), resolve));
-  }
+  let interpretors;
+  let db;
+  let ranTest = 0;
+  let randomTestId = atMostFourChar(Math.random());
+
+  return {
+    setup: () => {
+      interpretors = [];
+      interpretors.push(...defaultInterpretors);
+      if (useDb) {
+        // DO NOT try to destroy memory pouchDB instance. it is at least 3 seconds slow.
+        db = MemPouch(`testmem-${randomTestId}-${ranTest++}`);
+        interpretors.push(setupDatabaseInterpretor(db));
+      }
+
+      return (freeMonad) => {
+        return promise(freeMonad.foldMap(dispatch(interpretors), resolve));
+      };
+    }
+  };
 }
 

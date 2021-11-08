@@ -1,10 +1,17 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
-import { attach, getWithAttachment, get, put } from 'app/database';
+import { attach, getWithAttachment, get, put, alldocs } from 'app/database';
 import * as db_ops from 'app/db_ops';
 import { randomFourCharacter } from 'app/utils';
 import { L, docToItemWithBlob, makeItemDoc } from './item_utils';
 import * as batch_ops from './batch_ops';
+
+const getAll = () =>
+  free
+    .of(db_ops.makeStartEndRangeAllDocOptionAttached('i_'))
+    .chain(alldocs)
+    .map(R.map(docToItemWithBlob))
+
 
 const create = (name, blob) =>
   free
@@ -64,4 +71,4 @@ const editRemindDays = (itemId, days) =>
   ])
     .map(R.view(L.remindDays));
 
-export { create, remove, getItemWithPhoto, getItemRemindDays, editPhoto, editName, editRemindDays };
+export { getAll, create, remove, getItemWithPhoto, getItemRemindDays, editPhoto, editName, editRemindDays };

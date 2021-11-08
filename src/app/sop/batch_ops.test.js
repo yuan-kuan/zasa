@@ -1,12 +1,16 @@
 import * as R from 'ramda';
 
-import { createTestInterpetor } from 'test/utils';
+import { createTestHelper } from 'test/utils';
 import * as free from 'fp/free';
 
 import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
 
-const interpret = createTestInterpetor(true);
+const testHelper = createTestHelper(true);
+let interpret;
+beforeEach(() => {
+  interpret = testHelper.setup();
+});
 
 test('Create a batch with correct date and count of 1', async () => {
   const expiry = new Date('2020-04-27T01:00:00');
