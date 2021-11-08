@@ -32,6 +32,11 @@ const getItemWithPhoto = (itemId) =>
     .chain(getWithAttachment)
     .map(docToItemWithBlob);
 
+const getItemRemindDays = (itemId) =>
+  free.of(itemId)
+    .chain(get)
+    .map(R.view(L.remindDays))
+
 const editPhoto = (itemId, blob) =>
   free
     .of(itemId) //
@@ -46,11 +51,17 @@ const editName = (itemId, name) =>
     .chain(put)
     .map(R.view(L.name))
 
-const editRemindDays = (itemId, days) => free
-  .of(itemId) //
-  .chain(get)
-  .map(R.set(L.remindDays, days))
-  .chain(put)
-  .chain((_) => batch_ops.updateAllRemind(itemId))
+const internalEditRemindDays = (itemId, days) =>
+  free.of(itemId) //
+    .chain(get)
+    .map(R.set(L.remindDays, days))
+    .chain(put)
 
-export { create, remove, getItemWithPhoto, editPhoto, editName, editRemindDays };
+const editRemindDays = (itemId, days) =>
+  free.sequence([
+    internalEditRemindDays(itemId, days),
+    batch_ops.updateAllRemind(itemId)
+  ])
+    .map(R.view(L.remindDays));
+
+export { create, remove, getItemWithPhoto, getItemRemindDays, editPhoto, editName, editRemindDays };

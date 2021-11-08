@@ -1,29 +1,16 @@
-import PouchDB from 'pouchdb';
+import * as R from 'ramda';
+import * as free from 'fp/free';
 
-import { promise, resolve } from 'fluture';
-import { dispatch } from 'fp/interpretor';
-import * as database from 'app/database';
-import * as utils from 'app/utils';
-import { create, editName, editPhoto, getItemWithPhoto } from './item_ops';
+import { createTestInterpetor } from "test/utils";
+import { create, editName, editPhoto, editRemindDays, getItemRemindDays, getItemWithPhoto } from './item_ops';
 
-PouchDB.plugin(require('pouchdb-adapter-memory'));
-const MemPouch = PouchDB.defaults({
-  adapter: 'memory',
-});
-
-const dbDispatcher = database.setupDatabaseInterpretor(MemPouch('item-test'));
-
-const interpret = (freeMonad) => freeMonad.foldMap(dispatch([
-  dbDispatcher, utils.utilsInterpretor
-]), resolve);
+const interpret = createTestInterpetor(true);
 
 test('Create item with name only', async () => {
   const fm = create('testName', null)
     .chain(getItemWithPhoto);
 
-  const future = interpret(fm);
-
-  const result = await promise(future)
+  const result = await interpret(fm)
   expect(result).toHaveProperty('name', 'testName');
   expect(result.blob).toBeFalsy();
 });
@@ -32,11 +19,31 @@ test('Create item with name and photo', async () => {
   const fm = create('testName', Buffer.from('Hello Blob'))
     .chain(getItemWithPhoto);
 
-  const future = interpret(fm);
-
-  const result = await promise(future)
+  const result = await interpret(fm)
   expect(result).toHaveProperty('name', 'testName');
   expect(result).toHaveProperty('blob', Buffer.from('Hello Blob'));
+});
+
+test('New item starts with 30 remind days.', async () => {
+  const fm = create('test remind day', null)
+    .chain(getItemRemindDays);
+
+  const result = await interpret(fm)
+  expect(result).toBe(30);
+});
+
+test('Edit item remind days', async () => {
+  const fm = create('test remind day', null)
+    .chain((itemId) =>
+      free.sequence([
+        editRemindDays(itemId, 10),
+        getItemRemindDays(itemId)
+      ])
+    )
+    .map(R.last);
+
+  const result = await interpret(fm)
+  expect(result).toBe(10);
 });
 
 test('Edit item name', async () => {
@@ -45,7 +52,7 @@ test('Edit item name', async () => {
       editName(itemId, 'new name')
         .chain((_) => getItemWithPhoto(itemId)));
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result.name).toBe('new name');
 });
 
@@ -55,6 +62,6 @@ test('Edit item photo', async () => {
       editPhoto(itemId, Buffer.from('Second Blob'))
         .chain((_) => getItemWithPhoto(itemId)));
 
-  const result = await promise(interpret(fm));
+  const result = await interpret(fm);
   expect(result.blob).toEqual(Buffer.from('Second Blob'));
 });

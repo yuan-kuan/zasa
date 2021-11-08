@@ -10,12 +10,6 @@ import ItemCreation from 'view/item/ItemCreation.svelte';
 
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
-import * as database from '../database';
-import {
-  L as ItemL,
-  addTag,
-  removeTag,
-} from './item_utils';
 import { getAllTags } from './filter';
 import { goToHome } from './home';
 import * as item_ops from './item_ops';
@@ -54,13 +48,10 @@ const performEditName = (itemId, name) =>
 
 const performEditRemindDays = (itemId, days) =>
   item_ops.editRemindDays(itemId, days)
-    .map(R.view(ItemL.remindDays))
     .chain(setRef(ItemStores.remindDays));
 
 const presentRemind = (itemId) =>
-  free.of(itemId) //
-    .chain(database.get)
-    .map(R.view(ItemL.remindDays))
+  item_ops.getItemRemindDays(itemId)
     .chain(setRef(ItemStores.remindDays));
 
 const performCreateBatch = (itemId, expiryDate) =>

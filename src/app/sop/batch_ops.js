@@ -1,8 +1,11 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
+
 import * as db_ops from 'app/db_ops';
 import { alldocs, bulkDocs, get, put } from 'app/database';
 import { tapLog } from 'app/utils';
+
+import * as item_ops from "./item_ops";
 
 const L = {
   id: R.lensProp('_id'),
@@ -41,17 +44,10 @@ const makeBatchDoc = R.curry((itemId, expiryDate, days) =>
     R.set(L.count, 1)
   )({})
 );
-
-const getRemindDays = (itemId) =>
-  free
-    .of(itemId)
-    .chain(get)
-    .map(R.view(L.remindDays))
-
 const create = (itemId, expiryDate) =>
   free
     .of(itemId)
-    .chain(getRemindDays)
+    .chain(item_ops.getItemRemindDays)
     .map(makeBatchDoc(itemId, expiryDate))
     .chain(put)
 
@@ -72,7 +68,7 @@ const updateAllRemind = (itemId) =>
     .of(R.curry((days, batches) =>
       R.map(updateBatchRemind(days), batches)
     ))
-    .ap(getRemindDays(itemId))
+    .ap(item_ops.getItemRemindDays(itemId))
     .ap(getAll(itemId))
     .chain(bulkDocs)
 
