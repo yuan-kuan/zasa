@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as R from 'ramda';
 
-import { lift } from 'fp/free';
+import { of, lift } from 'fp/free';
 
 // eslint-disable-next-line no-undef
 PouchDB.plugin(PouchDBFind);
@@ -147,7 +147,7 @@ const setupDatabaseInterpretor = (memoryPouchdb) => {
 
 const get = (id) => lift(Get(id, false));
 const getWithAttachment = (id) => lift(Get(id, true));
-const alldocs = (options) => lift(AllDocs(options));
+const allDocs = (options) => lift(AllDocs(options));
 const put = (doc) => lift(Put(doc));
 const bulkDocs = (docs) => lift(BulkDocs(docs));
 const attach = (doc, filename, blob) => lift(Attach(doc, filename, blob));
@@ -158,11 +158,27 @@ const cleanUp = () => lift(CleanUp(null));
 const destroy = () => lift(Destroy(null));
 const sync = (targetUrl, options) => lift(Sync(targetUrl, options));
 
+const L = { deleted: R.lensProp('_deleted') };
+
+const markDeleted = (doc) => R.set(L.deleted, true, doc);
+const markAllDeleted = (docs) =>
+  R.map(R.set(L.deleted, true), docs);
+
+const del = (id) =>
+  get(id)
+    .map(markDeleted)
+    .chain(put);
+
+const deleteAllDocs = (docs) =>
+  of(docs)
+    .map(markAllDeleted)
+    .chain(bulkDocs);
+
 export {
   setupDatabaseInterpretor,
   get,
   getWithAttachment,
-  alldocs,
+  allDocs,
   put,
   bulkDocs,
   attach,
@@ -172,4 +188,6 @@ export {
   cleanUp,
   destroy,
   sync,
+  del,
+  deleteAllDocs,
 };

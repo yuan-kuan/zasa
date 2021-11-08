@@ -5,12 +5,11 @@ import { setRef } from 'fp/ref';
 import { addSop } from 'fp/sop';
 
 import { FilterStores, GridStores } from 'app/stores';
-import { alldocs } from '../database';
-import { tapLog } from '../utils';
-import { makeStartEndRangeAllDocOptionAttached } from '../db_ops';
 import { goToItem } from './item';
-import { docToItemWithBlob } from './item_utils';
+
+import * as item_ops from './item_ops';
 import * as filter from './filter';
+import { tapLog } from '../utils';
 
 const setup = () => filter.setupTagFilter();
 
@@ -21,18 +20,11 @@ const presentGoToItems = (itemWithBlobs) =>
     .chain(setRef(GridStores.goToItem));
 
 const presentAllItems = (_) =>
-  free
-    // TODo: i_ is too much detail to be here.
-    .of(makeStartEndRangeAllDocOptionAttached('i_'))
-    .chain(alldocs)
-    .map(R.map(docToItemWithBlob))
+  item_ops.getAll()
     .chain((items) =>
       free.sequence([
         setRef(GridStores.items, items),
-        free.sequence([
-          setRef(GridStores.items, items),
-          presentGoToItems(items),
-        ]),
+        presentGoToItems(items),
       ])
     );
 

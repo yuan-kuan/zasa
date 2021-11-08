@@ -1,36 +1,26 @@
 import {
-  addBatch,
-  makeBatchDoc,
-  updateRemindDay,
-  makeItemDoc,
-  addTag,
-  removeTag,
+  makeItemId
 } from './item_utils';
 
 
 test('Item with single word', () => {
-  const item = makeItemDoc('Single', 'abcd');
+  const id = makeItemId('Single', 'abcd');
 
-  expect(item._id).toBe('i_single-abcd');
-  expect(item.name).toBe('Single');
+  expect(id).toBe('i_single-abcd');
 });
 
 test('Item with two and three words', () => {
-  const item2 = makeItemDoc('dOuble do', '02');
-  const item3 = makeItemDoc('TiplE Tri iRR', '0202');
+  const id2 = makeItemId('dOuble do', '02');
+  const id3 = makeItemId('TiplE Tri iRR', '0202');
 
-  expect(item2._id).toBe('i_double-do-02');
-  expect(item2.name).toBe('dOuble do');
-
-  expect(item3._id).toBe('i_tiple-tri-irr-0202');
-  expect(item3.name).toBe('TiplE Tri iRR');
+  expect(id2).toBe('i_double-do-02');
+  expect(id3).toBe('i_tiple-tri-irr-0202');
 });
 
 test('Name with spaces in front or back will be trim', () => {
-  const item = makeItemDoc('  space space ', 'ad12');
+  const id = makeItemId('  space space ', 'ad12');
 
-  expect(item._id).toBe('i_space-space-ad12');
-  expect(item.name).toBe('space space');
+  expect(id).toBe('i_space-space-ad12');
 });
 
 // TODO: test the id generation, not the whole doc

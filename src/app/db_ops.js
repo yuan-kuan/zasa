@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import * as free from 'fp/free';
 import * as pouch from './database';
 
 const L = {
@@ -35,19 +34,6 @@ const makeMapWithKeysForDocAttachmentQueryOption = (keys) => {
   };
 };
 
-const remove = (id) =>
-  free
-    .of(id) //
-    .chain(pouch.get)
-    .map(R.set(L.deleted, true))
-    .chain(pouch.put);
-
-
-const removeAll = (docs) =>
-  free.of(docs)
-    .map(R.map(R.set(L.deleted, true)))
-    .chain(pouch.bulkDocs);
-
 const syncWithBackUp = (targetUrl, username, password) =>
   pouch.sync(targetUrl, {
     auth: {
@@ -61,7 +47,5 @@ export {
   makeStartEndRangeAllDocOptionAttached,
   makeReduceByGroupQueryOption,
   makeMapWithKeysForDocAttachmentQueryOption,
-  remove,
-  removeAll,
   syncWithBackUp,
 };

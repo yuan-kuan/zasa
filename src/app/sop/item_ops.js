@@ -1,15 +1,31 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
-import { attach, getWithAttachment, get, put, alldocs } from 'app/database';
+import { attach, getWithAttachment, get, put, allDocs, del } from 'app/database';
 import * as db_ops from 'app/db_ops';
 import { randomFourCharacter } from 'app/utils';
-import { L, docToItemWithBlob, makeItemDoc } from './item_utils';
+import { docToItemWithBlob, makeItemId } from './item_utils';
 import * as batch_ops from './batch_ops';
+
+const L = {
+  id: R.lensProp('_id'),
+  name: R.lensProp('name'),
+  remindDays: R.lensProp('remindDays'),
+  type: R.lensProp('type'),
+};
+
+const makeItemDoc = R.curry((name, postHash) =>
+  R.pipe(
+    R.set(L.id, makeItemId(name, postHash)),
+    R.set(L.name, R.trim(name)),
+    R.set(L.type, 'i'),
+    R.set(L.remindDays, 30)
+  )({})
+);
 
 const getAll = () =>
   free
     .of(db_ops.makeStartEndRangeAllDocOptionAttached('i_'))
-    .chain(alldocs)
+    .chain(allDocs)
     .map(R.map(docToItemWithBlob))
 
 
@@ -29,7 +45,7 @@ const create = (name, blob) =>
 
 const remove = (itemId) =>
   free.parallel([
-    db_ops.remove(itemId),
+    del(itemId),
     batch_ops.removeAll(itemId)
   ])
 

@@ -2,10 +2,11 @@ import * as R from 'ramda';
 import * as free from 'fp/free';
 
 import * as db_ops from 'app/db_ops';
-import { alldocs, bulkDocs, get, put } from 'app/database';
+import { allDocs, bulkDocs, del, deleteAllDocs, put } from 'app/database';
 import { tapLog } from 'app/utils';
 
 import * as item_ops from "./item_ops";
+import { makeBatchId, convertItemIdToBatchId } from './item_utils';
 
 const L = {
   id: R.lensProp('_id'),
@@ -19,46 +20,36 @@ const L = {
 
 const msAfterDays = (date, days) => date.valueOf() + days * 24 * 60 * 60 * 1000
 
-const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
-
 const makeGetBatchesAllDocOption = (itemId) =>
   R.pipe(convertItemIdToBatchId, db_ops.makeStartEndRangeAllDocOption)(itemId);
 
 const getAll = (itemId) => free
   .of(itemId) //
   .map(makeGetBatchesAllDocOption)
-  .chain(alldocs);
+  .chain(allDocs);
 
-const ymdOnly = (date) =>
-  R.converge(
-    (y, m, d) => y * 10000 + m * 100 + d,
-    [(d) => d.getFullYear(), (d) => d.getMonth() + 1, (d) => d.getDate()]
-  )(date);
-
-const makeBatchDoc = R.curry((itemId, expiryDate, days) =>
+const makeBatchDoc = R.curry((itemId, expiry, days) =>
   R.pipe(
-    R.set(L.id, `${convertItemIdToBatchId(itemId)}:${ymdOnly(expiryDate)}`),
-    R.set(L.expiry, expiryDate.valueOf()),
-    R.set(L.remind, msAfterDays(expiryDate, days)),
+    R.set(L.id, makeBatchId(itemId, expiry)),
+    R.set(L.expiry, expiry.valueOf()),
+    R.set(L.remind, msAfterDays(expiry, days)),
     R.set(L.type, 'b'),
     R.set(L.count, 1)
   )({})
 );
-const create = (itemId, expiryDate) =>
+const create = (itemId, expiry) =>
   free
     .of(itemId)
     .chain(item_ops.getItemRemindDays)
-    .map(makeBatchDoc(itemId, expiryDate))
+    .map(makeBatchDoc(itemId, expiry))
     .chain(put)
 
-const remove = (batchId) =>
-  free.of(batchId)
-    .chain(db_ops.remove);
+const remove = del;
 
 const removeAll = (itemId) =>
   free.of(itemId)
     .chain(getAll)
-    .chain(db_ops.removeAll)
+    .chain(deleteAllDocs);
 
 const updateBatchRemind = R.curry((days, batchDoc) =>
   R.set(L.remind, msAfterDays(batchDoc.expiry, days), batchDoc));
