@@ -10,10 +10,11 @@ import ItemCreation from 'view/item/ItemCreation.svelte';
 
 import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
-import { getAllTags } from './filter';
 import { goToHome } from './home';
+
 import * as item_ops from './item_ops';
 import * as batch_ops from './batch_ops';
+import * as filter_ops from './filter_ops';
 import * as tag_ops from './tag_ops';
 import { tapLog } from 'app/utils';
 
@@ -107,7 +108,7 @@ const presentTags = (itemId) =>
   free
     // Convert the two arguments to a list
     .of(R.curryN(2, R.unapply(R.identity)))
-    .ap(getAllTags())
+    .ap(filter_ops.getAllTags())
     .ap(tag_ops.getItemTags(itemId))
     .chain(([allTags, itemTags]) => free.sequence([
       setRef(TagStores.tags, itemTags),

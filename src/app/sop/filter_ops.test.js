@@ -4,7 +4,7 @@ import { createTestHelper } from 'test/utils';
 import * as free from 'fp/free';
 
 import * as item_ops from './item_ops';
-import * as filter_ops from './filter';
+import * as filter_ops from './filter_ops';
 import * as tag_ops from "./tag_ops";
 
 
