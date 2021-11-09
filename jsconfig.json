@@ -4,7 +4,8 @@
     "paths": {
       "fp": ["fp"],
       "view": ["view"],
-      "app": ["app"]
+      "app": ["app"],
+      "test": ["test"]
     }
   }
 }
