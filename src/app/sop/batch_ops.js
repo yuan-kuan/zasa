@@ -18,7 +18,7 @@ const L = {
   count: R.lensProp('count'),
 };
 
-const msAfterDays = (date, days) => date.valueOf() + days * 24 * 60 * 60 * 1000
+const msBeforeDays = (date, days) => date.valueOf() - days * 24 * 60 * 60 * 1000
 
 const makeGetBatchesAllDocOption = (itemId) =>
   R.pipe(convertItemIdToBatchId, db_ops.makeStartEndRangeAllDocOption)(itemId);
@@ -32,7 +32,7 @@ const makeBatchDoc = R.curry((itemId, expiry, days) =>
   R.pipe(
     R.set(L.id, makeBatchId(itemId, expiry)),
     R.set(L.expiry, expiry.valueOf()),
-    R.set(L.remind, msAfterDays(expiry, days)),
+    R.set(L.remind, msBeforeDays(expiry, days)),
     R.set(L.type, 'b'),
     R.set(L.count, 1)
   )({})
@@ -52,7 +52,7 @@ const removeAll = (itemId) =>
     .chain(deleteAllDocs);
 
 const updateBatchRemind = R.curry((days, batchDoc) =>
-  R.set(L.remind, msAfterDays(batchDoc.expiry, days), batchDoc));
+  R.set(L.remind, msBeforeDays(batchDoc.expiry, days), batchDoc));
 
 const updateAllRemind = (itemId) =>
   free

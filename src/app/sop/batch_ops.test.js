@@ -40,7 +40,7 @@ test('Create batch with remind date calculated from item, new item has 30 days',
 
 
   const result = await interpret(fm);
-  expect(result[0]).toHaveProperty('remind', (new Date('2020-05-27T01:00:00')).valueOf());
+  expect(result[0]).toHaveProperty('remind', (new Date('2020-03-28T01:00:00')).valueOf());
 });
 
 test('Create batch with a 14 remind days item', async () => {
@@ -55,7 +55,7 @@ test('Create batch with a 14 remind days item', async () => {
 
 
   const result = await interpret(fm);
-  expect(result[0]).toHaveProperty('remind', (new Date('2020-04-15T01:00:00')).valueOf());
+  expect(result[0]).toHaveProperty('remind', (new Date('2020-03-18T01:00:00')).valueOf());
 });
 
 test('Create 3 batches, order them by expiry', async () => {
@@ -77,11 +77,11 @@ test('Create 3 batches, order them by expiry', async () => {
   const result = await interpret(fm);
   expect(result).toHaveLength(3);
   expect(result[0]).toHaveProperty('expiry', expiry1.valueOf());
-  expect(result[0]).toHaveProperty('remind', (new Date('2020-05-27T01:00:00')).valueOf());
+  expect(result[0]).toHaveProperty('remind', (new Date('2020-03-28T01:00:00')).valueOf());
   expect(result[1]).toHaveProperty('expiry', expiry2.valueOf());
-  expect(result[1]).toHaveProperty('remind', (new Date('2020-06-26T01:00:00')).valueOf());
+  expect(result[1]).toHaveProperty('remind', (new Date('2020-04-27T01:00:00')).valueOf());
   expect(result[2]).toHaveProperty('expiry', expiry3.valueOf());
-  expect(result[2]).toHaveProperty('remind', (new Date('2020-06-27T01:00:00')).valueOf());
+  expect(result[2]).toHaveProperty('remind', (new Date('2020-04-28T01:00:00')).valueOf());
 });
 
 test('Changing item remind days should update all batches remind', async () => {
@@ -108,9 +108,9 @@ test('Changing item remind days should update all batches remind', async () => {
   expect(result[1]).toHaveProperty('expiry', expiry2.valueOf());
   expect(result[2]).toHaveProperty('expiry', expiry3.valueOf());
   // Expect remind dates are all 10 days before expiry (instead of the original 30 days)
-  expect(result[0]).toHaveProperty('remind', (new Date('2020-05-07T01:00:00')).valueOf());
-  expect(result[1]).toHaveProperty('remind', (new Date('2020-06-06T01:00:00')).valueOf());
-  expect(result[2]).toHaveProperty('remind', (new Date('2020-06-07T01:00:00')).valueOf());
+  expect(result[0]).toHaveProperty('remind', (new Date('2020-04-17T01:00:00')).valueOf());
+  expect(result[1]).toHaveProperty('remind', (new Date('2020-05-17T01:00:00')).valueOf());
+  expect(result[2]).toHaveProperty('remind', (new Date('2020-05-18T01:00:00')).valueOf());
 });
 
 test('Increment the count of a batch', async () => {
