@@ -10,12 +10,22 @@ const KV = daggy.taggedSum('KV', {
 });
 const { Get, Set } = KV;
 
-const kvToFuture = (p) =>
+const kvToFuture = (kv) => (p) =>
   p.cata({
-    Get: (key) => resolve(window.localStorage.getItem(key)),
-    Set: (key, value) => resolve(window.localStorage.setItem(key, value)),
+    Get: (key) => resolve(kv.getItem(key)),
+    Set: (key, value) => resolve(kv.setItem(key, value)),
   });
 
+const setupKVInterpretor = (memoryKV) => {
+  var kv;
+  if (memoryKV) {
+    kv = memoryKV;
+  } else {
+    kv = window.localStorage;
+  }
+
+  return [KV, kvToFuture(kv)];
+}
 
 const get = R.curry((defaultValue, key) =>
   lift(Get(key)) //
@@ -24,5 +34,4 @@ const get = R.curry((defaultValue, key) =>
 );
 const set = R.curry((key, value) => lift(Set(key, JSON.stringify(value))));
 
-export const kvInterpretor = [KV, kvToFuture];
-export { get, set };
+export { setupKVInterpretor, get, set };

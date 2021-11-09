@@ -1,6 +1,4 @@
 import * as R from 'ramda';
-import daggy from 'daggy';
-
 import * as free from 'fp/free';
 
 import { createIndex, find, put, query } from '../database';
@@ -11,16 +9,6 @@ import {
 } from '../db_ops';
 import * as kv from '../kv';
 import { docToItemWithBlob } from './item_utils';
-
-const Filter = daggy.taggedSum('Filter', {
-  GetSavedTags: [''],
-  SetSavedTags: ['tags'],
-  QueryTagFilter: ['options'],
-  FindExpiringItem: ['expiry'],
-  SetupTagFilter: [''],
-});
-const { GetSavedTags, SetSavedTags, QueryTagFilter, FindExpiringItem, SetupTagFilter } = Filter;
-
 const L = {
   id: R.lensProp('_id'),
   map: R.lensPath(['views', 'tagFilter', 'map']),
@@ -68,33 +56,27 @@ const makeSortByExpiryOptions = (expiry) => {
     ]
   };
 }
+const findExpiringItem = (expiry) => find(makeSortByExpiryOptions(expiry))
 
-const filterToFuture = (p) =>
-  p.cata({
-    GetSavedTags: (_) => free.interpete(kv.get([], 'filteringTags')),
-    SetSavedTags: (tags) => free.interpete(kv.set('filteringTags', tags)),
-    QueryTagFilter: (options) => free.interpete(query('tagFilter', options)),
-    FindExpiringItem: (expiry) => free.interpete(find(makeSortByExpiryOptions(expiry))),
-    SetupTagFilter: () =>
-      free.interpete(
-        free.sequence([
-          put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
-          createIndex(makeExpiryIndexDoc())
-        ])
-      ),
-
-  });
-
-
-const getSavedTagFilter = () => free.lift(GetSavedTags(null));
-const setSavedTagFilter = (tags) => free.lift(SetSavedTags(tags));
-const queryTagFilter = (options) => free.lift(QueryTagFilter(options));
-const findExpiringItem = (expiry) => free.lift(FindExpiringItem(expiry));
-const setupTagFilter = () => free.lift(SetupTagFilter(null));
+const getSavedTagFilter = () => kv.get([], 'filteringTags');
+const setSavedTagFilter = (tags) => kv.set('filteringTags', tags);
 
 const updateSavedTagFilter = (modifier) =>
   getSavedTagFilter().map(modifier).chain(setSavedTagFilter);
 
+const addFilterTag = (tag) =>
+  updateSavedTagFilter(R.append(tag));
+
+const removeFilterTag = (tag) =>
+  updateSavedTagFilter(R.without([tag]));
+
+const setupTagFilter = () =>
+  free.sequence([
+    put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
+    // createIndex(makeExpiryIndexDoc())
+  ]);
+
+const queryTagFilter = (options) => query('tagFilter', options)
 const queryResultToTagSelection = (rows) => R.pluck('key', rows);
 
 const getAllTags = () =>
@@ -117,16 +99,18 @@ const getItemsWithTags = (tags) =>
     .chain(queryTagFilter)
     .map(queryResultToItem);
 
-const getItemsExpiringBefore = (expiry) =>
-  free.of(expiry) //
-    .chain(findExpiringItem)
+// const getItemsExpiringBefore = (expiry) =>
+//   free.of(expiry) //
+//     .chain(findExpiringItem)
 
-export const filterInterpretor = [Filter, filterToFuture];
+// export const filterInterpretor = [Filter, filterToFuture];
 export {
   setupTagFilter,
+  addFilterTag,
+  removeFilterTag,
   getSavedTagFilter,
   updateSavedTagFilter,
   getAllTags,
   getItemsWithTags,
-  getItemsExpiringBefore,
+  // getItemsExpiringBefore,
 };

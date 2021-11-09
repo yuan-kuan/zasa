@@ -24,6 +24,7 @@
     "fluture": "^14.0.0",
     "image-blob-reduce": "^3.0.1",
     "jest": "^27.3.1",
+    "localstorage-memory": "^1.0.3",
     "page": "^1.11.6",
     "path-parser": "^6.1.0",
     "pica": "^7.1.0",
