@@ -59,7 +59,7 @@ describe('Need Filter Design Doc', () => {
   let interpret;
   beforeEach(() => {
     interpret = testHelper.setup();
-    return interpret(filter_ops.setupTagFilter());
+    return interpret(filter_ops.setup());
   });
 
   test('Get all tags ever added to any existing items', async () => {

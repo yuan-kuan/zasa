@@ -4,6 +4,7 @@ import * as pouch from './database';
 const L = {
   includeDoc: R.lensProp('include_docs'),
   attachments: R.lensProp('attachments'),
+  keys: R.lensProp('keys'),
   binary: R.lensProp('binary'),
   deleted: R.lensProp('_deleted'),
 };
@@ -19,6 +20,12 @@ const makeStartEndRangeAllDocOptionAttached = (key) =>
     R.set(L.attachments, true),
     R.set(L.binary, true)
   )(makeStartEndRangeAllDocOption(key));
+
+const makeKeysAllDocOptionAttached = (keys) =>
+  R.pipe(
+    R.set(L.keys, keys),
+    R.set(L.includeDoc, true)
+  )({});
 
 const makeReduceByGroupQueryOption = () => {
   return { group: true };
@@ -45,6 +52,7 @@ const syncWithBackUp = (targetUrl, username, password) =>
 export {
   makeStartEndRangeAllDocOption,
   makeStartEndRangeAllDocOptionAttached,
+  makeKeysAllDocOptionAttached,
   makeReduceByGroupQueryOption,
   makeMapWithKeysForDocAttachmentQueryOption,
   syncWithBackUp,

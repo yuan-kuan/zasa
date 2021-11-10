@@ -1,14 +1,15 @@
 import * as R from 'ramda';
 import * as free from 'fp/free';
 
-import { createIndex, find, put, query } from '../database';
+import { allDocs, createIndex, find, put, query } from '../database';
 import { tapLog } from '../utils';
 import {
+  makeKeysAllDocOptionAttached,
   makeMapWithKeysForDocAttachmentQueryOption,
   makeReduceByGroupQueryOption,
 } from '../db_ops';
 import * as kv from '../kv';
-import { docToItemWithBlob } from './item_utils';
+import { convertBatchIdToItemId, docToItemWithBlob } from './item_utils';
 const L = {
   id: R.lensProp('_id'),
   map: R.lensPath(['views', 'tagFilter', 'map']),
@@ -32,31 +33,33 @@ const makeTagFilterDesignDoc = () =>
     )
   )({});
 
-const makeExpiryIndexDoc = () => {
+const makeRemindIndexDoc = () => {
   return {
     index: {
-      fields: ['expiry'],
-      name: 'sort_expiry'
+      fields: ['remind'],
+      name: 'sort_remind'
     }
   }
 }
 
-const makeSortByExpiryOptions = (expiry) => {
+const makeSortByRemindOptions = (remind) => {
   return {
     selector: {
       type: {
         $eq: 'b'
       },
-      expiry: {
-        $lt: expiry
+      remind: {
+        $lt: remind
       }
     },
     sort: [
-      "expiry"
+      "remind"
+    ],
+    fields: [
+      "_id"
     ]
   };
 }
-const findExpiringItem = (expiry) => find(makeSortByExpiryOptions(expiry))
 
 const getSavedTagFilter = () => kv.get([], 'filteringTags');
 const setSavedTagFilter = (tags) => kv.set('filteringTags', tags);
@@ -70,10 +73,10 @@ const addFilterTag = (tag) =>
 const removeFilterTag = (tag) =>
   updateSavedTagFilter(R.without([tag]));
 
-const setupTagFilter = () =>
+const setup = () =>
   free.sequence([
     put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
-    // createIndex(makeExpiryIndexDoc())
+    createIndex(makeRemindIndexDoc())
   ]);
 
 const queryTagFilter = (options) => query('tagFilter', options)
@@ -99,18 +102,31 @@ const getItemsWithTags = (tags) =>
     .chain(queryTagFilter)
     .map(queryResultToItem);
 
-// const getItemsExpiringBefore = (expiry) =>
-//   free.of(expiry) //
-//     .chain(findExpiringItem)
+const todayInMs = () => (new Date()).valueOf();
 
-// export const filterInterpretor = [Filter, filterToFuture];
+const findRemindingItemIds = () =>
+  free.of(todayInMs())
+    .map(makeSortByRemindOptions)
+    .chain(find)
+    .map(R.map(R.compose(convertBatchIdToItemId, R.view(L.id))))
+    .map(R.uniq())
+
+const getRemindingItems = () =>
+  findRemindingItemIds()
+    .map(makeKeysAllDocOptionAttached)
+    .chain(allDocs)
+
+const getRemindingItemCount = () =>
+  findRemindingItemIds().map(R.length);
+
 export {
-  setupTagFilter,
+  setup,
   addFilterTag,
   removeFilterTag,
   getSavedTagFilter,
   updateSavedTagFilter,
   getAllTags,
   getItemsWithTags,
-  // getItemsExpiringBefore,
+  getRemindingItems,
+  getRemindingItemCount,
 };

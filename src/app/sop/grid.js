@@ -11,7 +11,7 @@ import * as item_ops from './item_ops';
 import * as filter_ops from './filter_ops';
 import { tapLog } from '../utils';
 
-const setup = () => filter_ops.setupTagFilter();
+const setup = () => filter_ops.setup();
 
 const presentGoToItems = (itemWithBlobs) =>
   free
