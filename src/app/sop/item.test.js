@@ -1,4 +1,6 @@
 import {
+  convertBatchIdToItemId,
+  makeBatchId,
   makeItemId
 } from './item_utils';
 
@@ -36,3 +38,13 @@ test('Name with spaces in front or back will be trim', () => {
 //   expect(batch.remind).toBe(remindDate.valueOf());
 //   expect(batch.count).toBe(0);
 // });
+
+
+test('Convert batch id back to item id', async () => {
+  const itemId = makeItemId('Apple Orange', 'abcd');
+  const expiry = new Date('2020-04-27T01:00:00');
+  const batchId = makeBatchId(itemId, expiry);
+
+  const result = convertBatchIdToItemId(batchId);
+  expect(result).toBe(itemId);
+});

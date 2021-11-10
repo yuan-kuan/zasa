@@ -12,6 +12,8 @@ const toSnakeCase = R.compose(R.replace(/[ ]/g, '-'), R.toLower, R.trim);
 const makeItemId = (name, hash) => `i_${toSnakeCase(name)}-${hash}`;
 
 const convertItemIdToBatchId = (itemId) => itemId.replace('i', 'b');
+const convertBatchIdToItemId = (batchId) => batchId.replace('b', 'i').substring(0, batchId.indexOf(':'));
+
 const ymdOnly = (date) =>
   R.converge(
     (y, m, d) => y * 10000 + m * 100 + d,
@@ -36,5 +38,6 @@ export {
   makeItemId,
   makeBatchId,
   convertItemIdToBatchId,
+  convertBatchIdToItemId,
   docToItemWithBlob,
 };
