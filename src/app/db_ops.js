@@ -24,7 +24,9 @@ const makeStartEndRangeAllDocOptionAttached = (key) =>
 const makeKeysAllDocOptionAttached = (keys) =>
   R.pipe(
     R.set(L.keys, keys),
-    R.set(L.includeDoc, true)
+    R.set(L.includeDoc, true),
+    R.set(L.attachments, true),
+    R.set(L.binary, true)
   )({});
 
 const makeReduceByGroupQueryOption = () => {
