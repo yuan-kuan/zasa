@@ -61,11 +61,21 @@ const makeSortByRemindOptions = (remind) => {
   };
 }
 
-const getSavedTagFilter = () => kv.get([], 'filteringTags');
+const getSavedTagFilter = () =>
+  kv.get([], 'filteringTags')
+    .chain(
+      R.ifElse(
+        R.isEmpty,
+        free.left,
+        free.right,
+      ));
+
 const setSavedTagFilter = (tags) => kv.set('filteringTags', tags);
 
 const updateSavedTagFilter = (modifier) =>
-  getSavedTagFilter().map(modifier).chain(setSavedTagFilter);
+  getSavedTagFilter()
+    .call(free.bimap(modifier, modifier))
+    .chain(setSavedTagFilter);
 
 const addFilterTag = (tag) =>
   updateSavedTagFilter(R.append(tag));
@@ -102,6 +112,11 @@ const getItemsWithTags = (tags) =>
     .chain(queryTagFilter)
     .map(queryResultToItem);
 
+const hasExpiringFlag = () => kv.get(false, 'hasExpiringFlag')
+  .chain(R.ifElse(R.identity, free.right, free.left));
+
+const setExpiringFlag = (toggle) => kv.set('hasExpiringFlag', toggle);
+
 const todayInMs = () => (new Date()).valueOf();
 
 const findRemindingItemIds = () =>
@@ -127,6 +142,9 @@ export {
   updateSavedTagFilter,
   getAllTags,
   getItemsWithTags,
+
+  hasExpiringFlag,
+  setExpiringFlag,
   getRemindingItems,
   getRemindingItemCount,
 };

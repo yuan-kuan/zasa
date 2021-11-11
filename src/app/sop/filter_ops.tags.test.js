@@ -16,9 +16,15 @@ describe('Need memory KV', () => {
   });
 
   test('Getting no saved filter? no problem', async () => {
-    const result = await interpret(filter_ops.getSavedTagFilter());
+    const result = await interpret(
+      free.bimap(
+        (arr) => `No saved filter ${arr.length}`,
+        R.identity,
+        filter_ops.getSavedTagFilter()
+      )
+    );
 
-    expect(result).toHaveLength(0);
+    expect(result).toBe('No saved filter 0');
   });
 
   test('Adding filter tags', async () => {

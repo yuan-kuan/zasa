@@ -30,7 +30,7 @@ const sevenDaysLater = daysLater(7);
 
 let itemIdApple, itemIdFerrari, itemIdSky, itemIdGrass;
 
-const testHelper = createTestHelper(true);
+const testHelper = createTestHelper(true, true);
 let interpret;
 
 beforeEach(async () => {
@@ -81,6 +81,34 @@ test('Zero number of items when all remind dates are far away.', async () => {
   )
 
   expect(result).toBe(0);
+});
+
+test.only('Expiring flag default to false', async () => {
+  const result = await interpret(
+    free.bimap(
+      (flag) => `got no flag ${flag}`,
+      (flag) => `got flag ${flag}`,
+      filter_ops.hasExpiringFlag()
+    )
+  );
+
+  expect(result).toBe('got no flag false');
+});
+
+test.only('Set expiring flag to true', async () => {
+  const result = await interpret(
+    free.sequence([
+      filter_ops.setExpiringFlag(true),
+      free.bimap(
+        (flag) => `got no flag ${flag}`,
+        (flag) => `got flag ${flag}`,
+        filter_ops.hasExpiringFlag()
+      )
+    ])
+      .map(R.last)
+  );
+
+  expect(result).toBe('got flag true');
 });
 
 describe('Start with few batches in reminding period', () => {
@@ -175,5 +203,4 @@ describe('Start with few batches in reminding period', () => {
     expect(result[1]).toHaveProperty('name', 'ferrari');
     expect(result[2]).toHaveProperty('name', 'sky');
   });
-
 });
