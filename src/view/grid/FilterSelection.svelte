@@ -5,7 +5,13 @@
   import Tag from 'view/Tag.svelte';
 
   import { FilterStores } from 'app/stores';
-  const { allTags, allTagsSelected, performToggleTagFilter } = FilterStores;
+  const {
+    allTags,
+    allTagsSelected,
+    performToggleTagFilter,
+    expiringFilterSelected,
+    performToggleExpiringFilter,
+  } = FilterStores;
 </script>
 
 <div
@@ -23,5 +29,10 @@
         on:click={$performToggleTagFilter[index]}
       />
     {/each}
+    <Tag
+      name="Expiring (2)"
+      selected={$expiringFilterSelected}
+      on:click={$performToggleExpiringFilter}
+    />
   </div>
 </div>

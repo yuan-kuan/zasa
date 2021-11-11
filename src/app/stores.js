@@ -16,6 +16,8 @@ export const FilterStores = {
   allTags: createRef([]),
   allTagsSelected: createRef([]),
   performToggleTagFilter: createRef([]),
+  expiringFilterSelected: createRef(),
+  performToggleExpiringFilter: createRef(),
 }
 
 export const ItemStores = {
