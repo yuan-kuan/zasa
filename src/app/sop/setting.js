@@ -12,10 +12,20 @@ import { setSettingUrl } from '../router';
 import { reload } from '../utils';
 import { goToHome } from './home';
 import { sync } from './backup';
+import * as kv from 'app/kv';
 
 
-const performDestroyStorage = () => destroy().chain((_) => reload());
-const performCompactStorage = () => cleanUp();
+const performDestroyStorage = () =>
+  free.sequence([
+    kv.remove('filteringTags'),
+    kv.remove('hasExpiringFla'),
+    destroy(),
+    reload()
+  ]);
+
+const performCompactStorage = () =>
+  cleanUp()
+
 const performSyncStorage = (backupCode) =>
   free.sequence([
     setRef(settingStore.syncStatus, 'Syncing...'),

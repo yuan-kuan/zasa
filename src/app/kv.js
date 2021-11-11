@@ -7,13 +7,15 @@ import { lift } from 'fp/free';
 const KV = daggy.taggedSum('KV', {
   Get: ['key'],
   Set: ['key', 'value'],
+  Remove: ['key']
 });
-const { Get, Set } = KV;
+const { Get, Set, Remove } = KV;
 
 const kvToFuture = (kv) => (p) =>
   p.cata({
     Get: (key) => resolve(kv.getItem(key)),
     Set: (key, value) => resolve(kv.setItem(key, value)),
+    Remove: (key) => resolve(kv.removeItem(key))
   });
 
 const setupKVInterpretor = (memoryKV) => {
@@ -33,5 +35,6 @@ const get = R.curry((defaultValue, key) =>
     .map(JSON.parse)
 );
 const set = R.curry((key, value) => lift(Set(key, JSON.stringify(value))));
+const remove = (key) => lift(Remove(key));
 
-export { setupKVInterpretor, get, set };
+export { setupKVInterpretor, get, set, remove };
