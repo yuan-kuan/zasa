@@ -130,6 +130,7 @@ const getRemindingItems = () =>
   findRemindingItemIds()
     .map(makeKeysAllDocOptionAttached)
     .chain(allDocs)
+    .map(R.map(docToItemWithBlob))
 
 const getRemindingItemCount = () =>
   findRemindingItemIds().map(R.length);

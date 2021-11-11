@@ -19,14 +19,14 @@ const presentGoToItems = (itemWithBlobs) =>
     .map(R.map((ivb) => () => addSop(() => goToItem(ivb.itemId))))
     .chain(setRef(GridStores.goToItem));
 
+const presentItems = (items) => free.sequence([
+  setRef(GridStores.items, items),
+  presentGoToItems(items),
+]);
+
 const presentAllItems = (_) =>
   item_ops.getAll()
-    .chain((items) =>
-      free.sequence([
-        setRef(GridStores.items, items),
-        presentGoToItems(items),
-      ])
-    );
+    .chain(presentItems);
 
 const presentFilteredItem = (filterTags) =>
   free
@@ -35,8 +35,6 @@ const presentFilteredItem = (filterTags) =>
     .chain((items) =>
       free.sequence([setRef(GridStores.items, items), presentGoToItems(items)])
     );
-
-const presentExpiringItems = (_) => filter_ops.getItemsExpiringBefore((new Date(2023, 0)).valueOf());
 
 const performAddTagFilter = (tag) =>
   free.sequence([filter_ops.updateSavedTagFilter(R.append(tag)), presentGrid()]);
@@ -71,15 +69,48 @@ const presentTagSelection = (selectedTags) =>
       ])
     );
 
-const presentItems = (savedTags) =>
+const presentItemsChangeThis = (savedTags) =>
   free.of(savedTags).chain(
     R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem))
-// R.ifElse(R.isEmpty, presentExpiringItems, presentFilteredItem))
+
+const presentExpiringItems = () =>
+  filter_ops.getRemindingItems().chain(presentItems);
+
+const performToggleExpiringFilter = (v) =>
+  free.sequence([
+    filter_ops.setExpiringFlag(v),
+    presentGrid()
+  ]);
+
+const presentExpiringFilter = (itsOn) =>
+  free.sequence([
+    setRef(FilterStores.expiringFilterSelected, itsOn),
+    setRef(FilterStores.performToggleExpiringFilter, () => addSop(() => performToggleExpiringFilter(!itsOn))),
+  ]);
 
 const presentGrid = () =>
-  filter_ops.getSavedTagFilter().chain(free.parallelConverge([
-    presentTagSelection,
-    presentItems
-  ]));
+  filter_ops.hasExpiringFlag()
+    .call(free.bichain(
+      (yes) =>
+        free.sequence([
+          presentExpiringFilter(yes),
+          filter_ops.getSavedTagFilter()
+            .call(free.bichain(
+              free.parallelConverge([
+                presentTagSelection,
+                presentItems
+              ]),
+              free.parallelConverge([
+                presentTagSelection,
+                presentItems
+              ])
+            ))
+        ]),
+      (no) =>
+        free.sequence([
+          presentExpiringFilter(no),
+          presentExpiringItems()
+        ])
+    ));
 
 export { presentGrid, setup as gridSetup };
