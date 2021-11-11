@@ -22,6 +22,6 @@ export const dispatch = (pairs) => (instruction_of_arg) => {
     const interpreter = found[1];
     return interpreter(instruction_of_arg);
   } else {
-    console.error('Cannot find interpretor for ', instruction_of_arg);
+    console.error(`Cannot find interpretor for type: ${instruction_of_arg.constructor} - args: ${instruction_of_arg}`);
   }
 };

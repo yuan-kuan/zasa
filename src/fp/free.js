@@ -58,6 +58,8 @@ FreeMonad.prototype.foldMap = function (interpreter, of) {
           interpreted
         );
       } else {
+        console.assert(typeof interpreted === 'function', `Bad interpreted ${interpreted}`);
+
         let future = interpreted(interpreter, of);
         return fluture.chain((result) => next(result).foldMap(interpreter, of))(
           future
@@ -74,8 +76,10 @@ const FreeUtils = daggy.taggedSum('FutureCommand', {
   Bichain: ['left', 'right', 'freeMonad'],
   Bimap: ['left', 'right', 'freeMonad'],
   Parallel: ['freeMonads'],
+  Left: ['value'],
+  Right: ['value'],
 });
-const { Bichain, Bimap, Parallel } = FreeUtils;
+const { Bichain, Bimap, Parallel, Left, Right } = FreeUtils;
 
 // This interpretor return a function that expect `interpreter` and `of`, when
 // called with the arguments (which usually pass in by caller `foldMap`), this
@@ -88,7 +92,7 @@ const freeUtilsToFuture = (p) =>
       )(freeMonad.foldMap(interpreter, of)),
 
     Bimap: (left, right, freeMonad) => (interpreter, of) =>
-      fluture.bimap(left)(right)(freeMonad.foldMap(interpreter, of)),
+      fluture.coalesce(left)(right)(freeMonad.foldMap(interpreter, of)),
 
     Parallel: (freeMonads) => (interpreter, of) => {
       // Interpret each free monads in the array
@@ -97,6 +101,9 @@ const freeUtilsToFuture = (p) =>
       // Run all interpreted Future with parallel
       return fluture.parallel(MAX_THREAD)(futures);
     },
+
+    Left: fluture.reject,
+    Right: fluture.resolve,
   });
 
 
@@ -112,10 +119,11 @@ const sequence = R.sequence(of);
 // Map the result over `left` function if the outcome from forking freeMonad
 // being rejected. Map over `right` when resolved.
 //
-// Outcome of the future will remain the same after the mapped function. i.e.
-// rejection will remain a rejected future.
+// Outcome of the future will become resolution as internally we use fluture's
+// coalesce instead of bimap.
 //
 // See also: https://github.com/fluture-js/Fluture#bimap
+// See also: https://github.com/fluture-js/Fluture#coalesce
 const bimap = R.curry((left, right, freeMonad) =>
   lift(Bimap(left, right, freeMonad))
 );
@@ -133,6 +141,9 @@ const bichain = R.curry((left, right, freeMonad) =>
   lift(Bichain(left, right, freeMonad))
 );
 
+const left = (v) => lift(Left(v))
+const right = (v) => lift(Right(v));
+
 const interpete = (freeMonad) => (interpreter, of) =>
   freeMonad.foldMap(interpreter, of);
 
@@ -145,5 +156,7 @@ export {
   sequence,
   bimap,
   bichain,
+  left,
+  right,
   interpete,
 };
