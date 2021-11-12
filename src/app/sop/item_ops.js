@@ -85,6 +85,7 @@ const editRemindDays = (itemId, days) =>
     internalEditRemindDays(itemId, days),
     batch_ops.updateAllRemind(itemId)
   ])
+    .map(R.head)
     .map(R.view(L.remindDays));
 
 export { getAll, create, remove, getItemWithPhoto, getItemRemindDays, editPhoto, editName, editRemindDays };

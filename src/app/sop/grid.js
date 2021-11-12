@@ -91,24 +91,24 @@ const presentExpiringFilter = (itsOn) =>
 const presentGrid = () =>
   filter_ops.hasExpiringFlag()
     .call(free.bichain(
-      (yes) =>
+      (no) =>
         free.sequence([
-          presentExpiringFilter(yes),
+          presentExpiringFilter(no),
           filter_ops.getSavedTagFilter()
             .call(free.bichain(
               free.parallelConverge([
                 presentTagSelection,
-                presentItems
+                presentAllItems
               ]),
               free.parallelConverge([
                 presentTagSelection,
-                presentItems
+                presentFilteredItem
               ])
             ))
         ]),
-      (no) =>
+      (yes) =>
         free.sequence([
-          presentExpiringFilter(no),
+          presentExpiringFilter(yes),
           presentExpiringItems()
         ])
     ));
