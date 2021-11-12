@@ -36,7 +36,7 @@ const makeTagFilterDesignDoc = () =>
 const makeRemindIndexDoc = () => {
   return {
     index: {
-      fields: ['remind'],
+      fields: ['expiry', 'remind'],
       name: 'sort_remind'
     }
   }
@@ -50,10 +50,13 @@ const makeSortByRemindOptions = (remind) => {
       },
       remind: {
         $lt: remind
+      },
+      expiry: {
+        $gt: 0
       }
     },
     sort: [
-      "remind"
+      "expiry", "remind"
     ],
     fields: [
       "_id"
