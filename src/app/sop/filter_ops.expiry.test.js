@@ -2,11 +2,12 @@ import * as R from 'ramda';
 
 import { createTestHelper } from 'test/utils';
 import * as free from 'fp/free';
+import { deleteAllDocs } from 'app/database';
 
 import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
 import * as filter_ops from './filter_ops';
-import { deleteAllDocs } from 'app/database';
+import * as tag_ops from "./tag_ops";
 
 let itemIdApple, itemIdFerrari, itemIdSky, itemIdGrass;
 
@@ -234,5 +235,48 @@ describe('Start with few batches in reminding period', () => {
     expect(result[1]).toHaveProperty('expiry', fourDaysLater.valueOf());
     expect(result[2]).toHaveProperty('name', 'apple');
     expect(result[2]).toHaveProperty('expiry', sevenDaysLater.valueOf());
+  });
+
+  describe('Start with few batches in reminding period', () => {
+    beforeEach(async () => {
+      await interpret(
+        free.sequence([
+          tag_ops.add(itemIdApple, 'fruit'),
+          tag_ops.add(itemIdApple, 'red'),
+          tag_ops.add(itemIdFerrari, 'red'),
+          tag_ops.add(itemIdFerrari, 'car'),
+          tag_ops.add(itemIdSky, 'blue'),
+          tag_ops.add(itemIdSky, 'natural'),
+          tag_ops.add(itemIdGrass, 'natural'),
+          tag_ops.add(itemIdGrass, 'green'),
+        ]))
+    });
+
+    test('Expiring item filtered with no tag, an error, but no impact', async () => {
+      const result = await interpret(
+        filter_ops.getRemindingItemsWithTags([])
+      );
+
+      expect(result).toHaveLength(0);
+    });
+
+    test('Expiring item filtered with one tag', async () => {
+      const result = await interpret(
+        filter_ops.getRemindingItemsWithTags(['red'])
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('name', 'apple');;
+    });
+
+    test('Expiring item filtered with two tag', async () => {
+      const result = await interpret(
+        filter_ops.getRemindingItemsWithTags(['red', 'green'])
+      );
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toHaveProperty('name', 'grass');
+      expect(result[1]).toHaveProperty('name', 'apple');
+    });
   });
 });

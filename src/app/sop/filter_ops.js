@@ -13,6 +13,7 @@ import { convertBatchIdToItemId, docToItemWithBlob } from './item_utils';
 const L = {
   id: R.lensProp('_id'),
   expiry: R.lensProp('expiry'),
+  tags: R.lensProp('tags'),
   map: R.lensPath(['views', 'tagFilter', 'map']),
   reduce: R.lensPath(['views', 'tagFilter', 'reduce']),
 };
@@ -131,7 +132,7 @@ const findRemindingItemIdAndExpiry = () =>
 
 const indexedMap = R.addIndex(R.map);
 
-const getRemindingItems = () =>
+const getRemindingItems = (tagFilter = R.identity) =>
   findRemindingItemIdAndExpiry()
     .chain((itemIdAndExpirys) =>
       free.of(itemIdAndExpirys)
@@ -139,11 +140,17 @@ const getRemindingItems = () =>
         .map(R.map(convertBatchIdToItemId))
         .map(makeKeysAllDocOptionAttached)
         .chain(allDocs)
+        .map(R.filter(tagFilter))
         .map(R.map(docToItemWithBlob))
         .map(indexedMap((doc, index) =>
           R.set(L.expiry, R.view(L.expiry, R.prop(index, itemIdAndExpirys)))(doc)
         ))
     )
+
+const getRemindingItemsWithTags = (tags) =>
+  getRemindingItems(
+    R.compose(R.not, R.isEmpty, R.intersection(tags), R.view(L.tags))
+  );
 
 const getRemindingItemCount = () =>
   findRemindingItemIdAndExpiry().map(R.length);
@@ -161,4 +168,5 @@ export {
   setExpiringFlag,
   getRemindingItems,
   getRemindingItemCount,
+  getRemindingItemsWithTags,
 };
