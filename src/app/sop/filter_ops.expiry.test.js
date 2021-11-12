@@ -136,8 +136,11 @@ describe('Start with few batches in reminding period', () => {
 
     expect(result).toHaveLength(3);
     expect(result[0]).toHaveProperty('name', 'grass');
+    expect(result[0]).toHaveProperty('expiry', oneDayLater.valueOf());
     expect(result[1]).toHaveProperty('name', 'sky');
+    expect(result[1]).toHaveProperty('expiry', fourDaysLater.valueOf());
     expect(result[2]).toHaveProperty('name', 'apple');
+    expect(result[2]).toHaveProperty('expiry', sevenDaysLater.valueOf());
   });
 
   test('Correct number of items has remind date before today', async () => {
@@ -161,6 +164,7 @@ describe('Start with few batches in reminding period', () => {
     expect(result[1]).toHaveProperty('name', 'sky');
     expect(result[2]).toHaveProperty('name', 'apple');
     expect(result[3]).toHaveProperty('name', 'ferrari');
+    expect(result[3]).toHaveProperty('expiry', sevenDaysLater.valueOf());
   });
 
   test('Removed reminding batch will get new result', async () => {
@@ -225,7 +229,10 @@ describe('Start with few batches in reminding period', () => {
 
     expect(result).toHaveLength(3);
     expect(result[0]).toHaveProperty('name', 'grass');
+    expect(result[0]).toHaveProperty('expiry', oneDayLater.valueOf());
     expect(result[1]).toHaveProperty('name', 'sky');
+    expect(result[1]).toHaveProperty('expiry', fourDaysLater.valueOf());
     expect(result[2]).toHaveProperty('name', 'apple');
+    expect(result[2]).toHaveProperty('expiry', sevenDaysLater.valueOf());
   });
 });

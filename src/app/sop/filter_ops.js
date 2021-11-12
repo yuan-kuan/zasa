@@ -12,6 +12,7 @@ import * as kv from '../kv';
 import { convertBatchIdToItemId, docToItemWithBlob } from './item_utils';
 const L = {
   id: R.lensProp('_id'),
+  expiry: R.lensProp('expiry'),
   map: R.lensPath(['views', 'tagFilter', 'map']),
   reduce: R.lensPath(['views', 'tagFilter', 'reduce']),
 };
@@ -59,7 +60,7 @@ const makeSortByRemindOptions = (remind) => {
       "expiry", "remind"
     ],
     fields: [
-      "_id"
+      "_id", "expiry"
     ]
   };
 }
@@ -122,21 +123,30 @@ const setExpiringFlag = (toggle) => kv.set('hasExpiringFlag', toggle);
 
 const todayInMs = () => (new Date()).valueOf();
 
-const findRemindingItemIds = () =>
+const findRemindingItemIdAndExpiry = () =>
   free.of(todayInMs())
     .map(makeSortByRemindOptions)
     .chain(find)
-    .map(R.map(R.compose(convertBatchIdToItemId, R.view(L.id))))
-    .map(R.uniq())
+    .map(R.uniqBy(R.compose(convertBatchIdToItemId, R.view(L.id))))
+
+const indexedMap = R.addIndex(R.map);
 
 const getRemindingItems = () =>
-  findRemindingItemIds()
-    .map(makeKeysAllDocOptionAttached)
-    .chain(allDocs)
-    .map(R.map(docToItemWithBlob))
+  findRemindingItemIdAndExpiry()
+    .chain((itemIdAndExpirys) =>
+      free.of(itemIdAndExpirys)
+        .map(R.pluck('_id'))
+        .map(R.map(convertBatchIdToItemId))
+        .map(makeKeysAllDocOptionAttached)
+        .chain(allDocs)
+        .map(R.map(docToItemWithBlob))
+        .map(indexedMap((doc, index) =>
+          R.set(L.expiry, R.view(L.expiry, R.prop(index, itemIdAndExpirys)))(doc)
+        ))
+    )
 
 const getRemindingItemCount = () =>
-  findRemindingItemIds().map(R.length);
+  findRemindingItemIdAndExpiry().map(R.length);
 
 export {
   setup,
