@@ -89,6 +89,7 @@ const performToggleExpiringFilter = (v) =>
 
 const presentExpiringFilter = (itsOn) =>
   free.sequence([
+    filter_ops.getExpiringItemCount().chain(setRef(FilterStores.expiringItemCount)),
     setRef(FilterStores.expiringFilterSelected, itsOn),
     setRef(FilterStores.performToggleExpiringFilter, () => addSop(() => performToggleExpiringFilter(!itsOn))),
   ]);

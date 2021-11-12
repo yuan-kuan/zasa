@@ -2,7 +2,7 @@
   import Tag from 'view/Tag.svelte';
 
   import { FilterStores } from 'app/stores';
-  const { tags } = FilterStores;
+  const { tags, expiringItemCount, expiringFilterSelected } = FilterStores;
 </script>
 
 <div class="fixed bottom-12 right-2 ">
@@ -10,5 +10,8 @@
     {#each $tags as tag}
       <Tag name={tag} dense on:click />
     {/each}
+    {#if $expiringFilterSelected}
+      <Tag name={`Expiring (${$expiringItemCount})`} dense on:click />
+    {/if}
   </div>
 </div>

@@ -9,6 +9,7 @@
     allTags,
     allTagsSelected,
     performToggleTagFilter,
+    expiringItemCount,
     expiringFilterSelected,
     performToggleExpiringFilter,
   } = FilterStores;
@@ -29,10 +30,12 @@
         on:click={$performToggleTagFilter[index]}
       />
     {/each}
-    <Tag
-      name="Expiring (2)"
-      selected={$expiringFilterSelected}
-      on:click={$performToggleExpiringFilter}
-    />
+    {#if $expiringItemCount > 0}
+      <Tag
+        name={`Expiring (${$expiringItemCount})`}
+        selected={$expiringFilterSelected}
+        on:click={$performToggleExpiringFilter}
+      />
+    {/if}
   </div>
 </div>
