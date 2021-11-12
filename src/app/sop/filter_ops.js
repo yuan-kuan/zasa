@@ -124,7 +124,7 @@ const setExpiringFlag = (toggle) => kv.set('hasExpiringFlag', toggle);
 
 const todayInMs = () => (new Date()).valueOf();
 
-const findRemindingItemIdAndExpiry = () =>
+const findExpiringItemIdAndExpiry = () =>
   free.of(todayInMs())
     .map(makeSortByRemindOptions)
     .chain(find)
@@ -132,8 +132,8 @@ const findRemindingItemIdAndExpiry = () =>
 
 const indexedMap = R.addIndex(R.map);
 
-const getRemindingItems = (tagFilter = R.identity) =>
-  findRemindingItemIdAndExpiry()
+const getExpiringItems = (tagFilter = R.identity) =>
+  findExpiringItemIdAndExpiry()
     .chain((itemIdAndExpirys) =>
       free.of(itemIdAndExpirys)
         .map(R.pluck('_id'))
@@ -147,13 +147,13 @@ const getRemindingItems = (tagFilter = R.identity) =>
         ))
     )
 
-const getRemindingItemsWithTags = (tags) =>
-  getRemindingItems(
+const getExpiringItemsWithTags = (tags) =>
+  getExpiringItems(
     R.compose(R.not, R.isEmpty, R.intersection(tags), R.view(L.tags))
   );
 
-const getRemindingItemCount = () =>
-  findRemindingItemIdAndExpiry().map(R.length);
+const getExpiringItemCount = () =>
+  findExpiringItemIdAndExpiry().map(R.length);
 
 export {
   setup,
@@ -166,7 +166,7 @@ export {
 
   hasExpiringFlag,
   setExpiringFlag,
-  getRemindingItems,
-  getRemindingItemCount,
-  getRemindingItemsWithTags,
+  getExpiringItems,
+  getExpiringItemCount,
+  getExpiringItemsWithTags,
 };

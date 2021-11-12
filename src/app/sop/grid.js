@@ -74,7 +74,7 @@ const presentItemsChangeThis = (savedTags) =>
     R.ifElse(R.isEmpty, presentAllItems, presentFilteredItem))
 
 const presentExpiringItems = () =>
-  filter_ops.getRemindingItems().chain(presentItems);
+  filter_ops.getExpiringItems().chain(presentItems);
 
 const performToggleExpiringFilter = (v) =>
   free.sequence([

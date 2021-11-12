@@ -40,7 +40,7 @@ test('No item when all remind dates are far away from today', async () => {
         batch_ops.create(itemIdApple, hundredDaysLater),
         batch_ops.create(itemIdSky, hundredDaysLater),
         batch_ops.create(itemIdGrass, fortyDaysLater),
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
       .map(R.last)
   )
@@ -56,7 +56,7 @@ test('Zero number of items when all remind dates are far away.', async () => {
         batch_ops.create(itemIdApple, hundredDaysLater),
         batch_ops.create(itemIdSky, hundredDaysLater),
         batch_ops.create(itemIdGrass, fortyDaysLater),
-        filter_ops.getRemindingItemCount()
+        filter_ops.getExpiringItemCount()
       ])
       .map(R.last)
   )
@@ -133,7 +133,7 @@ describe('Start with few batches in reminding period', () => {
   });
 
   test('Items with remind dates before today, sorted by earliest expiring date', async () => {
-    const result = await interpret(filter_ops.getRemindingItems());
+    const result = await interpret(filter_ops.getExpiringItems());
 
     expect(result).toHaveLength(3);
     expect(result[0]).toHaveProperty('name', 'grass');
@@ -145,7 +145,7 @@ describe('Start with few batches in reminding period', () => {
   });
 
   test('Correct number of items has remind date before today', async () => {
-    const result = await interpret(filter_ops.getRemindingItemCount());
+    const result = await interpret(filter_ops.getExpiringItemCount());
 
     expect(result).toBe(3);
   });
@@ -153,9 +153,9 @@ describe('Start with few batches in reminding period', () => {
   test('Added batch with reminded data before today will add the item to result', async () => {
     const [countBeforeAdd, _, result] = await interpret(
       free.sequence([
-        filter_ops.getRemindingItemCount(),
+        filter_ops.getExpiringItemCount(),
         batch_ops.create(itemIdFerrari, sevenDaysLater),
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
     );
 
@@ -171,12 +171,12 @@ describe('Start with few batches in reminding period', () => {
   test('Removed reminding batch will get new result', async () => {
     const [countBeforeAdd, _, result] = await interpret(
       free.sequence([
-        filter_ops.getRemindingItemCount(),
+        filter_ops.getExpiringItemCount(),
         batch_ops
           .getAll(itemIdApple)
           .map(R.init) // The first two batches of apple is within reminding
           .chain(deleteAllDocs), // Remove them
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
     );
 
@@ -189,9 +189,9 @@ describe('Start with few batches in reminding period', () => {
   test('Shorten remind days on an item to hide it from filter', async () => {
     const [countBeforeAdd, _, result] = await interpret(
       free.sequence([
-        filter_ops.getRemindingItemCount(),
+        filter_ops.getExpiringItemCount(),
         item_ops.editRemindDays(itemIdSky, 3),
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
     );
 
@@ -204,9 +204,9 @@ describe('Start with few batches in reminding period', () => {
   test('Lengthen remind days on an item to show it from filter', async () => {
     const [countBeforeAdd, _, result] = await interpret(
       free.sequence([
-        filter_ops.getRemindingItemCount(),
+        filter_ops.getExpiringItemCount(),
         item_ops.editRemindDays(itemIdFerrari, 60),
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
     );
 
@@ -223,7 +223,7 @@ describe('Start with few batches in reminding period', () => {
       free.sequence([
         item_ops.editRemindDays(itemIdGrass, 2),
         item_ops.editRemindDays(itemIdSky, 7),
-        filter_ops.getRemindingItems()
+        filter_ops.getExpiringItems()
       ])
         .map(R.last)
     );
@@ -254,7 +254,7 @@ describe('Start with few batches in reminding period', () => {
 
     test('Expiring item filtered with no tag, an error, but no impact', async () => {
       const result = await interpret(
-        filter_ops.getRemindingItemsWithTags([])
+        filter_ops.getExpiringItemsWithTags([])
       );
 
       expect(result).toHaveLength(0);
@@ -262,7 +262,7 @@ describe('Start with few batches in reminding period', () => {
 
     test('Expiring item filtered with one tag', async () => {
       const result = await interpret(
-        filter_ops.getRemindingItemsWithTags(['red'])
+        filter_ops.getExpiringItemsWithTags(['red'])
       );
 
       expect(result).toHaveLength(1);
@@ -271,7 +271,7 @@ describe('Start with few batches in reminding period', () => {
 
     test('Expiring item filtered with two tag', async () => {
       const result = await interpret(
-        filter_ops.getRemindingItemsWithTags(['red', 'green'])
+        filter_ops.getExpiringItemsWithTags(['red', 'green'])
       );
 
       expect(result).toHaveLength(2);
