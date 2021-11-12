@@ -149,7 +149,7 @@ const getExpiringItems = (tagFilter = R.identity) =>
 
 const getExpiringItemsWithTags = (tags) =>
   getExpiringItems(
-    R.compose(R.not, R.isEmpty, R.intersection(tags), R.view(L.tags))
+    R.compose(R.not, R.isEmpty, R.intersection(tags), R.defaultTo([]), R.view(L.tags))
   );
 
 const getExpiringItemCount = () =>

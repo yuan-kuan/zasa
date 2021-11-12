@@ -76,6 +76,11 @@ const presentItemsChangeThis = (savedTags) =>
 const presentExpiringItems = () =>
   filter_ops.getExpiringItems().chain(presentItems);
 
+const presentExpiringItemsWithTags = (tags) => {
+  console.log('tags :>> ', tags);
+  return filter_ops.getExpiringItemsWithTags(tags).chain(presentItems);
+};
+
 const performToggleExpiringFilter = (v) =>
   free.sequence([
     filter_ops.setExpiringFlag(v),
@@ -109,7 +114,17 @@ const presentGrid = () =>
       (yes) =>
         free.sequence([
           presentExpiringFilter(yes),
-          presentExpiringItems()
+          filter_ops.getSavedTagFilter()
+            .call(free.bichain(
+              () => free.parallel([
+                presentTagSelection([]),
+                presentExpiringItems()
+              ]),
+              free.parallelConverge([
+                presentTagSelection,
+                presentExpiringItemsWithTags
+              ])
+            ))
         ])
     ));
 
