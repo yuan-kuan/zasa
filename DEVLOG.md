@@ -1,12 +1,14 @@
+## Part 12
+
+### Layers of codes into integration testing
+
+### Reminder before expiry date with new Map/Reduce
+
 ## Part 11
 
 ### Compenantize Svelte component
 
-### Project Organization
-
-## Part 10
-
-### ~~Declaring Svelte Stores in Svelte Component~~
+### Project Organization & Alias
 
 ## Part 9
 
