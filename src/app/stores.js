@@ -3,6 +3,7 @@ import { createRef } from 'fp/ref';
 export const Nav = {
   goToCreateItem: createRef(),
   goToSetting: createRef(),
+  goToInfo: createRef(),
   backToHome: createRef()
 }
 

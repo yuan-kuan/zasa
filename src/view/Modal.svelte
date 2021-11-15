@@ -3,13 +3,15 @@
 </script>
 
 <div
-  class="opacity-100 fixed z-30 w-full h-full top-0 left-0 flex items-center justify-center"
+  class="fixed z-30 w-screen h-screen top-0 left-0 bg-gray-900 bg-opacity-10 flex items-center justify-center"
+  on:click
 >
   <!-- Modal background to get close click -->
   <div
-    class="fixed bottom-0 left-0 w-screen h-screen bg-gray-900 opacity-10"
+    class="relative max-h-full m-8"
     transition:fade={{ duration: 500 }}
-    on:click
-  />
-  <slot />
+    on:click|stopPropagation|preventDefault={() => {}}
+  >
+    <slot />
+  </div>
 </div>

@@ -18,7 +18,7 @@
 {#if isEditingTag}
   <Modal on:click={closeTagSelection}>
     <div
-      class="fixed mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+      class="mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
       transition:scale={{ delay: 0, duration: 500, easing: circInOut }}
     >
       <TagNewInput />
