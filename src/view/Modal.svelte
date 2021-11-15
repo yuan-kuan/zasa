@@ -8,10 +8,17 @@
 >
   <!-- Modal background to get close click -->
   <div
-    class="relative max-h-full m-8"
+    id="content"
+    class="relative overflow-auto m-8"
     transition:fade={{ duration: 500 }}
     on:click|stopPropagation|preventDefault={() => {}}
   >
     <slot />
   </div>
 </div>
+
+<style>
+  #content {
+    max-height: 93%;
+  }
+</style>
