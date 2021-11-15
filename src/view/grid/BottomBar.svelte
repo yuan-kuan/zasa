@@ -8,7 +8,7 @@
 </script>
 
 <div
-  class="fixed bottom-4 left-1/2 transform -translate-x-1/2 inline-flex mx-auto justify-between bg-primary w-11/12 rounded-3xl"
+  class="absolute bottom-4 left-1/2 transform -translate-x-1/2 inline-flex mx-auto justify-between bg-primary w-11/12 rounded-3xl"
 >
   <BottomSideButton title="Settings" on:click={$goToSetting} />
 
