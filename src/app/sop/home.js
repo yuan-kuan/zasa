@@ -3,7 +3,7 @@ import { setRef } from 'fp/ref';
 import { addSop } from 'fp/sop';
 import { viewMainPage, viewSubPage } from 'fp/view';
 
-import Home from 'view/Home.svelte';
+import Home from 'view/home/Home.svelte';
 import InfoModal from 'view/info/InfoModal.svelte';
 
 import { Nav } from 'app/stores';

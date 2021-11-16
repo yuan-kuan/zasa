@@ -1,19 +1,17 @@
 <script>
-  import BottomSideButton from './BottomSideButton.svelte';
   import Filter from './Filter.svelte';
-  import InfoModal from 'view/info/InfoModal.svelte';
+  import FloatUpMenu from './FloatUpMenu.svelte';
 
   import { Nav } from 'app/stores';
-
-  // TODO: Is this the best ?
   const { goToSetting, goToCreateItem, goToInfo } = Nav;
 </script>
 
 <div
   class="absolute bottom-4 left-1/2 transform -translate-x-1/2 inline-flex mx-auto justify-between bg-primary w-11/12 rounded-3xl"
 >
-  <BottomSideButton title="Settings" on:click={$goToSetting} />
-  <BottomSideButton title="Info" on:click={$goToInfo} />
+  <!-- <BottomSideButton title="Settings" on:click={$goToSetting} />
+  <BottomSideButton title="Info" on:click={$goToInfo} /> -->
+  <FloatUpMenu />
 
   <button
     class="relative inline-flex flex-col items-center text-xs font-medium text-white py-3 px-6 flex-grow"
