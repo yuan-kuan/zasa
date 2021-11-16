@@ -4,7 +4,7 @@ import { addSop } from 'fp/sop';
 import { viewMainPage, viewSubPage } from 'fp/view';
 
 import Home from 'view/home/Home.svelte';
-import InfoModal from 'view/info/InfoModal.svelte';
+import InfoOnePager from 'view/info/InfoOnePager.svelte';
 
 import { Nav } from 'app/stores';
 import { presentGrid } from './grid';
@@ -13,7 +13,7 @@ import { goToItemCreation } from './item';
 import { goToSettingPage } from './setting';
 
 const goToinfo = () => free.sequence([
-  viewSubPage(Home, InfoModal),
+  viewSubPage(Home, InfoOnePager),
   setHomeUrl(),
   presentGrid(),
 ]);

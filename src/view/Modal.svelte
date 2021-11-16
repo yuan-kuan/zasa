@@ -11,7 +11,9 @@
     id="content"
     class="relative overflow-auto m-8"
     transition:fade={{ duration: 500 }}
-    on:click|stopPropagation|preventDefault={() => {}}
+    on:click|stopPropagation={() => {
+      console.log('modal eat you');
+    }}
   >
     <slot />
   </div>

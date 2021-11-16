@@ -1,0 +1,58 @@
+<div class="p-8  bg-neutral">
+  <p class="font-bold text-center text-xl pb-2">B4 The Date</p>
+  <p class="font-semibold text-base py-2">What is this?</p>
+  <p class="">
+    It helps you keep track of all your food, cans, pickles, dried food, etc.
+  </p>
+  <p class="pt-2">
+    With a glance, you will know what is expiring, how many of them are left,
+    which you need to consume first and when is your next restock.
+  </p>
+
+  <p class="font-semibold text-base py-2 mt-4 border-t-2">Is this free?</p>
+  <p class="">
+    Not entirely. It is free to use in your mobile device, forever.
+  </p>
+  <p class="pt-2">
+    However, if you need a backup on the internet, I'm gonna need you to chip in
+    for the server cost.
+  </p>
+  <p class="pt-2">
+    Don't worry about it now, talk to Kuan when you had used B4TheDate
+    extensively. We will figure it out.
+  </p>
+
+  <p class="font-semibold text-base py-2 mt-4 border-t-2">
+    This is not <i class="italic">online</i>?
+  </p>
+  <p class="">
+    Indeed it is not. You can use this application offline. You can <a
+      class="underline"
+      href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/"
+      target="_blank"
+      >add it to your Home screen too
+    </a>
+  </p>
+  <p class="pt-2">
+    All your data and photos are stored inside your phone. I do not upload your
+    information to the internet, unless you choose to backup your data into the
+    remote server.
+  </p>
+
+  <p class="font-semibold text-base py-2 mt-4 border-t-2">How to backup?</p>
+  <p class="">Talk to Kuan.</p>
+  <p class="pt-2">
+    A backup code will be provided eventually. You will use it to upload all
+    your data and photos to a remote server. Later, you can use the same code in
+    another device, or the same device, to download all the backup data.
+  </p>
+
+  <p class="font-semibold text-base py-2 mt-4 border-t-2">
+    How to "talk to Kuan"?
+  </p>
+  <p class="">Call or message him lah.</p>
+  <p class="pt-2">
+    If you do not have his phone number (Welcome stranger on the Internet!),
+    email me at <a class="underline" href="mailto:kuan@hey.com">kuan@hey.com</a>
+  </p>
+</div>
