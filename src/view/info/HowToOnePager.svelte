@@ -1,7 +1,10 @@
 <script>
   import { Accordion, AccordionItem } from 'svelte-collapsible';
 
-  let accordionKey = 'a1';
+  import BottomSideButton from 'view/home/BottomSideButton.svelte';
+  import Tag from 'view/Tag.svelte';
+
+  let accordionKey = 'filterwithtag';
 </script>
 
 <div class="p-8  bg-neutral">
@@ -11,7 +14,7 @@
   </div>
 
   <Accordion bind:key={accordionKey}>
-    <AccordionItem key="a1">
+    <AccordionItem key="addnewitem">
       <header slot="header">Add New Item</header>
       <article slot="body">
         <p>
@@ -38,29 +41,124 @@
               </svg>
             </div>
           </button>
-          in the main page.
+          in the main page. You will see a new page.
         </p>
         <p>
-          In the next page, tap on the empty image box to upload a photo of the
-          new item.
+          In that page, tap on the empty image box to upload a photo of the new
+          item.
         </p>
-        <p>Lastly, give the new item a name. This step is mandatory.</p>
+        <p>
+          Lastly, give the new item a name. Press enter or click on "DONE"
+          button to complete.
+        </p>
       </article>
     </AccordionItem>
-    <AccordionItem key="a2">
-      <header slot="header">Tagging</header>
-      <article slot="body">Tag this tag that</article>
+
+    <AccordionItem key="tagtheitem">
+      <header slot="header">Tag the item</header>
+      <article slot="body">
+        <p>
+          Select an item from the grid. Then, at the item page, tap on
+          <button
+            class="btn inline-flex bg-secondary-accent items-center text-primary"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span class="pl-1"> add tag </span>
+          </button>
+        </p>
+
+        <p>
+          If you are just getting started with B4TheDate, you will see an empty
+          pop-up with an input box. Use it to add new tag for your item.
+        </p>
+
+        <p>You can have multiple tags for each item.</p>
+
+        <p>
+          Close the pop-up when you are done with the tagging. You will notice
+          the tags of the item is displayed instead.
+        </p>
+      </article>
     </AccordionItem>
+
+    <AccordionItem key="changetag">
+      <header slot="header">Manage Item's Tags</header>
+      <article slot="body">
+        <p>
+          To add or remove tags from an item. Go to it's page and tap on the
+          tags section:
+          <span class="mt-2 flex flex-row flex-wrap justify-center items-start">
+            <Tag name="Tag 1" dense />
+            <Tag name="Tag 2" dense />
+          </span>
+        </p>
+
+        <p>
+          Selected tag is highligthed
+          <span class="flex flex-row justify-center items-start">
+            <Tag name="selected" selected />
+          </span>
+          Tap on it to <strong>remove</strong> this tag from the item.
+        </p>
+
+        <p>
+          Available tag has no color
+          <span class="flex flex-row justify-center items-start">
+            <Tag name="available" selected={false} />
+          </span>
+          Tap on it to <strong>add</strong> this tag to the item.
+        </p>
+
+        <p>
+          If you do not find the tag you want, create a new one with the input
+          box at the top of the pop-up
+        </p>
+      </article>
+    </AccordionItem>
+
+    <AccordionItem key="filterwithtag">
+      <header slot="header">Filter Items with Tags</header>
+      <article slot="body">
+        <p>
+          You can configure the main page to only show items with certain tags.
+          To do that, tap on the Filter
+
+          <span class="inline-flex  bg-primary w-16 rounded-r-3xl">
+            <BottomSideButton title="Filter" />
+          </span>
+        </p>
+
+        <p>
+          From the pop-up, select the tags you want to use as filter. As you
+          select the tags, you can see the grid changes its content.
+        </p>
+
+        <p>
+          When none of the tags are selected, all items will be shown. This is
+          the default behaviour.
+        </p>
+      </article>
+    </AccordionItem>
+
     <AccordionItem key="addnewbatch">
       <header slot="header">Add New Batch</header>
       <article slot="body">Tag this tag that</article>
     </AccordionItem>
     <AccordionItem key="changereminddays">
       <header slot="header">Edit Remind Days</header>
-      <article slot="body">Tag this tag that</article>
-    </AccordionItem>
-    <AccordionItem key="filterwithtag">
-      <header slot="header">Filter Items with Tags</header>
       <article slot="body">Tag this tag that</article>
     </AccordionItem>
     <AccordionItem key="showexpiring">
@@ -96,6 +194,6 @@
 
   p {
     line-height: 1.625;
-    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 </style>

@@ -21,7 +21,7 @@
   <!-- New tag input -->
   <input
     type="text"
-    placeholder="Add new tag here"
+    placeholder="new tag. Cans, Dried, Frozen."
     class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
     bind:value={workingTag}
     on:keydown={addTagKeyDown}
