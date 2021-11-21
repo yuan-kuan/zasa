@@ -8,7 +8,7 @@ import { addSop } from 'fp/sop';
 
 import { goToItem, goToItemCreation } from 'app/sop/item';
 import { goToSettingPage } from 'app/sop/setting';
-import { goToHome } from 'app/sop/home';
+import { goToHome, goToHowTo, goToInfo } from 'app/sop/home';
 
 const Navigation = daggy.taggedSum('Navigation', {
   Show: ['path', 'params'],
@@ -37,11 +37,15 @@ const gridPath = '/';
 const itemCreatePath = '/item';
 const itemPath = '/item/:itemId';
 const settingPath = '/setting';
+const infoPath = '/info';
+const howtoPath = '/howto';
 
 const setHomeUrl = () => setUrl(gridPath);
 const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
 const setItemCreationUrl = () => setUrl('/item');
 const setSettingUrl = () => setUrl(settingPath);
+const setInfoUrl = () => setUrl(infoPath);
+const setHowToUrl = () => setUrl(howtoPath);
 
 function start() {
   page('/', () => {
@@ -60,6 +64,14 @@ function start() {
     addSop(() => goToSettingPage());
   });
 
+  page(infoPath, (ctx) => {
+    addSop(() => goToInfo());
+  });
+
+  page(howtoPath, (ctx) => {
+    addSop(() => goToHowTo());
+  });
+
   page('*', () => {
     console.error('Unknown path');
   });
@@ -67,4 +79,4 @@ function start() {
 }
 
 export const navigationInterpretor = [Navigation, nagivationToFuture];
-export { start, setHomeUrl, setItemUrl, setItemCreationUrl, setSettingUrl };
+export { start, setHomeUrl, setHowToUrl, setInfoUrl, setItemUrl, setItemCreationUrl, setSettingUrl };

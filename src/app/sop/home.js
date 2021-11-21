@@ -5,16 +5,23 @@ import { viewMainPage, viewSubPage } from 'fp/view';
 
 import Home from 'view/home/Home.svelte';
 import InfoOnePager from 'view/info/InfoOnePager.svelte';
+import HowToOnePager from 'view/info/HowToOnePager.svelte';
 
 import { Nav } from 'app/stores';
 import { presentGrid } from './grid';
-import { setHomeUrl } from '../router';
+import { setHomeUrl, setHowToUrl, setInfoUrl } from '../router';
 import { goToItemCreation } from './item';
 import { goToSettingPage } from './setting';
 
-const goToinfo = () => free.sequence([
+const goToInfo = () => free.sequence([
   viewSubPage(Home, InfoOnePager),
-  setHomeUrl(),
+  setInfoUrl(),
+  presentGrid(),
+]);
+
+const goToHowTo = () => free.sequence([
+  viewSubPage(Home, HowToOnePager),
+  setHowToUrl(),
   presentGrid(),
 ]);
 
@@ -22,7 +29,8 @@ const setupHome = () => free.sequence([
   //TODO: set this static NAV closure in ItemCration/ setting module instead?
   setRef(Nav.goToCreateItem, () => addSop(() => goToItemCreation())),
   setRef(Nav.goToSetting, () => addSop(() => goToSettingPage())),
-  setRef(Nav.goToInfo, () => addSop(() => goToinfo())),
+  setRef(Nav.goToInfo, () => addSop(() => goToInfo())),
+  setRef(Nav.goToHowTo, () => addSop(() => goToHowTo())),
   setRef(Nav.backToHome, () => addSop(() => goToHome())),
 ]);
 
@@ -32,4 +40,4 @@ const goToHome = () => free.sequence([
   presentGrid(),
 ]);
 
-export { setupHome, goToHome };
+export { setupHome, goToHome, goToInfo, goToHowTo };

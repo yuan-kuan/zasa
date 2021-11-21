@@ -11,14 +11,14 @@
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">Is this free?</p>
   <p class="">
-    Not entirely. It is free to use in your mobile device, forever.
+    Not entirely. It is free to use on your mobile device, forever.
   </p>
   <p class="pt-2">
     However, if you need a backup on the internet, I'm gonna need you to chip in
     for the server cost.
   </p>
   <p class="pt-2">
-    Don't worry about it now, talk to Kuan when you had used B4TheDate
+    Don't worry about it now. Talk to Kuan after you had used B4TheDate
     extensively. We will figure it out.
   </p>
 
@@ -30,12 +30,12 @@
       class="underline"
       href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/"
       target="_blank"
-      >add it to your Home screen too
+      >add it to your Home screen too.
     </a>
   </p>
   <p class="pt-2">
     All your data and photos are stored inside your phone. I do not upload your
-    information to the internet, unless you choose to backup your data into the
+    information to the internet unless you choose to backup your data into the
     remote server.
   </p>
 
@@ -53,6 +53,8 @@
   <p class="">Call or message him lah.</p>
   <p class="pt-2">
     If you do not have his phone number (Welcome stranger on the Internet!),
-    email me at <a class="underline" href="mailto:kuan@hey.com">kuan@hey.com</a>
+    send an email to <a class="underline" href="mailto:kuan@hey.com"
+      >kuan@hey.com</a
+    >
   </p>
 </div>

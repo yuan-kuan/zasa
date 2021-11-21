@@ -63,5 +63,8 @@
       "app/(.*)": "<rootDir>/src/app/$1",
       "test/(.*)": "<rootDir>/src/test/$1"
     }
+  },
+  "dependencies": {
+    "svelte-collapsible": "^0.2.1"
   }
 }

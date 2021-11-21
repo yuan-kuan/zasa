@@ -3,7 +3,7 @@
   import FloatUpMenuButton from './FloatUpMenuButton.svelte';
 
   import { Nav } from 'app/stores';
-  const { goToSetting, goToInfo } = Nav;
+  const { goToSetting, goToInfo, goToHowTo } = Nav;
 
   let expanded = true;
   const toggle = () => {
@@ -23,5 +23,6 @@
       on:click={$goToSetting}
     />
     <FloatUpMenuButton title="Info" on:click={$goToInfo} on:click={toggle} />
+    <FloatUpMenuButton title="HowTo" on:click={$goToHowTo} on:click={toggle} />
   </div>
 {/if}
