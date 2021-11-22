@@ -1,10 +1,11 @@
 <script>
   import { Accordion, AccordionItem } from 'svelte-collapsible';
 
+  import Batch from 'view/item/Batch.svelte';
   import BottomSideButton from 'view/home/BottomSideButton.svelte';
   import Tag from 'view/Tag.svelte';
 
-  let accordionKey = 'filterwithtag';
+  let accordionKey = 'updatestockcount';
 </script>
 
 <div class="p-8  bg-neutral">
@@ -154,9 +155,63 @@
     </AccordionItem>
 
     <AccordionItem key="addnewbatch">
-      <header slot="header">Add New Batch</header>
-      <article slot="body">Tag this tag that</article>
+      <header slot="header">Create A Batch</header>
+      <article slot="body">
+        <p>
+          A batch has two things: An expiry date and the number of stock that is
+          best before the date. You can have multiple batches for each item.
+        </p>
+
+        <p>
+          Create a new batch by tapping on
+          <button class="btn bg-primary-accent inline text-right text-primary ">
+            Pick a Date
+          </button>
+        </p>
+
+        <p>
+          Once a date is selected, a new line will be created right above the
+          button:
+          <span class="inline-block">
+            <Batch batch={{ expiry: new Date(), count: 1 }} />
+          </span>
+        </p>
+
+        <p>
+          This is the new batch you just created. You can adjust the stock count
+          with the "+" and "-" button.
+        </p>
+      </article>
     </AccordionItem>
+
+    <AccordionItem key="updatestockcount">
+      <header slot="header">Update Stock</header>
+      <article slot="body">
+        <p>Every now and then, you will consume the food and buy new stock.</p>
+
+        <p>
+          When you take one out for use, remember to deduct it from the batch it
+          belongs to (hint: same expiry date).
+        </p>
+
+        <p>
+          If you happen to buy new stock that share existing expiry date, just
+          add one to the batch's stock with the "+" button. Otherwise, create a
+          new batch for the new stock with new date.
+        </p>
+
+        <p>
+          It is common to have multiple batches with multiple stock count of a
+          single item
+        </p>
+
+        <p>
+          When you took the last one out from a batch, reduce its stock count to
+          zero. A delete button will appear. Tap on it to remove the batch.
+        </p>
+      </article>
+    </AccordionItem>
+
     <AccordionItem key="changereminddays">
       <header slot="header">Edit Remind Days</header>
       <article slot="body">Tag this tag that</article>
