@@ -1,3 +1,8 @@
+<script>
+  import { Nav } from 'app/stores';
+  const { backToHome } = Nav;
+</script>
+
 <div class="p-8  bg-neutral">
   <p class="font-bold text-center text-xl pb-2">B4 The Date</p>
   <p class="font-semibold text-base py-2">What is this?</p>
@@ -7,6 +12,14 @@
   <p class="pt-2">
     With a glance, you will know what is expiring, how many of them are left,
     which you need to consume first and when is your next restock.
+  </p>
+
+  <p class="font-semibold text-base py-2 mt-4 border-t-2">How to use?</p>
+  <p class="">
+    We have a dedicated section for the guides. <a
+      class="underline"
+      href="/howto">Visit Here</a
+    >.
   </p>
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">Is this free?</p>
@@ -57,4 +70,11 @@
       >kuan@hey.com</a
     >
   </p>
+
+  <div class="flex flex-row-reverse">
+    <button
+      class="mt-6 font-light text-primary underline place-self-end"
+      on:click={$backToHome}>close</button
+    >
+  </div>
 </div>

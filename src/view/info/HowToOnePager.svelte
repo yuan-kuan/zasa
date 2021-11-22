@@ -1,11 +1,14 @@
 <script>
   import { Accordion, AccordionItem } from 'svelte-collapsible';
 
+  import { Nav } from 'app/stores';
+  const { backToHome } = Nav;
+
   import Batch from 'view/item/Batch.svelte';
   import BottomSideButton from 'view/home/BottomSideButton.svelte';
   import Tag from 'view/Tag.svelte';
 
-  let accordionKey = 'updatestockcount';
+  let accordionKey = '';
 </script>
 
 <div class="p-8  bg-neutral">
@@ -212,15 +215,82 @@
       </article>
     </AccordionItem>
 
-    <AccordionItem key="changereminddays">
-      <header slot="header">Edit Remind Days</header>
-      <article slot="body">Tag this tag that</article>
+    <AccordionItem key="remindb4thedate">
+      <header slot="header">Remind You Before The Date</header>
+      <article slot="body">
+        <p>
+          Each item has its own reminder period (in days). An item will be
+          marked as expiring when one of its batches have expiry date that fall
+          within the reminding period.
+        </p>
+
+        <p>days = expiry - today</p>
+        <p>
+          Expiring = days {'<'} reminder
+        </p>
+
+        <p>
+          By default, each item has a 30 days reminder period. To change it, use
+          the reminder section in the item page:
+          <span class="mx-auto relative flex justify-center p-2 pt-6 pb-4">
+            <span class="text-right">Remind me in</span>
+
+            <input
+              class="w-12 px-2 rounded border border-gray-200 text-right text-primary"
+              type="text"
+              value="30"
+              readonly
+            />
+
+            <span>Days</span>
+          </span>
+        </p>
+      </article>
     </AccordionItem>
+
     <AccordionItem key="showexpiring">
       <header slot="header">Show Only Expiring Items</header>
-      <article slot="body">Tag this tag that</article>
+      <article slot="body">
+        <p>
+          When you have expiring items, the Expiring filter will have the number
+          of expiring items to it:
+          <span class="flex flex-row justify-center items-start">
+            <Tag name="Expiring (3)" selected={false} />
+          </span>
+        </p>
+
+        <p>
+          Selecting this filter tag will show you all the expiring items in the
+          grid. You can further filter it by normal tags too.
+        </p>
+
+        <p>
+          Find it from the Filter button:
+          <span class="inline-flex  bg-primary w-16 rounded-r-3xl">
+            <BottomSideButton title="Filter" />
+          </span>
+        </p>
+      </article>
+    </AccordionItem>
+
+    <AccordionItem key="backup">
+      <header slot="header">Backup</header>
+      <article slot="body">
+        <p>
+          Backup to the internet is possible, but it requires more care and
+          technicality. Talk to kuan or email him at
+          <a class="underline" href="mailto:kuan@hey.com">kuan@hey.com</a>
+        </p>
+      </article>
     </AccordionItem>
   </Accordion>
+
+  <div class="flex flex-row-reverse">
+    <button
+      class="mt-6 font-light text-primary underline place-self-end"
+      on:click={$backToHome}>close</button
+    >
+  </div>
 </div>
 
 <style>
