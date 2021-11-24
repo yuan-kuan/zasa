@@ -1,11 +1,12 @@
 <script>
   export let highlight = false;
+  export let needAttention = false;
   export let title;
 </script>
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <a
-  class="inline-flex flex-col items-center text-xs font-medium text-white py-3 px-4 flex-grow"
+  class="inline-flex justify-center text-xs font-medium text-white py-3 px-4 flex-grow"
   class:text-white={!highlight}
   class:text-neutral={highlight}
   on:click|preventDefault
@@ -25,6 +26,23 @@
 
   {#if title == 'B4'}
     <span class="font-bold text-xl">B4</span>
+  {/if}
+
+  {#if needAttention}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-7 w-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
   {/if}
   <span class="sr-only">{title}</span>
 </a>
