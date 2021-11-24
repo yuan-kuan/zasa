@@ -5,7 +5,7 @@
   import { Nav } from 'app/stores';
   const { goToSetting, goToInfo, goToHowTo } = Nav;
 
-  let expanded = true;
+  let expanded = false;
   const toggle = () => {
     expanded = !expanded;
   };
