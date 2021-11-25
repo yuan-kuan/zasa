@@ -41,7 +41,7 @@
 <div class="flex flex-col justify-center pt-4 px-4">
   <div class="p-2 border-b border-black">
     <p>Sycn with Remote or Local.</p>
-    <p>sycn up your current ZASA with remote backup.</p>
+    <p>sycn up your current B4 with remote backup.</p>
     <p>
       This required a backup code, if you like to have one, email me:
       kuan@hey.com

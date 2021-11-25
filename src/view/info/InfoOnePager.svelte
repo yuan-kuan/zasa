@@ -3,15 +3,15 @@
   const { backToHome } = Nav;
 </script>
 
-<div class="p-8  bg-neutral">
+<div class="p-8 rounded-3xl bg-neutral">
   <p class="font-bold text-center text-xl pb-2">B4 The Date</p>
   <p class="font-semibold text-base py-2">What is this?</p>
   <p class="">
     It helps you keep track of all your food, cans, pickles, dried food, etc.
   </p>
   <p class="pt-2">
-    With a glance, you will know what is expiring, how many of them are left,
-    which you need to consume first and when is your next restock.
+    With a glance, you will know what is expiring, how many of them left, which
+    you need to consume first and when is your next restock.
   </p>
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">How to use?</p>
@@ -24,15 +24,16 @@
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">Is this free?</p>
   <p class="">
-    Not entirely. It is free to use on your mobile device, forever.
+    Not entirely. It is free to use on your personal device, mobile phone,
+    tablet or laptop.
   </p>
   <p class="pt-2">
-    However, if you need a backup on the internet, I'm gonna need you to chip in
-    for the server cost.
+    However, if you need a backup on the Internet, I need you to chip in for the
+    server cost.
   </p>
   <p class="pt-2">
-    Don't worry about it now. Talk to Kuan after you had used B4TheDate
-    extensively. We will figure it out.
+    Don't worry about it now. Talk to Kuan after you used B4TheDate extensively.
+    We will figure it out.
   </p>
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">
@@ -47,17 +48,17 @@
     </a>
   </p>
   <p class="pt-2">
-    All your data and photos are stored inside your phone. I do not upload your
-    information to the internet unless you choose to backup your data into the
-    remote server.
+    B4 will store all your data and photos inside your phone. I do not upload
+    your information to the Internet unless you decide to backup your data into
+    the remote server.
   </p>
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">How to backup?</p>
   <p class="">Talk to Kuan.</p>
   <p class="pt-2">
-    A backup code will be provided eventually. You will use it to upload all
-    your data and photos to a remote server. Later, you can use the same code in
-    another device, or the same device, to download all the backup data.
+    I will provide you with a backup code eventually. You will use it to upload
+    all your data and photos to a remote server. Later, you can use the same
+    code in another device, or the same device, to download all the backup data.
   </p>
 
   <p class="font-semibold text-base py-2 mt-4 border-t-2">

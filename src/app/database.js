@@ -138,8 +138,7 @@ const setupDatabaseInterpretor = (memoryPouchdb) => {
   if (memoryPouchdb) {
     pouchdb = memoryPouchdb;
   } else {
-    //TODO: Migrate old user pouch to remote and rename this
-    pouchdb = new PouchDB('zasa-test');
+    pouchdb = new PouchDB('b4-storage');
   }
 
   return [Database, databaseToFuture(pouchdb)];

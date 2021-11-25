@@ -11,10 +11,10 @@
   let accordionKey = '';
 </script>
 
-<div class="p-8  bg-neutral">
+<div class="p-8 rounded-3xl  bg-neutral">
   <div class="font-bold text-center text-xl">How to use?</div>
   <div class="italic font-thin text-center text-sm leading-tight">
-    Use with a mobile phone.
+    Always use B4 with a mobile phone.
   </div>
 
   <Accordion bind:key={accordionKey}>
@@ -45,10 +45,10 @@
               </svg>
             </div>
           </button>
-          in the main page. You will see a new page.
+          on the main page. You will see a new page.
         </p>
         <p>
-          In that page, tap on the empty image box to upload a photo of the new
+          On that page, tap on the empty image box to upload a photo of the new
           item.
         </p>
         <p>
@@ -86,14 +86,14 @@
 
         <p>
           If you are just getting started with B4TheDate, you will see an empty
-          pop-up with an input box. Use it to add new tag for your item.
+          pop-up with an input box. Use it to add a new tag for your item.
         </p>
 
         <p>You can have multiple tags for each item.</p>
 
         <p>
-          Close the pop-up when you are done with the tagging. You will notice
-          the tags of the item is displayed instead.
+          Close the pop-up when you completed your tagging. You will notice the
+          tags of the item is displayed instead.
         </p>
       </article>
     </AccordionItem>
@@ -102,8 +102,8 @@
       <header slot="header">Manage Item's Tags</header>
       <article slot="body">
         <p>
-          To add or remove tags from an item. Go to it's page and tap on the
-          tags section:
+          To add or remove tags from an item. Go to its page and tap on the tags
+          section:
           <span class="mt-2 flex flex-row flex-wrap justify-center items-start">
             <Tag name="Tag 1" dense />
             <Tag name="Tag 2" dense />
@@ -111,7 +111,7 @@
         </p>
 
         <p>
-          Selected tag is highligthed
+          Selected tag is highlighted
           <span class="flex flex-row justify-center items-start">
             <Tag name="selected" selected />
           </span>
@@ -146,12 +146,12 @@
         </p>
 
         <p>
-          From the pop-up, select the tags you want to use as filter. As you
+          From the pop-up, select the tags you want to use as a filter. As you
           select the tags, you can see the grid changes its content.
         </p>
 
         <p>
-          When none of the tags are selected, all items will be shown. This is
+          When none of the tags is selected, all items will be shown. This is
           the default behaviour.
         </p>
       </article>
@@ -161,8 +161,8 @@
       <header slot="header">Create A Batch</header>
       <article slot="body">
         <p>
-          A batch has two things: An expiry date and the number of stock that is
-          best before the date. You can have multiple batches for each item.
+          A batch has two things: An expiry date and a stock count. You can have
+          multiple batches for each item.
         </p>
 
         <p>
@@ -190,7 +190,7 @@
     <AccordionItem key="updatestockcount">
       <header slot="header">Update Stock</header>
       <article slot="body">
-        <p>Every now and then, you will consume the food and buy new stock.</p>
+        <p>Now and then, you will consume the food and buy new stock.</p>
 
         <p>
           When you take one out for use, remember to deduct it from the batch it
@@ -198,18 +198,18 @@
         </p>
 
         <p>
-          If you happen to buy new stock that share existing expiry date, just
+          If you happen to buy new stock that shares the existing expiry date,
           add one to the batch's stock with the "+" button. Otherwise, create a
-          new batch for the new stock with new date.
+          new batch for the new stock with a new date.
         </p>
 
         <p>
-          It is common to have multiple batches with multiple stock count of a
-          single item
+          It is common to have multiple batches with multiple stock counts of a
+          single item.
         </p>
 
         <p>
-          When you took the last one out from a batch, reduce its stock count to
+          When you take the last one out from a batch, reduce its stock count to
           zero. A delete button will appear. Tap on it to remove the batch.
         </p>
       </article>
@@ -219,9 +219,9 @@
       <header slot="header">Remind You Before The Date</header>
       <article slot="body">
         <p>
-          Each item has its own reminder period (in days). An item will be
-          marked as expiring when one of its batches have expiry date that fall
-          within the reminding period.
+          Each item has its reminder period (in days). An item will be marked as
+          expiring when one of its batches have an expiry date that falls within
+          the reminding period.
         </p>
 
         <p>days = expiry - today</p>
@@ -231,7 +231,7 @@
 
         <p>
           By default, each item has a 30 days reminder period. To change it, use
-          the reminder section in the item page:
+          the reminder section on the item page:
           <span class="mx-auto relative flex justify-center p-2 pt-6 pb-4">
             <span class="text-right">Remind me in</span>
 
@@ -261,7 +261,7 @@
 
         <p>
           Selecting this filter tag will show you all the expiring items in the
-          grid. You can further filter it by normal tags too.
+          grid. You can further filter it by your tags too.
         </p>
 
         <p>
