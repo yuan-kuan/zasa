@@ -8,6 +8,7 @@ import css from 'rollup-plugin-css-only';
 import sveltePreprocess from 'svelte-preprocess';
 import { config } from 'dotenv';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -58,6 +59,13 @@ export default {
       LOCAL_DB_PASSWORD: JSON.stringify(process.env.LOCAL_DB_PASSWORD),
       REMOTE_BACKUP_CRED_URL: JSON.stringify(process.env.REMOTE_BACKUP_CRED_URL),
       preventAssignment: true,
+    }),
+    alias({
+      entries: [
+        { find: 'fp', replacement: __dirname + '/src/fp' },
+        { find: 'view', replacement: __dirname + '/src/view' },
+        { find: 'app', replacement: __dirname + '/src/app' },
+      ]
     }),
     svelte({
       preprocess: sveltePreprocess({ postcss: true }),

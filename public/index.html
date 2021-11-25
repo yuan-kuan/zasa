@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>ZASA</title>
+    <title>B4 The Date</title>
 
     <link rel="manifest" href="/manifest.json" />
-    <meta name="description" content="ZASA PWA" />
+    <meta name="description" content="B4 PWA" />
     <meta name="theme-color" content="#2F3BA2" />
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="ZASA" />
+    <meta name="apple-mobile-web-app-title" content="B4" />
     <link rel="apple-touch-icon" href="/images/zasa_logo144_72.png" />
 
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -30,7 +30,6 @@
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker.register("/service-worker.js").then((reg) => {
-            console.log("Service worker registered.", reg);
           });
         });
       }

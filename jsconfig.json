@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "fp": ["fp"],
+      "view": ["view"],
+      "app": ["app"],
+      "test": ["test"]
+    }
+  }
+}
