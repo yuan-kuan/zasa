@@ -35,7 +35,7 @@ const goToItemCreation = () =>
 const performDeleteItem = (itemId) =>
   free.sequence([
     item_ops.remove(itemId),
-    goToHome
+    goToHome(itemId)
   ]);
 
 const performEditPhoto = (itemId, blob) =>
