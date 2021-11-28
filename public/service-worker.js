@@ -1,7 +1,7 @@
 'use strict';
 
 // Update cache names any time any of the cached files change.
-const CACHE_NAME = 'test-cache-5';
+const CACHE_NAME = 'test-cache-6';
 
 // Add list of files to cache here.
 const FILES_TO_CACHE = [
@@ -10,7 +10,7 @@ const FILES_TO_CACHE = [
   '/favicon.png',
   '/build/bundle.css',
   '/build/bundle.js',
-  '/images/zasa_logo144_72.png',
+  '/images/b4_logo72_144.png',
 ];
 
 self.addEventListener('install', (evt) => {

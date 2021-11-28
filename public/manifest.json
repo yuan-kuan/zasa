@@ -3,32 +3,32 @@
   "short_name": "B4",
   "icons": [
     {
-      "src": "/images/zasa_logo128_72.png",
+      "src": "/images/b4_logo72_128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/images/zasa_logo144_72.png",
+      "src": "/images/b4_logo72_144.png",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "/images/zasa_logo152_72.png",
+      "src": "/images/b4_logo72_152.png",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "/images/zasa_logo192_72.png",
+      "src": "/images/b4_logo72_192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/images/zasa_logo256_72.png",
+      "src": "/images/b4_logo72_256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/images/zasa_logo512_72.png",
+      "src": "/images/b4_logo72_512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
