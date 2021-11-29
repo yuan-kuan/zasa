@@ -13,7 +13,10 @@
       waste.
     </p>
 
-    <p>To learn more about us, tap on the "B4" button at the bottom left.</p>
+    <p>
+      Add this web application to your Home for the best experience.To learn
+      more about us, tap on the "B4" button at the bottom left.
+    </p>
 
     <p>
       Want to start right away? Click on the "+" button at the bottom center.
