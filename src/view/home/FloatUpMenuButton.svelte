@@ -3,7 +3,7 @@
 </script>
 
 <button
-  class="m-1 border rounded-full text-sm text-primary select-none leading-loose bg-primary shadow-md px-3 py-1 flex"
+  class="m-1 border rounded-full text-sm text-white font-semibold select-none leading-loose bg-primary shadow-md px-3 py-1 flex"
   on:click
 >
   {#if title == 'Settings'}
@@ -55,5 +55,5 @@
     </svg>
   {/if}
 
-  <span>{title}</span>
+  <span class="px-2">{title}</span>
 </button>
