@@ -1,10 +1,13 @@
 <script>
+  import Logo from 'view/Logo.svelte';
   import { Nav } from 'app/stores';
   const { backToHome } = Nav;
 </script>
 
 <div class="p-8 rounded-3xl bg-neutral">
-  <p class="font-bold text-center text-xl pb-2">B4 The Date</p>
+  <p class="flex justify-center font-bold text-center text-xl pb-2">
+    <span><Logo /></span> <span class="pl-1 pt-1">The Date</span>
+  </p>
   <p class="font-semibold text-base py-2">What is this?</p>
   <p class="">
     It helps you keep track of all your food, cans, pickles, dried food, etc.

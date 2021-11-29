@@ -30,7 +30,7 @@
         on:click={$performToggleTagFilter[index]}
       />
     {/each}
-    {#if $expiringItemCount > 0}
+    {#if $expiringItemCount > 0 || $expiringFilterSelected}
       <Tag
         name={`Expiring (${$expiringItemCount})`}
         selected={$expiringFilterSelected}

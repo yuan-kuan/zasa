@@ -1,4 +1,6 @@
 <script>
+  import Logo from 'view/Logo.svelte';
+
   export let highlight = false;
   export let needAttention = false;
   export let title;
@@ -25,7 +27,7 @@
   {/if}
 
   {#if title == 'B4'}
-    <span class="font-bold text-xl">B4</span>
+    <Logo />
   {/if}
 
   {#if needAttention}
