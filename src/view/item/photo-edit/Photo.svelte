@@ -40,7 +40,11 @@
 </script>
 
 <div class="pt-1 w-64 mx-auto relative" on:click={() => (isTakingPhoto = true)}>
-  <img class="object-cover h-64 w-64 bg-primary-accent" src={photoUrl} alt="" />
+  <img
+    class="object-cover rounded-2xl h-64 w-64 bg-primary-accent"
+    src={photoUrl}
+    alt=""
+  />
   <div
     class="absolute bottom-2 right-2 px-2 text-primary  bg-primary-accent opacity-75 rounded-xl"
   >
