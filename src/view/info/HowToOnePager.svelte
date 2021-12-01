@@ -301,7 +301,7 @@
 
   :global(.accordion-item) {
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgb(100, 120, 140);
+    border-bottom: 1px solid white;
   }
 
   header {
@@ -315,6 +315,7 @@
   article {
     padding: 0.5rem;
     border-left-width: 2px;
+    border-left-color: white;
   }
 
   p {

@@ -84,7 +84,6 @@ const presentExpiringItems = () =>
   filter_ops.getExpiringItems().chain(presentItems);
 
 const presentExpiringItemsWithTags = (tags) => {
-  console.log('tags :>> ', tags);
   return filter_ops.getExpiringItemsWithTags(tags).chain(presentItems);
 };
 

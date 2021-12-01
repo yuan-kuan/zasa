@@ -13,8 +13,6 @@
 
   $: hasFilter = $tags.length != 0;
   $: hasExpiringItem = $expiringItemCount > 0 && !$expiringFilterSelected;
-
-  $: console.log($expiringItemCount);
 </script>
 
 <BottomSideButton
