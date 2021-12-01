@@ -46,6 +46,12 @@ const performRemoveTagFilter = (tag) =>
     presentGrid(),
   ]);
 
+const performClearFilter = () =>
+  free.sequence([
+    filter_ops.updateSavedTagFilter(R.intersection([])),
+    presentGrid(),
+  ]);
+
 const presentTagSelection = (selectedTags) =>
   filter_ops.getAllTags()
     .chain((tags) =>
@@ -66,6 +72,7 @@ const presentTagSelection = (selectedTags) =>
             tags
           )
         ),
+        setRef(FilterStores.performClearFilter, () => addSop(() => performClearFilter()))
       ])
     );
 
