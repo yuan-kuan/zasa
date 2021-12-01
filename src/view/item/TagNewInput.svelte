@@ -17,12 +17,12 @@
   };
 </script>
 
-<div class="relative flex p-2 pt-2 pb-4 mx-4 flex-initial text-primary ">
+<div class="relative flex p-2 pt-2 pb-4 mx-4 text-primary ">
   <!-- New tag input -->
   <input
     type="text"
-    placeholder="new tag. Cans, Dried, Frozen."
-    class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center"
+    placeholder="new tag"
+    class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-40"
     bind:value={workingTag}
     on:keydown={addTagKeyDown}
   />
