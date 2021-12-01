@@ -17,7 +17,9 @@
     you need to consume first and when is your next restock.
   </p>
 
-  <p class="font-semibold text-base py-2 mt-4 border-t-2">How to use?</p>
+  <p class="font-semibold text-base py-2 mt-4 border-t-2 border-white">
+    How to use?
+  </p>
   <p class="">
     We have a dedicated section for the guides. <a
       class="underline"
@@ -25,7 +27,9 @@
     >.
   </p>
 
-  <p class="font-semibold text-base py-2 mt-4 border-t-2">Is this free?</p>
+  <p class="font-semibold text-base py-2 mt-4 border-t-2 border-white">
+    Is this free?
+  </p>
   <p class="">
     Not entirely. It is free to use on your personal device, mobile phone,
     tablet or laptop.
@@ -39,7 +43,7 @@
     We will figure it out.
   </p>
 
-  <p class="font-semibold text-base py-2 mt-4 border-t-2">
+  <p class="font-semibold text-base py-2 mt-4 border-t-2 border-white">
     This is not <i class="italic">online</i>?
   </p>
   <p class="">
@@ -56,7 +60,9 @@
     the remote server.
   </p>
 
-  <p class="font-semibold text-base py-2 mt-4 border-t-2">How to backup?</p>
+  <p class="font-semibold text-base py-2 mt-4 border-t-2 border-white">
+    How to backup?
+  </p>
   <p class="">Talk to Kuan.</p>
   <p class="pt-2">
     I will provide you with a backup code eventually. You will use it to upload
@@ -64,7 +70,7 @@
     code in another device, or the same device, to download all the backup data.
   </p>
 
-  <p class="font-semibold text-base py-2 mt-4 border-t-2">
+  <p class="font-semibold text-base py-2 mt-4 border-t-2 border-white">
     How to "talk to Kuan"?
   </p>
   <p class="">Call or message him lah.</p>

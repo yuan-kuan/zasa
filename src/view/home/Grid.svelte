@@ -10,7 +10,6 @@
   $: {
     if ($items.length < 12) {
       filler = Array(12 - $items.length);
-      console.log('filler :>> ', filler);
     }
   }
 
