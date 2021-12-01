@@ -4,7 +4,7 @@
   const { backToHome } = Nav;
 </script>
 
-<div class="p-8 rounded-3xl bg-neutral">
+<div class="p-8  bg-neutral">
   <p class="flex justify-center font-bold text-center text-xl pb-2">
     <span><Logo /></span> <span class="pl-1 pt-1">The Date</span>
   </p>
