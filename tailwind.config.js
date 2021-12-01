@@ -11,6 +11,32 @@ module.exports = {
           ([_match, group, ..._rest]) => group
         ),
     },
+
+    safelist: [
+      // tiles fading
+      'bg-opacity-100',
+      'bg-opacity-90',
+      'bg-opacity-80',
+      'bg-opacity-70',
+      'bg-opacity-60',
+      'bg-opacity-50',
+      'bg-opacity-40',
+      'bg-opacity-30',
+      'bg-opacity-20',
+      'bg-opacity-10',
+      'bg-opacity-0',
+      'w-11/12',
+      'w-10/12',
+      'w-9/12',
+      'w-8/12',
+      'w-7/12',
+      'w-6/12',
+      'w-5/12',
+      'w-4/12',
+      'w-3/12',
+      'w-2/12',
+      'w-1/12',
+    ]
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
