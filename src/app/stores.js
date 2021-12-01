@@ -18,11 +18,13 @@ export const FilterStores = {
   allTags: createRef([]),
   allTagsSelected: createRef([]),
   performToggleTagFilter: createRef([]),
+  performClearFilter: createRef(),
 
   expiringItemCount: createRef(),
   expiringFilterSelected: createRef(),
   performToggleExpiringFilter: createRef(),
 }
+
 
 export const ItemStores = {
   name: createRef(),

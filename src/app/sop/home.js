@@ -14,13 +14,13 @@ import { goToItemCreation } from './item';
 import { goToSettingPage } from './setting';
 
 const goToInfo = () => free.sequence([
-  viewSubPage(Home, InfoOnePager),
+  viewSubPage(Home, InfoOnePager, () => addSop(() => goToHome())),
   setInfoUrl(),
   presentGrid(),
 ]);
 
 const goToHowTo = () => free.sequence([
-  viewSubPage(Home, HowToOnePager),
+  viewSubPage(Home, HowToOnePager, () => addSop(() => goToHome())),
   setHowToUrl(),
   presentGrid(),
 ]);
