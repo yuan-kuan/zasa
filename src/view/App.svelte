@@ -27,8 +27,8 @@
     images: [
       {
         url: 'https://b4the.date/images/b4_logo_withname_1200.jpg',
-        width: 800,
-        height: 419,
+        width: 1200,
+        height: 628,
         alt: 'Logo that read B 4',
       },
     ],
@@ -38,7 +38,7 @@
     title: 'B4 The Date',
     description:
       'Remind you to consume the otherwise expired food. Stop the waste.',
-    image: 'https://b4the.date/images/b4_logo_withname_800.jpg',
+    image: 'https://b4the.date/images/b4_logo_withname_1200.jpg',
     imageAlt: 'Logo that read B 4',
   }}
 />
