@@ -8,12 +8,13 @@
 </script>
 
 <script>
-  import SvelteSeo from 'svelte-seo';
+  // import SvelteSeo from 'svelte-seo';
   import Tailwindcss from './Tailwindcss.svelte';
 
   $: modalViewComponent = $modalView == '' ? null : $modalView;
 </script>
 
+<!-- 
 <SvelteSeo
   title="B4 The Date"
   description="Remind you to consume the otherwise expired food. Stop the waste."
@@ -41,7 +42,7 @@
     image: 'https://b4the.date/images/b4_logo_withname_1200.jpg',
     imageAlt: 'Logo that read B 4',
   }}
-/>
+/> -->
 
 <Tailwindcss />
 <main class="bg-white relative min-h-screen max-w-screen-md mx-auto">
