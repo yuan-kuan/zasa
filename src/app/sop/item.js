@@ -81,6 +81,15 @@ const performBatchCounting = (itemId, batches, operation) =>
       ]))
   )(batches);
 
+const performBatchDirectUpdate = (itemId, batches) =>
+  R.map(
+    (batch) => (count) =>
+      addSop(() => free.sequence([
+        batch_ops.updateAndSaveCount(count, batch),
+        presentBatches(itemId)
+      ]))
+  )(batches);
+
 const presentBatches = (itemId) =>
   batch_ops.getAll(itemId)
     .chain((batches) =>
@@ -88,6 +97,7 @@ const presentBatches = (itemId) =>
         setRef(BatchStores.batches, batches),
         setRef(BatchStores.performBatchInc, performBatchCounting(itemId, batches, batch_ops.incAndSaveCount)),
         setRef(BatchStores.performBatchDec, performBatchCounting(itemId, batches, batch_ops.decAndSaveCount)),
+        setRef(BatchStores.performBatchUpdate, performBatchDirectUpdate(itemId, batches)),
         setRef(BatchStores.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );

@@ -4,6 +4,7 @@
   export let batch;
   export let decrementBatchCount;
   export let incrementBatchCount;
+  export let updateBatchCount;
   export let deleteBatch;
 
   const toDateString = (batch) => {
@@ -22,6 +23,11 @@
 
   const increment = () => {
     incrementBatchCount();
+  };
+
+  const updateDirect = (value) => {
+    console.log('value :>> ', value);
+    updateBatchCount(value.detail);
   };
 
   const deleteB = () => {
@@ -47,6 +53,7 @@
       count={batch.count}
       on:decrement={decrement}
       on:increment={increment}
+      on:update={updateDirect}
     />
   {/if}
 </div>

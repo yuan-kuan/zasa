@@ -53,5 +53,6 @@ export const BatchStores = {
   performAddBatch: createRef(),
   performBatchInc: createRef([]),
   performBatchDec: createRef([]),
+  performBatchUpdate: createRef([]),
   performDeleteBatch: createRef([]),
 }
