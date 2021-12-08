@@ -124,8 +124,8 @@ test('Increment the count of a batch', async () => {
             R.head(),
             batch_ops.incAndSaveCount,
             R.chain(batch_ops.incAndSaveCount)
-          ))
-      ]))
+          )),
+        batch_ops.getAll(itemId).map(R.head())]))
     .map(R.last);
 
 
@@ -146,13 +146,34 @@ test('Decrement the count of a batch', async () => {
             batch_ops.incAndSaveCount,
             R.chain(batch_ops.incAndSaveCount),
             R.chain(batch_ops.decAndSaveCount),
-          ))
+          )),
+        batch_ops.getAll(itemId).map(R.head())
       ]))
     .map(R.last);
 
 
   const result = await interpret(fm);
   expect(result).toHaveProperty('count', 2);
+});
+
+test('Update a precise count of a batch', async () => {
+  const expiry = new Date('2020-04-27T01:00:00');
+  const fm = item_ops.create('test batch update', null)
+    .chain((itemId) =>
+      free.sequence([
+        batch_ops.create(itemId, expiry),
+        batch_ops.getAll(itemId).chain(
+          R.pipe(
+            R.head(),
+            batch_ops.updateAndSaveCount(8),
+          )),
+        batch_ops.getAll(itemId).map(R.head())
+      ]))
+    .map(R.last);
+
+
+  const result = await interpret(fm);
+  expect(result).toHaveProperty('count', 8);
 });
 
 test('Remove a batch', async () => {
