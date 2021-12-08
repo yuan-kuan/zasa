@@ -18,6 +18,7 @@
   const initInput = (inputElement) => {
     if (clickedToActivate) {
       inputElement?.focus();
+      inputElement?.select();
     }
   };
 
