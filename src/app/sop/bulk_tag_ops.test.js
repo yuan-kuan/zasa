@@ -85,6 +85,31 @@ describe('Single Item', () => {
       expect(result).toEqual(['tag C', 'tag D']);
     });
   });
+
+
+  describe('Remove tag A', () => {
+    beforeEach(() => {
+      return interpret(bulk_tag_ops.removeTag('tag A'));
+    });
+
+    test('item tags updated', async () => {
+      const result = await interpret(tag_ops.getItemTags(singleItemId));
+
+      expect(result).toEqual(['tag B']);
+    });
+
+    test('all tags updated', async () => {
+      const result = await interpret(filter_ops.getAllTags());
+
+      expect(result).toEqual(['tag B']);
+    });
+
+    test('saved tags updated', async () => {
+      const result = await interpret(filter_ops.getSavedTagFilter());
+
+      expect(result).toEqual(['tag B']);
+    });
+  });
 });
 
 describe('Multiple items', () => {
@@ -177,5 +202,31 @@ describe('Multiple items', () => {
     });
   });
 
+  describe('Remove tag red', () => {
+    beforeEach(() => {
+      return interpret(bulk_tag_ops.removeTag('red'));
+    });
 
+    test('item tags updated', async () => {
+      const resultA = await interpret(tag_ops.getItemTags(AItemId));
+      const resultB = await interpret(tag_ops.getItemTags(BItemId));
+      const resultC = await interpret(tag_ops.getItemTags(CItemId));
+
+      expect(resultA).toEqual(['fruit']);
+      expect(resultB).toEqual(['car']);
+      expect(resultC).toEqual(['fruit']);
+    });
+
+    test('all tags updated', async () => {
+      const result = await interpret(filter_ops.getAllTags());
+
+      expect(result).toEqual(['car', 'fruit']);
+    });
+
+    test('saved tags updated', async () => {
+      const result = await interpret(filter_ops.getSavedTagFilter());
+
+      expect(result).toEqual(['car']);
+    });
+  });
 });

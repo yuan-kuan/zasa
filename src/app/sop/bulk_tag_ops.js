@@ -29,10 +29,30 @@ const renameSavedTagFilter = (original, next) =>
       )
     );
 
-const renameTag = (original, next) =>
+const removeItemTag = (original) =>
+  free.of(original)
+    .map(R.of)
+    // TODO: We do not need blob and name, just id
+    .chain(filter_ops.getItemsWithTags)
+    .map(R.pluck('itemId'))
+    .chain((ids) =>
+      free.sequence([
+        R.traverse(free.of, (id) => tag_ops.remove(id, original), ids)
+      ]));
+
+const removeSavedTagFilter = (original) =>
+  filter_ops.removeFilterTag(original);
+
+const renameTag = R.curry((original, next) =>
   free.parallel([
     renameItemTag(original, next),
     renameSavedTagFilter(original, next),
+  ]));
+
+const removeTag = (original) =>
+  free.parallel([
+    removeItemTag(original),
+    removeSavedTagFilter(original),
   ]);
 
-export { renameTag }
+export { renameTag, removeTag }
