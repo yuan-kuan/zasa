@@ -1,4 +1,6 @@
 <script>
+  import { longpress } from 'view/actions.js';
+
   export let name;
   export let selected = false;
   export let dense = false;
@@ -16,8 +18,11 @@
     class="m-1 border rounded-full text-sm text-primary select-none leading-loose bg-white px-3 py-1"
     class:bg-white={selected == false}
     class:bg-secondary-accent={selected}
-    on:click
+    use:longpress
+    on:longpress
+    on:tagclick
   >
+    <!-- on:click -->
     {name}
   </div>
 {/if}
