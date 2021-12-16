@@ -15,7 +15,7 @@
   };
 
   const addNewTag = () => {
-    console.log(`changing ${original} to ${workingTag}`);
+    dispatch('rename', workingTag);
     dispatch('close');
   };
 

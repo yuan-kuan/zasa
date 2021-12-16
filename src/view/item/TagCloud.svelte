@@ -1,6 +1,7 @@
 <script>
   import { TagStores } from 'app/stores';
-  const { allTags, allTagsSelected, performToggleTagFilter } = TagStores;
+  const { allTags, allTagsSelected, performToggleTagFilter, performRenameTag } =
+    TagStores;
 
   import Tag from 'view/Tag.svelte';
 
@@ -10,11 +11,23 @@
   import Modal from 'view/Modal.svelte';
 
   let isRenamingTag = false;
+  let renamingIndex;
   let original;
   const handleLongPress = (index) => {
-    console.log(`long pressed at ${index}`);
+    renamingIndex = index;
     original = $allTags[index];
     isRenamingTag = true;
+  };
+
+  const closeRenaming = () => {
+    renamingIndex = null;
+    original = null;
+    isRenamingTag = false;
+  };
+
+  const handleRename = (event) => {
+    console.log(`try to renaming ${renamingIndex} to ${event.detail}`);
+    $performRenameTag[renamingIndex](event.detail);
   };
 </script>
 
@@ -31,12 +44,16 @@
 </div>
 
 {#if isRenamingTag}
-  <Modal on:click={() => (isRenamingTag = false)}>
+  <Modal on:click={closeRenaming}>
     <div
       class="mx-3 p-4 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
       transition:scale={{ delay: 0, duration: 500, easing: circInOut }}
     >
-      <TagRenamingPop {original} on:close={() => (isRenamingTag = false)} />
+      <TagRenamingPop
+        {original}
+        on:rename={handleRename}
+        on:close={closeRenaming}
+      />
 
       <div class="my-1 mx-10 border-t" />
       <button
