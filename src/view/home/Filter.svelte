@@ -26,5 +26,5 @@
   <div class="fixed bottom-0 right-0 w-screen h-screen" on:click={toggle} />
   <FilterSelection />
 {:else}
-  <FilterSummary on:click={toggle} />
+  <FilterSummary on:tagclick={toggle} />
 {/if}

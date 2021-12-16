@@ -24,7 +24,7 @@
     <Tag
       name={selection}
       selected={$allTagsSelected[index]}
-      on:click={$performToggleTagFilter[index]}
+      on:tagclick={$performToggleTagFilter[index]}
       on:longpress={() => handleLongPress(index)}
     />
   {/each}

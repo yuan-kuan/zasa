@@ -1,18 +1,19 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import { TagStores } from 'app/stores';
-
   import Tag from 'view/Tag.svelte';
 
+  const dispatch = createEventDispatcher();
   const { tags } = TagStores;
 </script>
 
 <div class="flex flex-wrap justify-center items-start">
   {#each $tags as tag}
-    <Tag name={tag} dense on:click />
+    <Tag name={tag} dense on:tagclick />
   {:else}
     <button
       class="btn bg-secondary-accent flex items-center text-primary "
-      on:click
+      on:click={() => dispatch('tagclick')}
     >
       <svg
         class="w-5 h-5"

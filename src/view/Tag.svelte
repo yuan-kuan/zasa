@@ -9,7 +9,9 @@
 {#if dense}
   <div
     class="border rounded-full text-xs select-none leading-tight text-primary  bg-secondary-accent px-2 py-1 mx-1"
-    on:click
+    use:longpress
+    on:tagclick
+    on:longpress
   >
     {name}
   </div>

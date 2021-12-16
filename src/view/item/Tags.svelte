@@ -13,7 +13,7 @@
   const openTagSelection = () => (isEditingTag = true);
 </script>
 
-<TagSummary on:click={openTagSelection} />
+<TagSummary on:tagclick={openTagSelection} />
 
 {#if isEditingTag}
   <Modal on:click={closeTagSelection}>
