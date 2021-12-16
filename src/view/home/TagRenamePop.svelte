@@ -14,14 +14,18 @@
     inputElement?.select();
   };
 
-  const addNewTag = () => {
-    dispatch('rename', workingTag);
+  const submit = () => {
+    if (isRemoving) {
+      dispatch('remove');
+    } else if (isRenaming) {
+      dispatch('rename', workingTag);
+    }
     dispatch('close');
   };
 
-  const addTagKeyDown = (e) => {
+  const keyDown = (e) => {
     if (e.key == 'Enter') {
-      addNewTag();
+      submit();
       e.preventDefault();
     }
   };
@@ -36,14 +40,14 @@
     class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-40"
     bind:value={workingTag}
     use:initInput
-    on:keydown={addTagKeyDown}
+    on:keydown={keyDown}
   />
 
   <!-- Add button -->
   <button
     class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
     disabled={workingTag == original}
-    on:click={addNewTag}>{isRemoving ? 'Remove' : 'Rename'}</button
+    on:click={submit}>{isRemoving ? 'Remove' : 'Rename'}</button
   >
 </div>
 

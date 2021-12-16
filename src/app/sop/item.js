@@ -121,6 +121,12 @@ const performTagRenaming = (itemId, original, next) =>
     presentTags(itemId)
   ]);
 
+const performTagRemoving = (itemId, tag) =>
+  free.sequence([
+    bulk_tag_ops.removeTag(tag),
+    presentTags(itemId)
+  ]);
+
 const presentTags = (itemId) =>
   free
     // Convert the two arguments to a list
@@ -144,6 +150,9 @@ const presentTags = (itemId) =>
       ),
       setRef(TagStores.performRenameTag,
         R.map((tag) => (next) => addSop(() => performTagRenaming(itemId, tag, next)), allTags)
+      ),
+      setRef(TagStores.performRemoveTag,
+        R.map((tag) => () => addSop(() => performTagRemoving(itemId, tag)), allTags)
       ),
     ]))
 

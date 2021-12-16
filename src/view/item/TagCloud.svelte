@@ -1,7 +1,12 @@
 <script>
   import { TagStores } from 'app/stores';
-  const { allTags, allTagsSelected, performToggleTagFilter, performRenameTag } =
-    TagStores;
+  const {
+    allTags,
+    allTagsSelected,
+    performToggleTagFilter,
+    performRenameTag,
+    performRemoveTag,
+  } = TagStores;
 
   import Tag from 'view/Tag.svelte';
 
@@ -26,8 +31,11 @@
   };
 
   const handleRename = (event) => {
-    console.log(`try to renaming ${renamingIndex} to ${event.detail}`);
     $performRenameTag[renamingIndex](event.detail);
+  };
+
+  const handleRemove = () => {
+    $performRemoveTag[renamingIndex]();
   };
 </script>
 
@@ -52,6 +60,7 @@
       <TagRenamingPop
         {original}
         on:rename={handleRename}
+        on:remove={handleRemove}
         on:close={closeRenaming}
       />
 

@@ -48,7 +48,7 @@ export const TagStores = {
   performAddNewTag: createRef(),
 
   performRenameTag: createRef([]),
-  performDeleteTag: createRef([]),
+  performRemoveTag: createRef([]),
 }
 
 export const BatchStores = {
