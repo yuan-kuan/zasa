@@ -18,7 +18,10 @@ const renameItemTag = (original, next) =>
 
 const renameSavedTagFilter = (original, next) =>
   filter_ops.getSavedTagFilter()
-    .chain(
+    .call(free.bichain(
+      // Left, there is no saved filter, we pass the result as a free
+      free.of,
+      // Right, there is saved tag, proceed to chain
       R.ifElse(
         R.includes(original),
         (_) => free.sequence([
@@ -27,6 +30,7 @@ const renameSavedTagFilter = (original, next) =>
         ]),
         free.of
       )
+    )
     );
 
 const removeItemTag = (original) =>

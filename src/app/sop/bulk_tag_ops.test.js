@@ -28,9 +28,7 @@ describe('Single Item', () => {
             tag_ops.add(itemId, 'tag B'),
           ]);
         }
-      ),
-      filter_ops.addFilterTag('tag A'),
-      filter_ops.addFilterTag('tag B'),
+      )
     ]));
   });
 
@@ -50,64 +48,93 @@ describe('Single Item', () => {
 
       expect(result).toEqual(['tag B', 'tag C']);
     });
-
-    test('saved tags updated', async () => {
-      const result = await interpret(filter_ops.getSavedTagFilter());
-
-      expect(result).toEqual(['tag B', 'tag C']);
-    });
   });
 
-  describe('Rename both tag. A to C, B to D', () => {
+  describe('with tag filtered', () => {
     beforeEach(() => {
       return interpret(
         free.sequence([
-          bulk_tag_ops.renameTag('tag A', 'tag C'),
-          bulk_tag_ops.renameTag('tag B', 'tag D'),
-        ]));
+          filter_ops.addFilterTag('tag A'),
+          filter_ops.addFilterTag('tag B'),
+        ])
+      );
     });
 
-    test('item tags updated', async () => {
-      const result = await interpret(tag_ops.getItemTags(singleItemId));
+    describe('Rename a tag. tag A to tag C', () => {
+      beforeEach(() => {
+        return interpret(bulk_tag_ops.renameTag('tag A', 'tag C'));
+      });
 
-      expect(result).toEqual(['tag C', 'tag D']);
+      test('item tags updated', async () => {
+        const result = await interpret(tag_ops.getItemTags(singleItemId));
+
+        expect(result).toEqual(['tag B', 'tag C']);
+      });
+
+      test('all tags updated', async () => {
+        const result = await interpret(filter_ops.getAllTags());
+
+        expect(result).toEqual(['tag B', 'tag C']);
+      });
+
+      test('saved tags updated', async () => {
+        const result = await interpret(filter_ops.getSavedTagFilter());
+
+        expect(result).toEqual(['tag B', 'tag C']);
+      });
     });
 
-    test('all tags updated', async () => {
-      const result = await interpret(filter_ops.getAllTags());
+    describe('Rename both tag. A to C, B to D', () => {
+      beforeEach(() => {
+        return interpret(
+          free.sequence([
+            bulk_tag_ops.renameTag('tag A', 'tag C'),
+            bulk_tag_ops.renameTag('tag B', 'tag D'),
+          ]));
+      });
 
-      expect(result).toEqual(['tag C', 'tag D']);
+      test('item tags updated', async () => {
+        const result = await interpret(tag_ops.getItemTags(singleItemId));
+
+        expect(result).toEqual(['tag C', 'tag D']);
+      });
+
+      test('all tags updated', async () => {
+        const result = await interpret(filter_ops.getAllTags());
+
+        expect(result).toEqual(['tag C', 'tag D']);
+      });
+
+      test('saved tags updated', async () => {
+        const result = await interpret(filter_ops.getSavedTagFilter());
+
+        expect(result).toEqual(['tag C', 'tag D']);
+      });
     });
 
-    test('saved tags updated', async () => {
-      const result = await interpret(filter_ops.getSavedTagFilter());
 
-      expect(result).toEqual(['tag C', 'tag D']);
-    });
-  });
+    describe('Remove tag A', () => {
+      beforeEach(() => {
+        return interpret(bulk_tag_ops.removeTag('tag A'));
+      });
 
+      test('item tags updated', async () => {
+        const result = await interpret(tag_ops.getItemTags(singleItemId));
 
-  describe('Remove tag A', () => {
-    beforeEach(() => {
-      return interpret(bulk_tag_ops.removeTag('tag A'));
-    });
+        expect(result).toEqual(['tag B']);
+      });
 
-    test('item tags updated', async () => {
-      const result = await interpret(tag_ops.getItemTags(singleItemId));
+      test('all tags updated', async () => {
+        const result = await interpret(filter_ops.getAllTags());
 
-      expect(result).toEqual(['tag B']);
-    });
+        expect(result).toEqual(['tag B']);
+      });
 
-    test('all tags updated', async () => {
-      const result = await interpret(filter_ops.getAllTags());
+      test('saved tags updated', async () => {
+        const result = await interpret(filter_ops.getSavedTagFilter());
 
-      expect(result).toEqual(['tag B']);
-    });
-
-    test('saved tags updated', async () => {
-      const result = await interpret(filter_ops.getSavedTagFilter());
-
-      expect(result).toEqual(['tag B']);
+        expect(result).toEqual(['tag B']);
+      });
     });
   });
 });
