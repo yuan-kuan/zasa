@@ -5,6 +5,7 @@ export const Nav = {
   goToSetting: createRef(),
   goToInfo: createRef(),
   goToHowTo: createRef(),
+  goToRelease: createRef(),
   backToHome: createRef()
 }
 
