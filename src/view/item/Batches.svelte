@@ -10,6 +10,7 @@
     performAddBatch,
     performBatchInc,
     performBatchDec,
+    performBatchUpdate,
     performDeleteBatch,
   } = BatchStores;
 
@@ -34,6 +35,7 @@
         {batch}
         decrementBatchCount={() => $performBatchDec[index]()}
         incrementBatchCount={() => $performBatchInc[index]()}
+        updateBatchCount={(v) => $performBatchUpdate[index](v)}
         deleteBatch={() => $performDeleteBatch[index]()}
       />
     </div>

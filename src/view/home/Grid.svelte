@@ -8,6 +8,7 @@
 
   let filler = [];
   $: {
+    filler = [];
     if ($items.length < 12) {
       filler = Array(12 - $items.length);
     }
@@ -25,6 +26,23 @@
   <div class="p-4 grid grid-cols-3 md:grid-cols-6 gap-2 auto-cols-max">
     {#each $items as item, index}
       <div class="relative w-full" on:click={$goToItem[index]}>
+        {#if item.blob}
+          <img
+            class="object-cover w-full border rounded-xl"
+            src={URL.createObjectURL(item.blob)}
+            alt=""
+          />
+        {:else}
+          <div
+            class="relative bg-primary rounded-lg ratio11 flex justify-center items-center
+        m-auto w-full bg-opacity-50
+        "
+          >
+            <div class=" text-white">
+              <Logo />
+            </div>
+          </div>
+        {/if}
         <!-- {item.name} -->
         <span
           class="absolute bottom-0 left-0 px-2 bg-secondary-accent bg-opacity-50 text-sm text-primary filter w-full truncate rounded-b-xl"
@@ -35,13 +53,6 @@
             class="absolute top-0 right-0 px-2 bg-red-300 bg-opacity-50 text-sm text-primary filter w-full truncate rounded-t-xl"
             >{expireInDays(item.expiry)} days left</span
           >
-        {/if}
-        {#if item.blob}
-          <img
-            class="object-cover w-full border rounded-xl"
-            src={URL.createObjectURL(item.blob)}
-            alt=""
-          />
         {/if}
       </div>
     {/each}

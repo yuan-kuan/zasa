@@ -5,6 +5,7 @@ export const Nav = {
   goToSetting: createRef(),
   goToInfo: createRef(),
   goToHowTo: createRef(),
+  goToRelease: createRef(),
   backToHome: createRef()
 }
 
@@ -46,6 +47,9 @@ export const TagStores = {
   performToggleTagFilter: createRef([]),
   tags: createRef([]),
   performAddNewTag: createRef(),
+
+  performRenameTag: createRef([]),
+  performRemoveTag: createRef([]),
 }
 
 export const BatchStores = {
@@ -53,5 +57,6 @@ export const BatchStores = {
   performAddBatch: createRef(),
   performBatchInc: createRef([]),
   performBatchDec: createRef([]),
+  performBatchUpdate: createRef([]),
   performDeleteBatch: createRef([]),
 }

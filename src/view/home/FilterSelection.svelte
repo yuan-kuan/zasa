@@ -37,14 +37,14 @@
       <Tag
         name={selection}
         selected={$allTagsSelected[index]}
-        on:click={$performToggleTagFilter[index]}
+        on:tagclick={$performToggleTagFilter[index]}
       />
     {/each}
     {#if $expiringItemCount > 0 || $expiringFilterSelected}
       <Tag
         name={`Expiring (${$expiringItemCount})`}
         selected={$expiringFilterSelected}
-        on:click={$performToggleExpiringFilter}
+        on:tagclick={$performToggleExpiringFilter}
       />
     {/if}
   </div>

@@ -67,4 +67,9 @@ const addCount = R.curry((n, batchDoc) => R.over(L.count, R.add(n))(batchDoc));
 const incAndSaveCount = (batchDoc) => R.compose(put, addCount(1))(batchDoc);
 const decAndSaveCount = (batchDoc) => R.compose(put, addCount(-1))(batchDoc);
 
-export { getAll, create, remove, removeAll, updateAllRemind, incAndSaveCount, decAndSaveCount };
+const updateAndSaveCount = R.curry((n, batchDoc) => R.pipe(
+  R.set(L.count, n),
+  put,
+)(batchDoc));
+
+export { getAll, create, remove, removeAll, updateAllRemind, incAndSaveCount, decAndSaveCount, updateAndSaveCount };

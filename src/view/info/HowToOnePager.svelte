@@ -7,6 +7,7 @@
   import Batch from 'view/item/Batch.svelte';
   import BottomSideButton from 'view/home/BottomSideButton.svelte';
   import Tag from 'view/Tag.svelte';
+  import TagNewInput from 'view/item/TagNewInput.svelte';
 
   let accordionKey = '';
 </script>
@@ -157,6 +158,113 @@
       </article>
     </AccordionItem>
 
+    <AccordionItem key="renametag">
+      <header slot="header">Rename and Remove Tag</header>
+      <article slot="body">
+        <p>
+          Caution! Renaming a tag will rename it for all items with the same
+          tag. Removing a tag will remove it from all item with the same tag.
+        </p>
+
+        <p>
+          First, go to an item page with the tag you like to rename. Tap on the
+          tags section to open up the tag cloud:
+          <span
+            class="w-56 mx-3 p-4  pt-8 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+          >
+            <div class="relative flex p-2 pt-2 pb-4 mx-4 text-primary ">
+              <!-- New tag input -->
+              <input
+                type="text"
+                placeholder="new tag"
+                class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-20"
+                readonly
+              />
+
+              <!-- Add button -->
+              <button
+                class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+                >add</button
+              >
+            </div>
+
+            <div
+              class="mt-2 flex flex-row flex-wrap justify-center items-start"
+            >
+              <Tag name="Fruit" selected />
+              <Tag name="Can" />
+            </div>
+
+            <div class="my-1 mx-10 border-t" />
+            <button
+              class="font-light text-primary underline place-self-end"
+              disabled>close</button
+            >
+          </span>
+        </p>
+
+        <p>
+          Long press (press and hold for 1 second) on the Tag you like to
+          rename. Another popup will appear which let you input the new name for
+          the tag:
+
+          <span
+            class="w-56 mx-3 p-4  pt-8 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+          >
+            <span class="text-primary font-semibold">Rename Tag</span>
+
+            <span class="relative flex p-2 pt-2 pb-4 mx-4 text-primary ">
+              <!-- New tag input -->
+              <input
+                type="text"
+                class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-20"
+                readonly
+                value="new"
+              />
+
+              <!-- Add button -->
+              <button
+                class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+                >Rename</button
+              >
+            </span>
+            <span class="text-primary block"
+              ><strong>old</strong> to <strong>new</strong></span
+            >
+          </span>
+        </p>
+
+        <p>
+          To remove a tag, clear the input box to have the button turns to
+          "REMOVE".
+
+          <span
+            class="w-56 mx-3 p-4  pt-8 flex flex-col justify-center items-center rounded-lg bg-white shadow-lg"
+          >
+            <span class="text-primary font-semibold">Rename Tag</span>
+
+            <span class="relative flex p-2 pt-2 pb-4 mx-4 text-primary ">
+              <!-- New tag input -->
+              <input
+                type="text"
+                class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-20"
+                readonly
+              />
+
+              <!-- Add button -->
+              <button
+                class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+                >Remove</button
+              >
+            </span>
+            <span class="text-danger"
+              >Removing tag <strong>old</strong> entirely</span
+            >
+          </span>
+        </p>
+      </article>
+    </AccordionItem>
+
     <AccordionItem key="addnewbatch">
       <header slot="header">Create A Batch</header>
       <article slot="body">
@@ -182,7 +290,8 @@
 
         <p>
           This is the new batch you just created. You can adjust the stock count
-          with the "+" and "-" button.
+          with the "+" and "-" button. To key in a larger number directly, tap
+          on the count number.
         </p>
       </article>
     </AccordionItem>

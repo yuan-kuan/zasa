@@ -15,15 +15,16 @@
   const initInput = (inputElement) => {
     if (clickedToActivate) {
       inputElement?.focus();
+      inputElement?.select();
     }
   };
 
-  const onEditName = () => {
+  const onEditDays = () => {
     isEditing = false;
     $performEditRemindDays(count);
   };
 
-  const nameKeyDown = (e) => {
+  const daysKeyDown = (e) => {
     if (e.key == 'Enter') {
       $performEditRemindDays(count);
       isEditing = false;
@@ -41,12 +42,12 @@
       type="text"
       bind:value={count}
       use:initInput
-      on:keydown={nameKeyDown}
+      on:keydown={daysKeyDown}
     />
 
     <button
       class="px-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
-      on:click={onEditName}>Done</button
+      on:click={onEditDays}>Done</button
     >
   {:else}
     <input

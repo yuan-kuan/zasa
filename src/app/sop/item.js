@@ -12,9 +12,10 @@ import { setItemCreationUrl, setItemUrl } from '../router';
 import { ItemStores, BatchStores, TagStores } from '../stores';
 import { goToHome } from './home';
 
-import * as item_ops from './item_ops';
 import * as batch_ops from './batch_ops';
+import * as bulk_tag_ops from './bulk_tag_ops';
 import * as filter_ops from './filter_ops';
+import * as item_ops from './item_ops';
 import * as tag_ops from './tag_ops';
 import { tapLog } from 'app/utils';
 
@@ -81,6 +82,15 @@ const performBatchCounting = (itemId, batches, operation) =>
       ]))
   )(batches);
 
+const performBatchDirectUpdate = (itemId, batches) =>
+  R.map(
+    (batch) => (count) =>
+      addSop(() => free.sequence([
+        batch_ops.updateAndSaveCount(count, batch),
+        presentBatches(itemId)
+      ]))
+  )(batches);
+
 const presentBatches = (itemId) =>
   batch_ops.getAll(itemId)
     .chain((batches) =>
@@ -88,6 +98,7 @@ const presentBatches = (itemId) =>
         setRef(BatchStores.batches, batches),
         setRef(BatchStores.performBatchInc, performBatchCounting(itemId, batches, batch_ops.incAndSaveCount)),
         setRef(BatchStores.performBatchDec, performBatchCounting(itemId, batches, batch_ops.decAndSaveCount)),
+        setRef(BatchStores.performBatchUpdate, performBatchDirectUpdate(itemId, batches)),
         setRef(BatchStores.performDeleteBatch, makeDeleteBatch(itemId, batches)),
       ])
     );
@@ -101,6 +112,18 @@ const performAddNewTag = (itemId, tag) =>
 const performRemoveTag = (itemId, tag) =>
   free.sequence([
     tag_ops.remove(itemId, tag),
+    presentTags(itemId)
+  ]);
+
+const performTagRenaming = (itemId, original, next) =>
+  free.sequence([
+    bulk_tag_ops.renameTag(original, next),
+    presentTags(itemId)
+  ]);
+
+const performTagRemoving = (itemId, tag) =>
+  free.sequence([
+    bulk_tag_ops.removeTag(tag),
     presentTags(itemId)
   ]);
 
@@ -124,6 +147,12 @@ const presentTags = (itemId) =>
           )(tag),
           allTags
         )
+      ),
+      setRef(TagStores.performRenameTag,
+        R.map((tag) => (next) => addSop(() => performTagRenaming(itemId, tag, next)), allTags)
+      ),
+      setRef(TagStores.performRemoveTag,
+        R.map((tag) => () => addSop(() => performTagRemoving(itemId, tag)), allTags)
       ),
     ]))
 
