@@ -19,6 +19,7 @@ const performDestroyStorage = () =>
   free.sequence([
     kv.remove('filteringTags'),
     kv.remove('hasExpiringFla'),
+    kv.remove('version'),
     destroy(),
     reload()
   ]);

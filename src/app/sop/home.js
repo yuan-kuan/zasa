@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import * as free from 'fp/free';
 import { setRef } from 'fp/ref';
 import { addSop } from 'fp/sop';
@@ -13,6 +14,9 @@ import { presentGrid } from './grid';
 import * as router from '../router';
 import { goToItemCreation } from './item';
 import { goToSettingPage } from './setting';
+
+import * as version_ops from './version_ops';
+import { tapLog } from 'app/utils';
 
 const goToInfo = () => free.sequence([
   viewSubPage(Home, InfoOnePager, () => addSop(() => goToHome())),
@@ -42,10 +46,35 @@ const setupHome = () => free.sequence([
   setRef(Nav.backToHome, () => addSop(() => goToHome())),
 ]);
 
-const goToHome = () => free.sequence([
-  viewMainPage(Home),
-  router.setHomeUrl(),
-  presentGrid(),
-]);
+const presentHome = () =>
+  free.sequence([
+    viewMainPage(Home),
+    router.setHomeUrl(),
+    presentGrid(),
+  ]);
+
+const currentVersion = 1;
+
+const goToHome = () =>
+  version_ops.load()
+    .chain(
+      R.cond([
+        [R.equals(currentVersion), R.always(presentHome())],
+        [
+          R.isNil,
+          R.always(free.sequence([
+            presentHome(),
+            version_ops.save(currentVersion)
+          ]))
+        ],
+        [
+          R.T,
+          R.always(free.sequence([
+            goToRelease(),
+            version_ops.save(currentVersion)
+          ]))
+        ],
+      ])
+    )
 
 export { setupHome, goToHome, goToInfo, goToHowTo, goToRelease };
