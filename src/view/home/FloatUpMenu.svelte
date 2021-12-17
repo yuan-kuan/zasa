@@ -22,12 +22,12 @@
       on:click={toggle}
       on:click={$goToSetting}
     />
-    <FloatUpMenuButton title="Info" on:click={$goToInfo} on:click={toggle} />
-    <FloatUpMenuButton title="HowTo" on:click={$goToHowTo} on:click={toggle} />
     <FloatUpMenuButton
       title="Releases"
       on:click={$goToRelease}
       on:click={toggle}
     />
+    <FloatUpMenuButton title="Info" on:click={$goToInfo} on:click={toggle} />
+    <FloatUpMenuButton title="HowTo" on:click={$goToHowTo} on:click={toggle} />
   </div>
 {/if}
