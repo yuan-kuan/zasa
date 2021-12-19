@@ -23,7 +23,9 @@
 
 <!-- Grid -->
 {#if hasItem}
-  <div class="p-4 grid grid-cols-3 md:grid-cols-6 gap-2 auto-cols-max">
+  <div
+    class="p-4 pb-20 h-full grid grid-cols-3 md:grid-cols-6 gap-2 auto-cols-max"
+  >
     {#each $items as item, index}
       <div class="relative w-full" on:click={$goToItem[index]}>
         {#if item.blob}

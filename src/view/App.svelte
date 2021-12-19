@@ -45,7 +45,9 @@
 /> -->
 
 <Tailwindcss />
-<main class="bg-white relative min-h-screen max-w-screen-md mx-auto">
+<main
+  class="bg-white relative min-h-screen max-h-screen max-w-screen-md mx-auto overflow-y-auto"
+>
   <svelte:component this={$primaryView} />
 
   {#if modalViewComponent}
