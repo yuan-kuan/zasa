@@ -33,6 +33,10 @@ const setupBackupInterpretor = () => {
   let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
   let isLocalBackup = LOCAL_DB_URL != undefined;
 
+  console.log(`REMOTE_BACKUP_CRED_URL ${REMOTE_BACKUP_CRED_URL}`);
+  console.log(`LOCAL_DB_URL ${LOCAL_DB_URL}`);
+  console.log(`isRemoteBackup ${isRemoteBackup}`);
+  console.log(`isLocalBackup ${isLocalBackup}`);
   if (!isRemoteBackup && !isLocalBackup) {
     console.warn('Backup is not setup properly');
     return [Backup, emptyBackupToFuture];

@@ -15,7 +15,7 @@ const MemPouch = PouchDB.defaults({
 });
 
 /// Boolean -> ( Free Monad -> Promise )
-export const createTestHelper = (useDb = false, useKv = false) => {
+export const createTestHelper = (useDb = false, useKv = false, extraInterpretors = []) => {
   const defaultInterpretors = [utilsInterpretor, freeUtilsInterpretor];
 
   let interpretors;
@@ -28,6 +28,10 @@ export const createTestHelper = (useDb = false, useKv = false) => {
     setup: () => {
       interpretors = [];
       interpretors.push(...defaultInterpretors);
+      if (extraInterpretors.length > 0) {
+        interpretors.push(...extraInterpretors);
+      }
+
       if (useDb) {
         // DO NOT try to destroy memory pouchDB instance. it is at least 3 seconds slow.
         db = MemPouch(`testmem-${randomTestId}-${ranTest++}`);
