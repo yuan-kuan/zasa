@@ -5,46 +5,27 @@
   export const primaryView = createRef(null);
   export const modalView = createRef(null);
   export const closeModal = createRef(null);
+  export const toastMessage = createRef(null);
 </script>
 
 <script>
-  // import SvelteSeo from 'svelte-seo';
+  import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+  import { onMount } from 'svelte';
   import Tailwindcss from './Tailwindcss.svelte';
 
   $: modalViewComponent = $modalView == '' ? null : $modalView;
+
+  onMount(() => {
+    toastMessage.subscribe((message) => {
+      if (message) {
+        toast.push(message);
+      }
+    });
+  });
 </script>
 
-<!-- 
-<SvelteSeo
-  title="B4 The Date"
-  description="Remind you to consume the otherwise expired food. Stop the waste."
-  keywords="food waste, expiry date, best before"
-  openGraph={{
-    title: 'B4 The Date',
-    description:
-      'Remind you to consume the otherwise expired food. Stop the waste.',
-    url: 'https://b4the.date',
-    type: 'website',
-    images: [
-      {
-        url: 'https://b4the.date/images/b4_logo_withname_1200.jpg',
-        width: 1200,
-        height: 628,
-        alt: 'Logo that read B 4',
-      },
-    ],
-  }}
-  twitter={{
-    site: '@yuankuan_',
-    title: 'B4 The Date',
-    description:
-      'Remind you to consume the otherwise expired food. Stop the waste.',
-    image: 'https://b4the.date/images/b4_logo_withname_1200.jpg',
-    imageAlt: 'Logo that read B 4',
-  }}
-/> -->
-
 <Tailwindcss />
+<SvelteToast />
 <main
   class="bg-white relative min-h-screen max-h-screen max-w-screen-md mx-auto overflow-y-auto"
 >

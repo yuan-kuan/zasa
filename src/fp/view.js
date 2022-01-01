@@ -5,7 +5,8 @@ import { addSop } from './sop';
 import {
   primaryView,
   modalView,
-  closeModal
+  closeModal,
+  toastMessage
 } from 'view/App.svelte';
 
 // Void -> Free SetRef
@@ -24,3 +25,5 @@ export const viewSubPage = (primaryComponent, subComponent, subViewClosed) =>
       if (subViewClosed != undefined) subViewClosed();
     }),
   ]);
+
+export const toast = (message) => ref.setRef(toastMessage, message);
