@@ -20,7 +20,7 @@ const nagivationToFuture = (p) =>
     Show: (path, params) =>
       Future((reject, resolve) => {
         try {
-          const newPath = new Path(path).build(params);
+          const newPath = new Path(path).build(params, { ignoreConstraints: true });
 
           if (newPath != page.current) {
             page.show(newPath, page.prevContext, false, true);
@@ -46,7 +46,7 @@ const howtoPath = '/howto';
 const releasePath = '/releases';
 
 const setHomeUrl = () => setUrl(gridPath);
-const setItemUrl = (itemId) => setUrl(itemPath, { itemId });
+const setItemUrl = (itemId) => setUrl(itemPath, { 'itemId': encodeURIComponent(itemId) });
 const setItemCreationUrl = () => setUrl('/item');
 const setSettingUrl = () => setUrl(settingPath);
 const setInfoUrl = () => setUrl(infoPath);
