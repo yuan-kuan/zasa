@@ -10,9 +10,16 @@
   import Tags from './Tags.svelte';
   import Reminder from './Reminder.svelte';
   import Batches from './Batches.svelte';
+  import NoteInput from './NoteInput.svelte';
 
-  const { name, performEditName, performEditPhoto, performDeleteItem } =
-    ItemStores;
+  const {
+    name,
+    note,
+    performEditName,
+    performEditPhoto,
+    performDeleteItem,
+    performEditNote,
+  } = ItemStores;
 
   const editName = (newName) => {
     $performEditName(newName);
@@ -44,6 +51,8 @@
   <!-- Line divider -->
   <div class="h-4 mt-4 mx-10 border-t " />
   <Batches />
+  <div class="h-4 mt-4 mx-10 border-t " />
+  <NoteInput note={$note} editNote={$performEditNote} />
   <!-- Tail buffer -->
   <div class="h-20" />
 </div>

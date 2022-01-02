@@ -52,6 +52,14 @@ const performEditRemindDays = (itemId, days) =>
   item_ops.editRemindDays(itemId, days)
     .chain(setRef(ItemStores.remindDays));
 
+const performEditNote = (itemId, note) =>
+  item_ops.editNote(itemId, note)
+    .chain(setRef(ItemStores.note));
+
+const presentNote = (itemId) =>
+  item_ops.getItemNote(itemId)
+    .chain(setRef(ItemStores.note));
+
 const presentRemind = (itemId) =>
   item_ops.getItemRemindDays(itemId)
     .chain(setRef(ItemStores.remindDays));
@@ -184,6 +192,9 @@ const goToItem = (itemId) =>
     setRef(ItemStores.performEditPhoto, (blob) =>
       addSop(() => performEditPhoto(itemId, blob))
     ),
+    setRef(ItemStores.performEditNote, (note) =>
+      addSop(() => performEditNote(itemId, note))
+    ),
     setRef(ItemStores.performDeleteItem, () =>
       addSop(() => performDeleteItem(itemId))
     ),
@@ -191,6 +202,7 @@ const goToItem = (itemId) =>
     presentRemind(itemId),
     presentTags(itemId),
     presentBatches(itemId),
+    presentNote(itemId),
   ]);
 
 export { goToItem, goToItemCreation };

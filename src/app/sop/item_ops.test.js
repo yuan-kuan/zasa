@@ -71,6 +71,8 @@ test('Edit item photo', async () => {
   expect(result.blob).toEqual(Buffer.from('Second Blob'));
 });
 
+
+
 test('Edit item note', async () => {
   const fm = item_ops.create('testEditNote', null)
     .chain((itemId) =>

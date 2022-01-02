@@ -95,6 +95,7 @@ const editNote = (itemId, note) =>
     .chain(get)
     .map(R.set(L.note, note))
     .chain(put)
+    .map(R.view(L.note));
 
 const getItemNote = (itemId) =>
   free.of(itemId) //
