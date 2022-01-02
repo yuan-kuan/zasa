@@ -18,7 +18,19 @@
   onMount(() => {
     toastMessage.subscribe((message) => {
       if (message) {
-        toast.push(message);
+        toast.push(
+          `<strong>Encountered an Error!</strong><br>
+          The issue has been copied. Please paste it to Kuan, or paste it to a note and send him all at once.<br>
+          Thank you!`,
+          {
+            duration: 7500,
+            theme: {
+              '--toastBackground': '#e3342f',
+              '--toastBorderRadius': '0.75rem',
+            },
+          }
+        );
+        window.navigator.clipboard.writeText(message);
       }
     });
   });
