@@ -10,6 +10,7 @@ const L = {
   id: R.lensProp('_id'),
   name: R.lensProp('name'),
   remindDays: R.lensProp('remindDays'),
+  note: R.lensProp('note'),
   type: R.lensProp('type'),
 };
 
@@ -88,4 +89,27 @@ const editRemindDays = (itemId, days) =>
     .map(R.head)
     .map(R.view(L.remindDays));
 
-export { getAll, create, remove, getItemWithPhoto, getItemRemindDays, editPhoto, editName, editRemindDays };
+const editNote = (itemId, note) =>
+  free
+    .of(itemId) //
+    .chain(get)
+    .map(R.set(L.note, note))
+    .chain(put)
+
+const getItemNote = (itemId) =>
+  free.of(itemId) //
+    .chain(get)
+    .map(R.view(L.note));
+
+export {
+  getAll,
+  create,
+  remove,
+  getItemWithPhoto,
+  getItemRemindDays,
+  editPhoto,
+  editName,
+  editRemindDays,
+  editNote,
+  getItemNote,
+};

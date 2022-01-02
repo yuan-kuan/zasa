@@ -71,6 +71,16 @@ test('Edit item photo', async () => {
   expect(result.blob).toEqual(Buffer.from('Second Blob'));
 });
 
+test('Edit item note', async () => {
+  const fm = item_ops.create('testEditNote', null)
+    .chain((itemId) =>
+      item_ops.editNote(itemId, 'Some Notes')
+        .chain((_) => item_ops.getItemNote(itemId)));
+
+  const result = await interpret(fm);
+  expect(result).toEqual('Some Notes');
+});
+
 test('Get all created items', async () => {
   const fm =
     free
