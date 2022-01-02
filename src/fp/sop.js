@@ -9,6 +9,7 @@ const idle = Symbol.for('sop-mode-idle');
 const working = Symbol.for('sop-mode-running');
 
 let sopId = 0;
+let toastErrorSop;
 
 const getDeref = (sopId) => {
   return (s) => {
@@ -65,7 +66,10 @@ const sopManager = (function* () {
 
         fork((e) => {
           console.error('SOP error: ', e);
+
+          sopQueue.unshift([toastErrorSop(e)]);
           setTimeout(() => sopManager.next([run]), 0);
+
         })(() => setTimeout(() => sopManager.next([run]), 0))(future);
       } else {
         // When there is no SOP to run, set the mode back to idle.
@@ -89,6 +93,10 @@ const addSop = (sop, continuedDeref) => {
 const continueSop = R.curry((derefAction, sop) =>
   R.map((continuedDeref) => () => addSop(sop, continuedDeref), derefAction)
 );
+
+const addToastErrorSop = (sop) => {
+  toastErrorSop = sop;
+}
 
 const staticInterpretors = [];
 const dynamicInterpretorGetters = [];
@@ -114,6 +122,7 @@ const constructInterpretor = (deref) => {
 export {
   addSop,
   continueSop,
+  addToastErrorSop,
   registerStaticInterpretor,
   registerDynamicInterpretorGetter,
   registerDerefInterpretor,

@@ -1,6 +1,6 @@
 import App from 'view/App.svelte';
 
-import { addSop, registerStaticInterpretor } from 'fp/sop';
+import { addSop, addToastErrorSop, registerStaticInterpretor } from 'fp/sop';
 import { freeUtilsInterpretor } from 'fp/free';
 
 import { navigationInterpretor, start } from 'app/router';
@@ -10,6 +10,7 @@ import { setupDatabaseInterpretor } from 'app/database';
 import { setupKVInterpretor } from 'app/kv';
 import { utilsInterpretor } from 'app/utils';
 import { setupBackupInterpretor } from 'app/sop/backup';
+import { toast } from 'fp/view';
 
 // Use Free Utils
 registerStaticInterpretor(freeUtilsInterpretor);
@@ -21,6 +22,7 @@ registerStaticInterpretor(navigationInterpretor);
 registerStaticInterpretor(utilsInterpretor);
 registerStaticInterpretor(setupBackupInterpretor());
 
+addToastErrorSop((error) => () => toast(error));
 addSop(() => gridSetup());
 addSop(() => setupHome());
 
