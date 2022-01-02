@@ -18,14 +18,18 @@ const { Show } = Navigation;
 const nagivationToFuture = (p) =>
   p.cata({
     Show: (path, params) =>
-      Future((_, resolve) => {
-        const newPath = new Path(path).build(params);
+      Future((reject, resolve) => {
+        try {
+          const newPath = new Path(path).build(params);
 
-        if (newPath != page.current) {
-          page.show(newPath, page.prevContext, false, true);
+          if (newPath != page.current) {
+            page.show(newPath, page.prevContext, false, true);
+          }
+
+          resolve(newPath);
+        } catch (error) {
+          reject(`Navigation error: ${error} when path is ${path} and params are ${JSON.stringify(params)}`);
         }
-
-        resolve(newPath);
         return () => { };
       }),
   });

@@ -10,6 +10,7 @@ import { goToItem } from './item';
 import * as item_ops from './item_ops';
 import * as filter_ops from './filter_ops';
 import { tapLog } from '../utils';
+import { toast } from 'fp/view';
 
 const setup = () => filter_ops.setup();
 
@@ -37,7 +38,11 @@ const presentFilteredItem = (filterTags) =>
     );
 
 const performAddTagFilter = (tag) =>
-  free.sequence([filter_ops.updateSavedTagFilter(R.append(tag)), presentGrid()]);
+  free.sequence([
+    filter_ops.updateSavedTagFilter(R.append(tag)),
+    presentGrid(),
+    toast(`added ${tag}`)
+  ]);
 
 
 const performRemoveTagFilter = (tag) =>
