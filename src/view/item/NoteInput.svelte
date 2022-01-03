@@ -32,7 +32,7 @@
   };
 </script>
 
-<div class="mx-auto relative flex flex-col px-4">
+<div class="mx-auto relative flex flex-col px-4 w-80">
   {#if isEditingNote}
     <!-- New tag input -->
     <textarea
@@ -45,7 +45,7 @@
 
     <!-- Add button -->
     <button
-      class="mt-2 px-4 py-2 rounded-r-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
+      class="mt-2 px-4 py-2 rounded-lg bg-primary  text-gray-800 font-bold uppercase border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
       class:bg-primary={!preventEditNote}
       class:bg-neutral={preventEditNote}
       on:click={onEditNote}>{preventEditNote ? 'Cancel' : 'Add Note'}</button
