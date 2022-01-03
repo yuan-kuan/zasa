@@ -21,7 +21,8 @@ import { tapLog } from 'app/utils';
 
 const performCreateItem = (name, blob) =>
   item_ops.create(name, blob)
-    .chain(goToItem);
+    .chain(goToItem)
+    .chain((_) => setRef(ItemStores.savedStatus, `Saved! ${name} is created.`))
 
 const goToItemCreation = () =>
   free.sequence([
@@ -42,19 +43,24 @@ const performDeleteItem = (itemId) =>
 const performEditPhoto = (itemId, blob) =>
   free.sequence([
     item_ops.editPhoto(itemId, blob),
-    goToItem(itemId)
+    goToItem(itemId),
+    setRef(ItemStores.savedStatus, `Saved! New photo.`)
   ]);
 
 const performEditName = (itemId, name) =>
-  item_ops.editName(itemId, name).chain(setRef(ItemStores.name));
+  item_ops.editName(itemId, name) //
+    .chain(setRef(ItemStores.name))
+    .chain((_) => setRef(ItemStores.savedStatus, `Saved! Name is "${name}".`));
 
 const performEditRemindDays = (itemId, days) =>
   item_ops.editRemindDays(itemId, days)
-    .chain(setRef(ItemStores.remindDays));
+    .chain(setRef(ItemStores.remindDays))
+    .chain((_) => setRef(ItemStores.savedStatus, `Saved! ${days} to remind.`));
 
 const performEditNote = (itemId, note) =>
   item_ops.editNote(itemId, note)
-    .chain(setRef(ItemStores.note));
+    .chain(setRef(ItemStores.note))
+    .chain((_) => setRef(ItemStores.savedStatus, `Saved new notes.`));
 
 const presentNote = (itemId) =>
   item_ops.getItemNote(itemId)
@@ -67,13 +73,15 @@ const presentRemind = (itemId) =>
 const performCreateBatch = (itemId, expiryDate) =>
   free.sequence([
     batch_ops.create(itemId, expiryDate),
-    presentBatches(itemId)
+    presentBatches(itemId),
+    setRef(ItemStores.savedStatus, `Saved new batch`)
   ]);
 
 const performDeleteBatch = (itemId, batchId) =>
   free.sequence([
     batch_ops.remove(batchId),
-    presentBatches(itemId)
+    presentBatches(itemId),
+    setRef(ItemStores.savedStatus, `Saved. Removed a batch`)
   ]);
 
 const makeDeleteBatch = (itemId, batches) =>
@@ -86,7 +94,8 @@ const performBatchCounting = (itemId, batches, operation) =>
     (batch) => () =>
       addSop(() => free.sequence([
         operation(batch),
-        presentBatches(itemId)
+        presentBatches(itemId),
+        setRef(ItemStores.savedStatus, `Saved. Updated a batch`)
       ]))
   )(batches);
 
@@ -95,7 +104,8 @@ const performBatchDirectUpdate = (itemId, batches) =>
     (batch) => (count) =>
       addSop(() => free.sequence([
         batch_ops.updateAndSaveCount(count, batch),
-        presentBatches(itemId)
+        presentBatches(itemId),
+        setRef(ItemStores.savedStatus, `Saved. Updated a batch`)
       ]))
   )(batches);
 
@@ -114,25 +124,29 @@ const presentBatches = (itemId) =>
 const performAddNewTag = (itemId, tag) =>
   free.sequence([
     tag_ops.add(itemId, tag),
-    presentTags(itemId)
+    presentTags(itemId),
+    setRef(ItemStores.savedStatus, `Saved. Added #${tag}.`)
   ]);
 
 const performRemoveTag = (itemId, tag) =>
   free.sequence([
     tag_ops.remove(itemId, tag),
-    presentTags(itemId)
+    presentTags(itemId),
+    setRef(ItemStores.savedStatus, `Saved. Removed #${tag}.`)
   ]);
 
 const performTagRenaming = (itemId, original, next) =>
   free.sequence([
     bulk_tag_ops.renameTag(original, next),
-    presentTags(itemId)
+    presentTags(itemId),
+    setRef(ItemStores.savedStatus, `Saved. Renamed #${original} to #${next}.`)
   ]);
 
 const performTagRemoving = (itemId, tag) =>
   free.sequence([
     bulk_tag_ops.removeTag(tag),
-    presentTags(itemId)
+    presentTags(itemId),
+    setRef(ItemStores.savedStatus, `Saved. Deleted #${tag} from all items.`)
   ]);
 
 const presentTags = (itemId) =>
@@ -176,6 +190,7 @@ const goToItem = (itemId) =>
   free.sequence([
     viewMainPage(Item),
     setItemUrl(itemId),
+    resetRef(ItemStores.savedStatus),
     setRef(ItemStores.nameError, null),
     setRef(ItemStores.performEditName, (newName) =>
       addSop(() => performEditName(itemId, newName))

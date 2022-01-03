@@ -5,6 +5,7 @@
   const { backToHome } = Nav;
 
   export let back = $backToHome;
+  export let statusText = '';
   export let actions = null;
 </script>
 
@@ -26,6 +27,11 @@
     </svg>
     Back
   </button>
+
+  <span
+    class="overflow-ellipsis whitespace-nowrap overflow-x-hidden text-secondary-accent text-sm font-semibold self-center"
+    >{statusText}</span
+  >
 
   {#if actions}
     <DropdownMenu {actions} />

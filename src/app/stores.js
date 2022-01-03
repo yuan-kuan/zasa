@@ -33,6 +33,7 @@ export const ItemStores = {
   editingPhotoBlob: createRef(),
   remindDays: createRef(),
   note: createRef(),
+  savedStatus: createRef(),
   performEditName: createRef(),
   performEditPhoto: createRef(),
   performDeleteItem: createRef(),

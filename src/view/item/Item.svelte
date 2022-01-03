@@ -15,6 +15,7 @@
   const {
     name,
     note,
+    savedStatus,
     performEditName,
     performEditPhoto,
     performDeleteItem,
@@ -35,6 +36,7 @@
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
   <Backheader
+    statusText={$savedStatus}
     actions={[
       {
         classes: 'btn-secondary',
