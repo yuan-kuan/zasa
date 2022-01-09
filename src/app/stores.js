@@ -26,19 +26,21 @@ export const FilterStores = {
   performToggleExpiringFilter: createRef(),
 }
 
-
 export const ItemStores = {
   name: createRef(),
   nameError: createRef(),
   photoBlob: createRef(),
   editingPhotoBlob: createRef(),
   remindDays: createRef(),
+  note: createRef(),
+  savedStatus: createRef(),
   performEditName: createRef(),
   performEditPhoto: createRef(),
   performDeleteItem: createRef(),
   backFromEditPhoto: createRef(),
   performSave: createRef(),
   performEditRemindDays: createRef(),
+  performEditNote: createRef(),
 }
 
 export const TagStores = {
@@ -59,4 +61,14 @@ export const BatchStores = {
   performBatchDec: createRef([]),
   performBatchUpdate: createRef([]),
   performDeleteBatch: createRef([]),
+}
+
+export const SettingStores = {
+  syncStatus: createRef(),
+  spaceTaken: createRef(),
+  spaceLeft: createRef(),
+  performCleanupStorage: createRef(),
+  performDestroyStorage: createRef(),
+  backFromSettingPage: createRef(),
+  performSyncStorage: createRef(),
 }

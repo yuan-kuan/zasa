@@ -16,6 +16,7 @@
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-replace": "^3.0.0",
+    "@zerodevx/svelte-toast": "^0.6.3",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.3.1",
     "daggy": "^1.5.0",
@@ -35,6 +36,7 @@
     "pouchdb-find": "^7.2.2",
     "ramda": "^0.27.1",
     "rollup": "^2.44.0",
+    "rollup-jest": "^1.1.3",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
@@ -50,7 +52,13 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.js$": "babel-jest",
+      "\\.js$": [
+        "rollup-jest",
+        {
+          "configFile": "./rollup.test.config.js",
+          "args": "--environment LOCAL"
+        }
+      ],
       "^.+\\.svelte$": "svelte-jester"
     },
     "moduleFileExtensions": [

@@ -10,9 +10,17 @@
   import Tags from './Tags.svelte';
   import Reminder from './Reminder.svelte';
   import Batches from './Batches.svelte';
+  import NoteInput from './NoteInput.svelte';
 
-  const { name, performEditName, performEditPhoto, performDeleteItem } =
-    ItemStores;
+  const {
+    name,
+    note,
+    savedStatus,
+    performEditName,
+    performEditPhoto,
+    performDeleteItem,
+    performEditNote,
+  } = ItemStores;
 
   const editName = (newName) => {
     $performEditName(newName);
@@ -28,6 +36,7 @@
   transition:slide={{ delay: 0, duration: 500, easing: circInOut }}
 >
   <Backheader
+    statusText={$savedStatus}
     actions={[
       {
         classes: 'btn-secondary',
@@ -44,6 +53,8 @@
   <!-- Line divider -->
   <div class="h-4 mt-4 mx-10 border-t " />
   <Batches />
+  <div class="h-4 mt-4 mx-10 border-t " />
+  <NoteInput note={$note} editNote={$performEditNote} />
   <!-- Tail buffer -->
   <div class="h-20" />
 </div>

@@ -1,15 +1,13 @@
-<script context="module">
-  import { createRef } from 'fp/ref';
-
-  export const performCleanupStorage = createRef();
-  export const performDestroyStorage = createRef();
-  export const backFromSettingPage = createRef();
-
-  export const performSyncStorage = createRef();
-  export const syncStatus = createRef('');
-</script>
-
 <script>
+  import { SettingStores } from 'app/stores';
+  const {
+    performCleanupStorage,
+    performDestroyStorage,
+    backFromSettingPage,
+    performSyncStorage,
+    syncStatus,
+  } = SettingStores;
+
   let syncButton;
   let backupCode = '';
   let isSyncing = false;
