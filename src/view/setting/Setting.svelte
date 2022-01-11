@@ -1,4 +1,5 @@
 <script>
+  import Logo from 'view/Logo.svelte';
   import { SettingStores } from 'app/stores';
   const {
     performCleanupStorage,
@@ -36,9 +37,13 @@
   >
 </header>
 
-<div class="flex flex-col justify-center pt-4 px-4">
+<div class="flex flex-col justify-center pt-4 px-4 h-screen bg-neutral">
+  <p class="flex justify-center font-bold text-center text-xl pb-2">
+    <span><Logo /></span> <span class="pl-1 pt-1">Settings</span>
+  </p>
+
   <div class="p-2 border-b border-black">
-    <p>Sycn with Remote or Local.</p>
+    <p class="font-semibold text-lg">Sync</p>
     <p>sycn up your current B4 with remote backup.</p>
     <p>
       This required a backup code, if you like to have one, email me:
@@ -64,21 +69,26 @@
     {/if}
   </div>
 
-  <div class="p-2 border-b border-black">
-    <p>
-      Compact will reduce the size of the database in your browser's storage.
-    </p>
+  <div class=" flex flex-col p-2 border-b border-black">
+    <p class="font-semibold text-lg">Compact</p>
+    <p>Free up some space by trimming bits and bytes that B4 no longer need.</p>
 
-    <button class="btn btn-blue" on:click={$performCleanupStorage}
-      >Compact Storage</button
+    <button
+      class="btn btn-primary self-center"
+      on:click={$performCleanupStorage}>Compact Storage</button
     >
   </div>
 
-  <div class="p-2 border-b border-black">
-    <p>Delete everything in this browser (does not affect remote backup).</p>
+  <div class=" flex flex-col p-2 border-b border-black">
+    <p class="font-semibold text-lg">Factory Reset</p>
+    <p>Delete everything in this device (does not affect remote backup).</p>
 
-    <button class="btn btn-red mt-4" on:click={$performDestroyStorage}
-      >Destroy Storage</button
+    <button
+      class="btn bg-red-500 text-white self-center"
+      on:click={$performDestroyStorage}>Factory Reset</button
     >
   </div>
+
+  <!-- Filler  -->
+  <div class="flex-grow" />
 </div>
