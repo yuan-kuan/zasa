@@ -64,11 +64,16 @@ export const BatchStores = {
 }
 
 export const SettingStores = {
-  syncStatus: createRef(),
   spaceTaken: createRef(),
   spaceLeft: createRef(),
   performCleanupStorage: createRef(),
   performDestroyStorage: createRef(),
   backFromSettingPage: createRef(),
+}
+
+export const SyncStores = {
+  savedCode: createRef(),
+  savedTimestamp: createRef(),
+  syncStatus: createRef(),
   performSyncStorage: createRef(),
 }

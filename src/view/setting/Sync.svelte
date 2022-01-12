@@ -3,9 +3,26 @@
   import { circInOut } from 'svelte/easing';
   import Modal from 'view/Modal.svelte';
 
-  let hasCode = true;
+  import { SyncStores } from 'app/stores';
+  const { savedCode, syncStatus, savedTimestamp, performSyncStorage } =
+    SyncStores;
+
+  $: hasCode = $savedCode;
   let settingUp = false;
   let showingTips = false;
+
+  let workingCode = '';
+
+  const submit = () => {
+    $performSyncStorage(workingCode);
+  };
+
+  const keyDown = (e) => {
+    if (e.key == 'Enter') {
+      submit();
+      e.preventDefault();
+    }
+  };
 
   const initInput = (inputElement) => {
     inputElement?.focus();
@@ -13,6 +30,9 @@
   };
 
   const closeSettingUp = () => (settingUp = false);
+
+  $: hasSyncStatus = $syncStatus;
+  $: syncStatusIsError = $syncStatus?.toLowerCase().includes('error');
 </script>
 
 <div class="flex flex-col p-2 py-4 border-b border-black">
@@ -20,7 +40,7 @@
 
   {#if hasCode}
     <p>Sync often to keep your data safe.</p>
-    <p><strong>Code: </strong> HEY438</p>
+    <p><strong>Code: </strong> {$savedCode}</p>
     <p><strong>Last Sync: </strong> 10 days ago</p>
 
     <div class="flex flex-row justify-center mt-2">
@@ -57,18 +77,25 @@
           type="text"
           class="rounded-l-lg py-2 pl-2 border-t mr-0 border-b border-l border-gray-200 text-center w-40"
           use:initInput
+          on:keydown={keyDown}
+          bind:value={workingCode}
         />
-        <!-- bind:value={workingTag}
-      on:keydown={keyDown} -->
 
         <!-- Add button -->
         <button
           class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
-          >Submit</button
+          disabled={workingCode == ''}
+          on:click={submit}>Submit</button
         >
-        <!-- disabled={workingTag == original}
-      on:click={submit} -->
       </div>
+
+      {#if hasSyncStatus}
+        {#if syncStatusIsError}
+          <p class="w-full mb-4 text-center text-red-600">{$syncStatus}</p>
+        {:else}
+          <p class="w-full mb-4 text-center text-green-600">{$syncStatus}</p>
+        {/if}
+      {/if}
 
       {#if showingTips}
         <p>

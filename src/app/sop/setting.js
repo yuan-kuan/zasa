@@ -7,12 +7,12 @@ import { addSop } from 'fp/sop';
 import { viewMainPage } from 'fp/view';
 
 import Setting from 'view/setting/Setting.svelte';
-import { SettingStores } from 'app/stores';
+import { SettingStores, SyncStores } from 'app/stores';
 
 import { setSettingUrl } from '../router';
-import { reload } from '../utils';
+import { reload, tapLog } from '../utils';
 import { goToHome } from './home';
-import { sync } from './backup';
+import * as backup from './backup';
 import * as kv from 'app/kv';
 
 const performDestroyStorage = () =>
@@ -29,25 +29,42 @@ const performCompactStorage = () =>
 
 const performSyncStorage = (backupCode) =>
   free.sequence([
-    setRef(SettingStores.syncStatus, 'Syncing...'),
-    sync(backupCode).call(free.bichain(
-      (error) => setRef(SettingStores.syncStatus, `Sync Error: ${error}`),
-      (_) => setRef(SettingStores.syncStatus, `Sync is done!`),
-    ))
+    setRef(SyncStores.syncStatus, 'Syncing...'),
+    free.of(backupCode)
+      .chain(backup.sync)
+      .call(free.bichain(
+        (error) => setRef(SyncStores.syncStatus, `Sync Error: ${error}`),
+        (_) => free.sequence([
+          setRef(SyncStores.syncStatus, `Sync is done!`),
+          backup.saveCode(backupCode, new Date())
+        ])
+      )
+      )
   ])
+
+const presentSync = () =>
+  free.sequence([
+    free.bichain(
+      () => setRef(SyncStores.savedCode, ''),
+      setRef(SyncStores.savedCode),
+      backup.getSavedCode(),
+    ),
+    // backup.getSavedTimestamp().chain(setRef(SyncStores.savedTimestamp)),
+    setRef(SyncStores.performSyncStorage, (code) =>
+      addSop(() => performSyncStorage(code))
+    ),
+  ]);
 
 const goToSettingPage = () =>
   free.sequence([
     viewMainPage(Setting),
     setSettingUrl(),
+    presentSync(),
     setRef(SettingStores.performCleanupStorage, () =>
       addSop(() => performCompactStorage())
     ),
     setRef(SettingStores.performDestroyStorage, () =>
       addSop(() => performDestroyStorage())
-    ),
-    setRef(SettingStores.performSyncStorage, (code) =>
-      addSop(() => performSyncStorage(code))
     ),
     setRef(SettingStores.backFromSettingPage, () => addSop(() => goToHome())),
   ]);
