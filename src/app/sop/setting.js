@@ -51,7 +51,7 @@ const presentSync = () =>
       backup.getSavedCode(),
     ),
     free.bichain(
-      () => setRef(SyncStores.getSavedTimestamp, ''),
+      () => setRef(SyncStores.savedTimestamp, ''),
       setRef(SyncStores.savedTimestamp),
       backup.getSavedTimestamp(),
     ),
