@@ -1,12 +1,13 @@
 import daggy from 'daggy';
-
+import * as R from 'ramda';
 import * as free from 'fp/free';
 
+import * as kv from '../kv';
 import { fetchJson, tapLog } from '../utils';
 import { syncWithBackUp } from '../db_ops';
 
 const Backup = daggy.taggedSum('Backup', {
-  Sync: ['code']
+  Sync: ['code'],
 });
 const { Sync } = Backup;
 
@@ -32,11 +33,6 @@ const setupBackupInterpretor = () => {
   // Read the ENV variables
   let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
   let isLocalBackup = LOCAL_DB_URL != undefined;
-
-  console.log(`REMOTE_BACKUP_CRED_URL ${REMOTE_BACKUP_CRED_URL}`);
-  console.log(`LOCAL_DB_URL ${LOCAL_DB_URL}`);
-  console.log(`isRemoteBackup ${isRemoteBackup}`);
-  console.log(`isLocalBackup ${isLocalBackup}`);
   if (!isRemoteBackup && !isLocalBackup) {
     console.warn('Backup is not setup properly');
     return [Backup, emptyBackupToFuture];
@@ -47,5 +43,27 @@ const setupBackupInterpretor = () => {
 }
 
 const sync = (code) => free.lift(Sync(code));
+const saveCode = (code, timeStamp) =>
+  free.sequence([
+    kv.set('backupCode', code),
+    kv.set('backupTimestamp', timeStamp),
+  ])
+const getSavedCode = () =>
+  kv.get('', 'backupCode')
+    .chain(
+      R.ifElse(
+        R.isEmpty,
+        free.left,
+        free.right,
+      ));
 
-export { setupBackupInterpretor, sync };
+const getSavedTimestamp = () =>
+  kv.get('', 'backupTimestamp')
+    .chain(
+      R.ifElse(
+        R.isEmpty,
+        free.left,
+        (dateString) => free.right(new Date(dateString)),
+      ));
+
+export { setupBackupInterpretor, sync, saveCode, getSavedCode, getSavedTimestamp };
