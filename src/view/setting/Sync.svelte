@@ -1,4 +1,6 @@
 <script>
+  import moment from 'moment';
+
   import { scale } from 'svelte/transition';
   import { circInOut } from 'svelte/easing';
   import Modal from 'view/Modal.svelte';
@@ -10,6 +12,25 @@
   $: hasCode = $savedCode;
   let settingUp = false;
   let showingTips = false;
+
+  let timeAgoText;
+  savedTimestamp.subscribe((v) => {
+    if (v) {
+      let previosSyncDate = moment(v);
+      let today = moment();
+      let daysDifference = today.diff(previosSyncDate, 'days');
+      if (daysDifference > 0) {
+        timeAgoText = `${daysDifference} days ago`;
+      } else {
+        let hoursDifference = today.diff(previosSyncDate, 'hours');
+        if (hoursDifference > 0) {
+          timeAgoText = `${hoursDifference} hours ago`;
+        } else {
+          timeAgoText = `${today.diff(previosSyncDate, 'minutes')} minutes ago`;
+        }
+      }
+    }
+  });
 
   let workingCode = '';
 
@@ -29,6 +50,12 @@
     inputElement?.select();
   };
 
+  const syncWithSavedCode = () => {
+    if (hasCode) {
+      $performSyncStorage($savedCode);
+    }
+  };
+
   const closeSettingUp = () => (settingUp = false);
 
   $: hasSyncStatus = $syncStatus;
@@ -41,7 +68,7 @@
   {#if hasCode}
     <p>Sync often to keep your data safe.</p>
     <p><strong>Code: </strong> {$savedCode}</p>
-    <p><strong>Last Sync: </strong> 10 days ago</p>
+    <p><strong>Last Sync: </strong> {timeAgoText}</p>
 
     <div class="flex flex-row justify-center mt-2">
       <button
@@ -49,7 +76,9 @@
         on:click={() => (settingUp = true)}>Setup new Sync</button
       >
       <span class="px-4" />
-      <button class="btn bg-primary text-white">Sync Now</button>
+      <button class="btn bg-primary text-white" on:click={syncWithSavedCode}
+        >Sync Now</button
+      >
     </div>
   {:else}
     <p class="mb-2">

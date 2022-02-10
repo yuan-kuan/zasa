@@ -36,7 +36,8 @@ const performSyncStorage = (backupCode) =>
         (error) => setRef(SyncStores.syncStatus, `Sync Error: ${error}`),
         (_) => free.sequence([
           setRef(SyncStores.syncStatus, `Sync is done!`),
-          backup.saveCode(backupCode, new Date())
+          backup.saveCode(backupCode, new Date()),
+          presentSync()
         ])
       )
       )
@@ -49,7 +50,11 @@ const presentSync = () =>
       setRef(SyncStores.savedCode),
       backup.getSavedCode(),
     ),
-    // backup.getSavedTimestamp().chain(setRef(SyncStores.savedTimestamp)),
+    free.bichain(
+      () => setRef(SyncStores.getSavedTimestamp, ''),
+      setRef(SyncStores.savedTimestamp),
+      backup.getSavedTimestamp(),
+    ),
     setRef(SyncStores.performSyncStorage, (code) =>
       addSop(() => performSyncStorage(code))
     ),
