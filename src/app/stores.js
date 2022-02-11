@@ -1,5 +1,18 @@
 import { createRef } from 'fp/ref';
 
+/**
+ * @typedef {object} Nav
+ * @property {object} goToCreateItem
+ * @property {object} goToSetting
+ * @property {object} goToInfo
+ * @property {object} goToHowTo
+ * @property {object} goToRelease
+ * @property {object} backToHome
+*/
+
+/**
+ * @type Nav
+ */
 export const Nav = {
   goToCreateItem: createRef(),
   goToSetting: createRef(),
@@ -9,23 +22,67 @@ export const Nav = {
   backToHome: createRef()
 }
 
+/**
+ * @typedef {object} GridStores
+ * @property {object} items
+ * @property {object} goToItem
+*/
+
+/**
+ * @type GridStores
+ */
 export const GridStores = {
   items: createRef([]),
   goToItem: createRef([])
 }
 
+/**
+ * @typedef {object} FilterStores
+ * @property {object} tags
+ * @property {object} allTags
+ * @property {object} allTagsSelected
+ * @property {object} performToggleTagFilter
+ * @property {object} performClearFilter
+ * @property {object} expiringItemCount
+ * @property {object} expiringFilterSelected
+ * @property {object} performToggleExpiringFilter
+*/
+
+/**
+ * @type FilterStores
+ */
 export const FilterStores = {
   tags: createRef([]),
   allTags: createRef([]),
   allTagsSelected: createRef([]),
   performToggleTagFilter: createRef([]),
   performClearFilter: createRef(),
-
   expiringItemCount: createRef(),
   expiringFilterSelected: createRef(),
   performToggleExpiringFilter: createRef(),
 }
 
+/**
+ * @typedef {object} ItemStores
+ * @property {object} name
+ * @property {object} nameError
+ * @property {object} photoBlob
+ * @property {object} editingPhotoBlob
+ * @property {object} remindDays 
+ * @property {object} note
+ * @property {object} savedStatus
+ * @property {object} performEditName
+ * @property {object} performEditPhoto
+ * @property {object} performDeleteItem
+ * @property {object} backFromEditPhoto
+ * @property {object} performSave
+ * @property {object} performEditRemindDays
+ * @property {object} performEditNote
+*/
+
+/**
+ * @type ItemStores
+ */
 export const ItemStores = {
   name: createRef(),
   nameError: createRef(),
@@ -43,17 +100,43 @@ export const ItemStores = {
   performEditNote: createRef(),
 }
 
+/**
+ * @typedef {object} TagStores 
+ * @property {object}  allTags
+ * @property {object}  allTagsSelected
+ * @property {object}  performToggleTagFilter
+ * @property {object}  tags
+ * @property {object}  performAddNewTag
+ * @property {object}  performRenameTag
+ * @property {object}  performRemoveTag
+*/
+
+/**
+ * @type TagStores
+ */
 export const TagStores = {
   allTags: createRef([]),
   allTagsSelected: createRef([]),
   performToggleTagFilter: createRef([]),
   tags: createRef([]),
   performAddNewTag: createRef(),
-
   performRenameTag: createRef([]),
   performRemoveTag: createRef([]),
 }
 
+/**
+ * @typedef {object} BatchStores 
+ * @property {object}  batches
+ * @property {object}  performAddBatch
+ * @property {object}  performBatchInc
+ * @property {object}  performBatchDec
+ * @property {object}  performBatchUpdate
+ * @property {object}  performDeleteBatch
+*/
+
+/**
+ * @type BatchStores
+ */
 export const BatchStores = {
   batches: createRef([]),
   performAddBatch: createRef(),
@@ -63,6 +146,18 @@ export const BatchStores = {
   performDeleteBatch: createRef([]),
 }
 
+/**
+ * @typedef {object} SettingStores
+ * @property {object}  spaceTaken 
+ * @property {object}  spaceLeft
+ * @property {object}  performCleanupStorage
+ * @property {object}  performDestroyStorage
+ * @property {object}  backFromSettingPage 
+*/
+
+/**
+ * @type SettingStores
+ */
 export const SettingStores = {
   spaceTaken: createRef(),
   spaceLeft: createRef(),
