@@ -37,7 +37,7 @@ const goToItemCreation = () =>
 const performDeleteItem = (itemId) =>
   free.sequence([
     item_ops.remove(itemId),
-    goToHome(itemId)
+    goToHome()
   ]);
 
 const performEditPhoto = (itemId, blob) =>
@@ -199,7 +199,7 @@ const goToItem = (itemId) =>
       addSop(() => performEditRemindDays(itemId, newDays))
     ),
     setRef(BatchStores.performAddBatch, (expiryDate, count) =>
-      addSop(() => performCreateBatch(itemId, expiryDate, count))
+      addSop(() => performCreateBatch(itemId, expiryDate))
     ),
     setRef(TagStores.performAddNewTag, (tag) =>
       addSop(() => performAddNewTag(itemId, tag))

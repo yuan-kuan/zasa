@@ -71,6 +71,17 @@ export const SettingStores = {
   backFromSettingPage: createRef(),
 }
 
+/**
+ * @typedef {object} SyncStores
+ * @property {object} savedCode - previously sync code that saved locally
+ * @property {object} savedTimestamp
+ * @property {object} syncStatus
+ * @property {object} performSyncStorage
+ */
+
+/**
+ * @type SyncStores
+ */
 export const SyncStores = {
   savedCode: createRef(),
   savedTimestamp: createRef(),

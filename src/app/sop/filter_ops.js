@@ -28,6 +28,7 @@ const makeTagFilterDesignDoc = () =>
         if (doc.type == 'i') {
           let tags = doc.tags;
           if (tags !== undefined) {
+            // @ts-ignore This is meant to be a string
             tags.forEach((tag) => emit(tag, null));
           }
         }

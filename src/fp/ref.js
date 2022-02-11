@@ -112,6 +112,7 @@ const Ref = daggy.taggedSum('Ref', {
   Set: ['ref', 'value'],
   Update: ['ref', 'key', 'value'],
 });
+// @ts-ignore
 const { Deref, Get, Set, Reset, Update } = Ref;
 
 const refToFuture = (deref) => (p) =>

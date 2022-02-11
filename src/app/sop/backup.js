@@ -9,10 +9,12 @@ import { syncWithBackUp } from '../db_ops';
 const Backup = daggy.taggedSum('Backup', {
   Sync: ['code'],
 });
+// @ts-ignore
 const { Sync } = Backup;
 
 const remoteSyncWithCode = (code) =>
   free.of(code)//
+    // @ts-ignore replacable ENV
     .map((code) => `${REMOTE_BACKUP_CRED_URL}/${code}`)
     .chain((requestUrl) => fetchJson(requestUrl, { method: 'GET' }))
     .chain((creds) => syncWithBackUp(creds.dbUrl, creds.username, creds.password));
@@ -22,6 +24,7 @@ const remoteBackupToFuture = (p) => p.cata({
 });
 
 const localBackupToFuture = (p) => p.cata({
+  // @ts-ignore replacable ENV
   Sync: (code) => free.interpete(syncWithBackUp(`${LOCAL_DB_URL}/${code}`, LOCAL_DB_USERNAME, LOCAL_DB_PASSWORD)),
 });
 
@@ -31,7 +34,9 @@ const emptyBackupToFuture = (p) => p.cata({
 
 const setupBackupInterpretor = () => {
   // Read the ENV variables
+  // @ts-ignore replacable ENV
   let isRemoteBackup = REMOTE_BACKUP_CRED_URL != undefined;
+  // @ts-ignore replacable ENV
   let isLocalBackup = LOCAL_DB_URL != undefined;
   if (!isRemoteBackup && !isLocalBackup) {
     console.warn('Backup is not setup properly');
