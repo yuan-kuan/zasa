@@ -41,7 +41,6 @@ const performAddTagFilter = (tag) =>
   free.sequence([
     filter_ops.updateSavedTagFilter(R.append(tag)),
     presentGrid(),
-    toast(`added ${tag}`)
   ]);
 
 
