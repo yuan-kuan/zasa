@@ -6,8 +6,13 @@
   import Modal from 'view/Modal.svelte';
 
   import { SyncStores } from 'app/stores';
-  const { savedCode, syncStatus, savedTimestamp, performSyncStorage } =
-    SyncStores;
+  const {
+    savedCode,
+    syncStatus,
+    syncErrorMessage,
+    savedTimestamp,
+    performSyncStorage,
+  } = SyncStores;
 
   $: hasCode = $savedCode;
   let settingUp = false;
@@ -35,7 +40,9 @@
   let workingCode = '';
 
   const submit = () => {
-    $performSyncStorage(workingCode);
+    if (!isSyncing) {
+      $performSyncStorage(workingCode);
+    }
   };
 
   const keyDown = (e) => {
@@ -58,8 +65,33 @@
 
   const closeSettingUp = () => (settingUp = false);
 
-  $: hasSyncStatus = $syncStatus;
-  $: syncStatusIsError = $syncStatus?.toLowerCase().includes('error');
+  $: hasSyncStatus = $syncStatus != SyncStores.IDLE;
+  $: isSyncing = $syncStatus == SyncStores.SYNCING;
+  $: syncStatusIsError = $syncStatus == SyncStores.FAILED;
+
+  let syncMessage;
+  $: {
+    switch ($syncStatus) {
+      case SyncStores.IDLE:
+        syncMessage = '';
+        break;
+      case SyncStores.SYNCING:
+        syncMessage = 'Syncing...';
+        break;
+      case SyncStores.DONE:
+        syncMessage = 'Synced Succeed!';
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        break;
+      case SyncStores.FAILED:
+        syncMessage = `Sync failed with error ${$syncErrorMessage}`;
+        break;
+
+      default:
+        break;
+    }
+  }
 </script>
 
 <div class="flex flex-col p-2 py-4 border-b border-black">
@@ -68,7 +100,11 @@
   {#if hasCode}
     <p>Sync often to keep your data safe.</p>
     <p><strong>Code: </strong> {$savedCode}</p>
-    <p><strong>Last Sync: </strong> {timeAgoText}</p>
+    {#if isSyncing}
+      <p>{syncMessage}</p>
+    {:else}
+      <p><strong>Last Sync: </strong> {timeAgoText}</p>
+    {/if}
 
     <div class="flex flex-row justify-center mt-2">
       <button
@@ -76,8 +112,10 @@
         on:click={() => (settingUp = true)}>Setup new Sync</button
       >
       <span class="px-4" />
-      <button class="btn bg-primary text-white" on:click={syncWithSavedCode}
-        >Sync Now</button
+      <button
+        class="btn bg-primary text-white disabled:cursor-not-allowed disabled:bg-gray-200"
+        disabled={isSyncing}
+        on:click={syncWithSavedCode}>Sync Now</button
       >
     </div>
   {:else}
@@ -113,16 +151,16 @@
         <!-- Add button -->
         <button
           class="px-4 py-2 rounded-r-lg bg-secondary-accent font-bold text-primary  border-primary-accent border-t border-b border-r disabled:cursor-not-allowed disabled:bg-gray-200"
-          disabled={workingCode == ''}
+          disabled={workingCode == '' || isSyncing}
           on:click={submit}>Submit</button
         >
       </div>
 
       {#if hasSyncStatus}
         {#if syncStatusIsError}
-          <p class="w-full mb-4 text-center text-red-600">{$syncStatus}</p>
+          <p class="w-full mb-4 text-center text-red-600">{syncMessage}</p>
         {:else}
-          <p class="w-full mb-4 text-center text-green-600">{$syncStatus}</p>
+          <p class="w-full mb-4 text-center text-green-600">{syncMessage}</p>
         {/if}
       {/if}
 

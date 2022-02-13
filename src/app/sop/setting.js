@@ -20,6 +20,8 @@ const performDestroyStorage = () =>
     kv.remove('filteringTags'),
     kv.remove('hasExpiringFla'),
     kv.remove('version'),
+    kv.remove('backupCode'),
+    kv.remove('backupTimestamp'),
     destroy(),
     reload()
   ]);
@@ -29,15 +31,18 @@ const performCompactStorage = () =>
 
 const performSyncStorage = (backupCode) =>
   free.sequence([
-    setRef(SyncStores.syncStatus, 'Syncing...'),
+    setRef(SyncStores.syncStatus, SyncStores.SYNCING),
     free.of(backupCode)
       .chain(backup.sync)
       .call(free.bichain(
-        (error) => setRef(SyncStores.syncStatus, `Sync Error: ${error}`),
+        (error) => free.sequence([
+          setRef(SyncStores.syncStatus, SyncStores.FAILED),
+          setRef(SyncStores.syncErrorMessage, error)
+        ]),
         (_) => free.sequence([
-          setRef(SyncStores.syncStatus, `Sync is done!`),
+          setRef(SyncStores.syncStatus, SyncStores.DONE),
           backup.saveCode(backupCode, new Date()),
-          presentSync()
+          // presentSync()
         ])
       )
       )
@@ -46,6 +51,7 @@ const performSyncStorage = (backupCode) =>
 
 const presentSync = () =>
   free.sequence([
+    setRef(SyncStores.syncStatus, SyncStores.IDLE),
     free.bichain(
       () => setRef(SyncStores.savedCode, ''),
       setRef(SyncStores.savedCode),
