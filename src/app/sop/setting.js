@@ -43,6 +43,7 @@ const performSyncStorage = (backupCode) =>
       )
   ])
 
+
 const presentSync = () =>
   free.sequence([
     free.bichain(

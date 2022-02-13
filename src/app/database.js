@@ -22,6 +22,7 @@ const Database = daggy.taggedSum('Database', {
   Destroy: [''],
   Sync: ['targetUrl', 'options'],
 });
+// @ts-ignore
 const { Get, AllDocs, Put, BulkDocs, Attach, Query, CleanUp, CreateIndex, Find, Destroy, Sync } = Database;
 
 const databaseToFuture = (pouchdb) => (p) =>

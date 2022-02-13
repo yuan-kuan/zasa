@@ -9,6 +9,7 @@
 
   const toDateString = (batch) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    // @ts-ignore wrong type check?
     return new Date(batch.expiry).toLocaleDateString('en-GB', options);
   };
 

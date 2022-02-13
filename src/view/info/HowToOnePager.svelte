@@ -1,4 +1,5 @@
 <script>
+  // @ts-ignore
   import { Accordion, AccordionItem } from 'svelte-collapsible';
 
   import { Nav } from 'app/stores';

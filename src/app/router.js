@@ -13,6 +13,7 @@ import { goToHome, goToHowTo, goToInfo, goToRelease } from 'app/sop/home';
 const Navigation = daggy.taggedSum('Navigation', {
   Show: ['path', 'params'],
 });
+// @ts-ignore
 const { Show } = Navigation;
 
 const nagivationToFuture = (p) =>
@@ -23,6 +24,7 @@ const nagivationToFuture = (p) =>
           const newPath = new Path(path).build(params, { ignoreConstraints: true });
 
           if (newPath != page.current) {
+            // @ts-ignore wrong type definition version?
             page.show(newPath, page.prevContext, false, true);
           }
 

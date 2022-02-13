@@ -1,3 +1,4 @@
+// @ts-ignore
 import daggy from 'daggy';
 import { Future, resolve } from 'fluture';
 import * as R from 'ramda';
@@ -9,6 +10,7 @@ const Utils = daggy.taggedSum('Utils', {
   Reload: [''],
   FetchJson: ['url', 'options'],
 });
+// @ts-ignore
 const { Random, Reload, FetchJson } = Utils;
 
 const utilsToFuture = (p) =>
@@ -35,6 +37,7 @@ const atMostFourChar = R.pipe(
   R.multiply(36 * 36 * 36 * 36),
   Math.floor,
   (num) => num.toString(36),
+  // @ts-ignore
   R.take(4)
 );
 

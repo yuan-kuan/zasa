@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Copied from https://github.com/DrBoolean/freemonadky
 
 import daggy from 'daggy';

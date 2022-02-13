@@ -1,4 +1,6 @@
 <script>
+  // @ts-nocheck Cropper has no type
+
   import { onDestroy, onMount } from 'svelte';
   import Cropper from 'svelte-easy-crop';
   import { getCroppedImg } from './canvasUtils';

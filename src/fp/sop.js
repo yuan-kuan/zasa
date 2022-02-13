@@ -44,7 +44,7 @@ const sopManager = (function* () {
 
         // Use the event loop to trigger the [next()]. Generator cannot iterate
         // themselves.
-        setTimeout(() => sopManager.next([run]), 0);
+        setTimeout(() => sopManager.next([run, null, null]), 0);
       }
     } else if (command == run) {
       if (sopQueue.length > 0) {
@@ -68,9 +68,9 @@ const sopManager = (function* () {
           console.error('SOP error: ', e);
 
           sopQueue.unshift([toastErrorSop(e)]);
-          setTimeout(() => sopManager.next([run]), 0);
+          setTimeout(() => sopManager.next([run, null, null]), 0);
 
-        })(() => setTimeout(() => sopManager.next([run]), 0))(future);
+        })(() => setTimeout(() => sopManager.next([run, null, null]), 0))(future);
       } else {
         // When there is no SOP to run, set the mode back to idle.
         // This will ensure the next [add] command will restart the running.

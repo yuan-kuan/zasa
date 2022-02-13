@@ -6,6 +6,11 @@
       "view": ["view"],
       "app": ["app"],
       "test": ["test"]
-    }
-  }
+    },
+    "checkJs": true,
+    "skipLibCheck": true,
+  },
+  "include": [
+    "src"
+  ]
 }

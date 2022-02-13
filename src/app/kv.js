@@ -1,3 +1,4 @@
+// @ts-ignore
 import daggy from 'daggy';
 import * as R from 'ramda';
 import { resolve } from 'fluture';
@@ -9,6 +10,7 @@ const KV = daggy.taggedSum('KV', {
   Set: ['key', 'value'],
   Remove: ['key']
 });
+// @ts-ignore
 const { Get, Set, Remove } = KV;
 
 const kvToFuture = (kv) => (p) =>
