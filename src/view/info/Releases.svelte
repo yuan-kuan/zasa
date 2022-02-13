@@ -8,6 +8,9 @@
   <p class="flex justify-center font-bold text-center text-xl pb-2">
     <span><Logo /></span> <span class="pl-1 pt-1">The Date</span>
   </p>
+  
+  <p class="font-semibold text-base py-2">February 2022</p>
+  <p>patching</p>
 
   <p class="font-semibold text-base py-2">December 2021</p>
 
