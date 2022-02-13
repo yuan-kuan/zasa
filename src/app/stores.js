@@ -171,7 +171,12 @@ export const SettingStores = {
  * @property {object} savedCode - previously sync code that saved locally
  * @property {object} savedTimestamp
  * @property {object} syncStatus
+ * @property {object} syncErrorMessage
  * @property {object} performSyncStorage
+ * @property {Symbol} IDLE
+ * @property {Symbol} SYNCING
+ * @property {Symbol} DONE
+ * @property {Symbol} FAILED
  */
 
 /**
@@ -181,5 +186,12 @@ export const SyncStores = {
   savedCode: createRef(),
   savedTimestamp: createRef(),
   syncStatus: createRef(),
+  syncErrorMessage: createRef(),
   performSyncStorage: createRef(),
+
+  IDLE: Symbol('sync_status_idle'),
+  SYNCING: Symbol('sync_status_syncing'),
+  DONE: Symbol('sync_status_done'),
+  FAILED: Symbol('sync_status_failed'),
 }
+
