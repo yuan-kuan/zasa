@@ -8,6 +8,7 @@ import {
   makeMapWithKeysForDocAttachmentQueryOption,
   makeReduceByGroupQueryOption,
 } from '../db_ops';
+import * as stock_ops from './stock_ops';
 import * as kv from '../kv';
 import { convertBatchIdToItemId, docToItemWithBlob } from './item_utils';
 const L = {
@@ -67,6 +68,33 @@ const makeSortByRemindOptions = (remind) => {
   };
 }
 
+
+const makeOutOfStockIndexDoc = () => {
+  return {
+    index: {
+      fields: ['stockStatus'],
+      name: 'sort_remind'
+    }
+  }
+}
+
+const makeOutOfStockOptions = () => {
+  return {
+    selector: {
+      type: {
+        $eq: 'i'
+      },
+      stockStatus: {
+        $eq: stock_ops.Status.out_of_stock
+      },
+    },
+    fields: [
+      "_id", "expiry"
+    ]
+  };
+}
+
+
 const getSavedTagFilter = () =>
   kv.get([], 'filteringTags')
     .chain(
@@ -92,7 +120,8 @@ const removeFilterTag = (tag) =>
 const setup = () =>
   free.sequence([
     put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
-    createIndex(makeRemindIndexDoc())
+    createIndex(makeRemindIndexDoc()),
+    createIndex(makeOutOfStockIndexDoc())
   ]);
 
 const queryTagFilter = (options) => query('tagFilter', options)
@@ -138,6 +167,7 @@ const getExpiringItems = (tagFilter = R.identity) =>
     .chain((itemIdAndExpirys) =>
       free.of(itemIdAndExpirys)
         .map(R.pluck('_id'))
+        //TODO: Repeated convert?
         .map(R.map(convertBatchIdToItemId))
         .map(makeKeysAllDocOptionAttached)
         .chain(allDocs)
@@ -156,6 +186,25 @@ const getExpiringItemsWithTags = (tags) =>
 const getExpiringItemCount = () =>
   findExpiringItemIdAndExpiry().map(R.length);
 
+const hasOutOfStockFlag = () => kv.get(false, 'hasOutOfStockFlag')
+  .chain(R.ifElse(R.identity, free.right, free.left));
+
+const setOutOfStockFlag = (toggle) => kv.set('hasOutOfStockFlag', toggle);
+
+const findOutOfStockItems = () =>
+  free.of(makeOutOfStockOptions())
+    .chain(find)
+
+const getOutOfStockItems = () =>
+  findOutOfStockItems()
+    .map(R.pluck('_id'))
+    .map(makeKeysAllDocOptionAttached)
+    .chain(allDocs)
+    .map(R.map(docToItemWithBlob))
+
+const getOutOfStockItemsCount = () =>
+  findOutOfStockItems().map(R.length);
+
 export {
   setup,
   addFilterTag,
@@ -170,4 +219,9 @@ export {
   getExpiringItems,
   getExpiringItemCount,
   getExpiringItemsWithTags,
+
+  hasOutOfStockFlag,
+  setOutOfStockFlag,
+  getOutOfStockItems,
+  getOutOfStockItemsCount,
 };

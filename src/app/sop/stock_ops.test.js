@@ -6,15 +6,8 @@ import * as free from 'fp/free';
 import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
 import * as stock_ops from './stock_ops';
+import * as filter_ops from './filter_ops';
 
-const testHelper = createTestHelper(true);
-let interpret;
-let runningDate = 1;
-
-beforeEach(() => {
-  interpret = testHelper.setup();
-  runningDate = 1;
-});
 
 const randomDate = () => {
   let d = new Date('2020-04-27T01:00:00');
@@ -62,111 +55,205 @@ const removeBatch = (itemId) =>
     stock_ops.refreshItemStockStatus(itemId),
   ]);
 
-test('New item do not have stock status', async () => {
-  const fm = item_ops.create('brand_new', null).chain(stock_ops.getItemStockStatus);
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.brand_new);
+let runningDate = 1;
+beforeEach(() => {
+  runningDate = 1;
 });
 
-test('New item still has brand new status after refresh', async () => {
-  const fm = item_ops.create('brand_new_refresh', null)
-    .chain((itemId) => free.sequence([
-      stock_ops.refreshItemStockStatus(itemId),
-      stock_ops.getItemStockStatus(itemId)
-    ]))
-    .map(R.last);
+describe('Batch to say stock', () => {
+  const testHelper = createTestHelper(true);
+  let interpret;
+  beforeEach(() => {
+    interpret = testHelper.setup();
+  });
 
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.brand_new);
-});
+  test('New item do not have stock status', async () => {
+    const fm = item_ops.create('brand_new', null).chain(stock_ops.getItemStockStatus);
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.brand_new);
+  });
 
-test('Adding new batch to item change to have stock status', async () => {
-  const fm = item_ops.create('add_a_batch', null)
-    .chain((itemId) =>
-      free.sequence([
-        createBatch(itemId),
-        stock_ops.getItemStockStatus(itemId),
+  test('New item still has brand new status after refresh', async () => {
+    const fm = item_ops.create('brand_new_refresh', null)
+      .chain((itemId) => free.sequence([
+        stock_ops.refreshItemStockStatus(itemId),
+        stock_ops.getItemStockStatus(itemId)
       ]))
-    .map(R.last);
+      .map(R.last);
 
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.has_stock);
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.brand_new);
+  });
+
+  test('Adding new batch to item change to have stock status', async () => {
+    const fm = item_ops.create('add_a_batch', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.has_stock);
+  });
+
+  test('Adding more batch to have stock item does not change its status', async () => {
+    const fm = item_ops.create('add_a_batch', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          stock_ops.getItemStockStatus(itemId),
+          createBatch(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.has_stock);
+  });
+
+  test('Adding new count to a batch does not change item stock status', async () => {
+    const fm = item_ops.create('add_count', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          increaseBatchCount(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.has_stock);
+  });
+
+  test('Remove all batch from item change to no stock status', async () => {
+    const fm = item_ops.create('remove_all_batch', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          removeBatch(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.out_of_stock);
+  });
+
+  test('Remove partial batch does not change stock status', async () => {
+    const fm = item_ops.create('test batch remove', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          createBatch(itemId),
+          removeBatch(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.has_stock);
+  });
+
+  test('Reduce count on a batch does not change item stock status', async () => {
+    const fm = item_ops.create('reduce_count', null)
+      .chain((itemId) =>
+        free.sequence([
+          createBatch(itemId),
+          decreaseBatchCount(itemId),
+          stock_ops.getItemStockStatus(itemId),
+        ]))
+      .map(R.last);
+
+    const result = await interpret(fm);
+    expect(result).toBe(stock_ops.Status.has_stock);
+  });
 });
 
-test('Adding more batch to have stock item does not change its status', async () => {
-  const fm = item_ops.create('add_a_batch', null)
-    .chain((itemId) =>
+describe('Filter for out of stock', () => {
+  let itemIdApple, itemIdFerrari, itemIdSky, itemIdGrass;
+
+  const testHelper = createTestHelper(true);
+  let interpret;
+
+  beforeEach(async () => {
+    interpret = testHelper.setup();
+    const results = await interpret(
       free.sequence([
-        createBatch(itemId),
-        stock_ops.getItemStockStatus(itemId),
-        createBatch(itemId),
-        stock_ops.getItemStockStatus(itemId),
-      ]))
-    .map(R.last);
+        filter_ops.setup(),
+        item_ops.create('apple', null),
+        item_ops.create('ferrari', null),
+        item_ops.create('sky', null),
+        item_ops.create('grass', null),
+      ])
+    );
 
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.has_stock);
+    itemIdApple = results[1];
+    itemIdFerrari = results[2];
+    itemIdSky = results[3];
+    itemIdGrass = results[4];
+  });
+
+  test('Return items with no stocks', async () => {
+    const preparation = free.sequence([
+      createBatch(itemIdApple),
+      createBatch(itemIdFerrari),
+      createBatch(itemIdSky),
+      createBatch(itemIdGrass),
+
+      removeBatch(itemIdApple),
+      removeBatch(itemIdFerrari),
+    ]);
+
+    const itemResults = await interpret(
+      preparation.chain(() => filter_ops.getOutOfStockItems()));
+
+    expect(itemResults).toHaveLength(2);
+    expect(itemResults[0]).toHaveProperty('name', 'apple');
+    expect(itemResults[1]).toHaveProperty('name', 'ferrari');
+
+    const countResult = await interpret(filter_ops.getOutOfStockItemsCount());
+    expect(countResult).toBe(2);
+  });
+
+  test('Brand new item is not out of stock', async () => {
+    const preparation = free.sequence([
+      createBatch(itemIdApple),
+      createBatch(itemIdFerrari),
+      removeBatch(itemIdApple),
+      removeBatch(itemIdFerrari),
+    ]);
+
+    const itemResults = await interpret(
+      preparation.chain(() => filter_ops.getOutOfStockItems()));
+
+    expect(itemResults).toHaveLength(2);
+    expect(itemResults[0]).toHaveProperty('name', 'apple');
+    expect(itemResults[1]).toHaveProperty('name', 'ferrari');
+
+    const countResult = await interpret(
+      preparation.chain(() => filter_ops.getOutOfStockItemsCount()));
+    expect(countResult).toBe(2);
+  });
+
+  test('Restock remove items from filter', async () => {
+    const preparation = free.sequence([
+      createBatch(itemIdApple),
+      createBatch(itemIdFerrari),
+      removeBatch(itemIdApple),
+      removeBatch(itemIdFerrari),
+      createBatch(itemIdFerrari),
+    ]);
+
+    const itemResults = await interpret(
+      preparation.chain(() => filter_ops.getOutOfStockItems()));
+
+    expect(itemResults).toHaveLength(1);
+    expect(itemResults[0]).toHaveProperty('name', 'apple');
+
+    const countResult = await interpret(filter_ops.getOutOfStockItemsCount());
+    expect(countResult).toBe(1);
+  });
+
 });
-
-test('Adding new count to a batch does not change item stock status', async () => {
-  const fm = item_ops.create('add_count', null)
-    .chain((itemId) =>
-      free.sequence([
-        createBatch(itemId),
-        increaseBatchCount(itemId),
-        stock_ops.getItemStockStatus(itemId),
-      ]))
-    .map(R.last);
-
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.has_stock);
-});
-
-test('Remove all batch from item change to no stock status', async () => {
-  const fm = item_ops.create('remove_all_batch', null)
-    .chain((itemId) =>
-      free.sequence([
-        createBatch(itemId),
-        removeBatch(itemId),
-        stock_ops.getItemStockStatus(itemId),
-      ]))
-    .map(R.last);
-
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.out_of_stock);
-});
-
-test('Remove partial batch does not change stock status', async () => {
-  const fm = item_ops.create('test batch remove', null)
-    .chain((itemId) =>
-      free.sequence([
-        createBatch(itemId),
-        createBatch(itemId),
-        removeBatch(itemId),
-        stock_ops.getItemStockStatus(itemId),
-      ]))
-    .map(R.last);
-
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.has_stock);
-});
-
-test('Reduce count on a batch does not change item stock status', async () => {
-  const fm = item_ops.create('reduce_count', null)
-    .chain((itemId) =>
-      free.sequence([
-        createBatch(itemId),
-        decreaseBatchCount(itemId),
-        stock_ops.getItemStockStatus(itemId),
-      ]))
-    .map(R.last);
-
-  const result = await interpret(fm);
-  expect(result).toBe(stock_ops.Status.has_stock);
-});
-
-// describe('Filter for out of stock', () => {
-//   test('', async () => {
-//     throw Error('empty test');
-//   });
-// });
