@@ -14,6 +14,9 @@
     expiringFilterSelected,
     performToggleExpiringFilter,
     performClearFilter,
+    outOfStockItemCount,
+    outOfStockFilterSelected,
+    performToggleOutOfStockFilter,
   } = FilterStores;
 
   $: hasSelectedTag = $tags.length > 0;
@@ -45,6 +48,13 @@
         name={`Expiring (${$expiringItemCount})`}
         selected={$expiringFilterSelected}
         on:tagclick={$performToggleExpiringFilter}
+      />
+    {/if}
+    {#if $outOfStockItemCount > 0 || $outOfStockFilterSelected}
+      <Tag
+        name={`Out of stock (${$outOfStockItemCount})`}
+        selected={$outOfStockFilterSelected}
+        on:tagclick={$performToggleOutOfStockFilter}
       />
     {/if}
   </div>

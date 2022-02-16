@@ -162,7 +162,7 @@ const findExpiringItemIdAndExpiry = () =>
 
 const indexedMap = R.addIndex(R.map);
 
-const getExpiringItems = (tagFilter = R.identity) =>
+const getExpiringItems = (tagFilter = R.T) =>
   findExpiringItemIdAndExpiry()
     .chain((itemIdAndExpirys) =>
       free.of(itemIdAndExpirys)
@@ -178,10 +178,16 @@ const getExpiringItems = (tagFilter = R.identity) =>
         ))
     )
 
+const itemWithTagFilter = (tags) =>
+  R.compose(
+    R.not,
+    R.isEmpty,
+    R.intersection(tags),
+    R.defaultTo([]),
+    R.view(L.tags));
+
 const getExpiringItemsWithTags = (tags) =>
-  getExpiringItems(
-    R.compose(R.not, R.isEmpty, R.intersection(tags), R.defaultTo([]), R.view(L.tags))
-  );
+  getExpiringItems(itemWithTagFilter(tags));
 
 const getExpiringItemCount = () =>
   findExpiringItemIdAndExpiry().map(R.length);
@@ -195,15 +201,19 @@ const findOutOfStockItems = () =>
   free.of(makeOutOfStockOptions())
     .chain(find)
 
-const getOutOfStockItems = () =>
+const getOutOfStockItems = (tagFilter = R.identity) =>
   findOutOfStockItems()
     .map(R.pluck('_id'))
     .map(makeKeysAllDocOptionAttached)
     .chain(allDocs)
+    .map(R.filter(tagFilter))
     .map(R.map(docToItemWithBlob))
 
 const getOutOfStockItemsCount = () =>
   findOutOfStockItems().map(R.length);
+
+const getOutOfStockItemsWithTags = (tags) =>
+  getOutOfStockItems(itemWithTagFilter(tags));
 
 export {
   setup,
@@ -224,4 +234,5 @@ export {
   setOutOfStockFlag,
   getOutOfStockItems,
   getOutOfStockItemsCount,
+  getOutOfStockItemsWithTags,
 };

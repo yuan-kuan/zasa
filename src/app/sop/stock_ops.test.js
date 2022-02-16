@@ -7,7 +7,7 @@ import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
 import * as filter_ops from './filter_ops';
 import * as stock_ops from './stock_ops';
-
+import * as tag_ops from "./tag_ops";
 
 const randomDate = () => {
   let d = new Date('2020-04-27T01:00:00');
@@ -254,5 +254,60 @@ describe('Filter for out of stock', () => {
 
     const countResult = await interpret(filter_ops.getOutOfStockItemsCount());
     expect(countResult).toBe(1);
+  });
+
+  describe('with tags', () => {
+    beforeEach(async () => {
+      await interpret(
+        free.sequence([
+          tag_ops.add(itemIdApple, 'fruit'),
+          tag_ops.add(itemIdApple, 'red'),
+          tag_ops.add(itemIdFerrari, 'red'),
+          tag_ops.add(itemIdFerrari, 'car'),
+          tag_ops.add(itemIdSky, 'blue'),
+          tag_ops.add(itemIdSky, 'natural'),
+          tag_ops.add(itemIdGrass, 'natural'),
+          tag_ops.add(itemIdGrass, 'green'),
+        ]))
+    });
+
+    test('Return item with the tag with no stock', async () => {
+      const preparation = free.sequence([
+        createBatch(itemIdApple),
+        createBatch(itemIdFerrari),
+        createBatch(itemIdSky),
+        createBatch(itemIdGrass),
+
+        removeBatch(itemIdApple),
+        removeBatch(itemIdFerrari),
+      ]);
+
+      const itemResults = await interpret(
+        preparation.chain(() => filter_ops.getOutOfStockItemsWithTags(['car'])));
+
+      expect(itemResults).toHaveLength(1);
+      expect(itemResults[0]).toHaveProperty('name', 'ferrari');
+    });
+
+    test('Return item with the tag with no stock - 2', async () => {
+      const preparation = free.sequence([
+        createBatch(itemIdApple),
+        createBatch(itemIdFerrari),
+        createBatch(itemIdSky),
+        createBatch(itemIdGrass),
+
+        removeBatch(itemIdApple),
+        removeBatch(itemIdFerrari),
+        removeBatch(itemIdSky),
+        removeBatch(itemIdGrass),
+      ]);
+
+      const itemResults = await interpret(
+        preparation.chain(() => filter_ops.getOutOfStockItemsWithTags(['natural'])));
+
+      expect(itemResults).toHaveLength(2);
+      expect(itemResults[0]).toHaveProperty('name', 'grass');
+      expect(itemResults[1]).toHaveProperty('name', 'sky');
+    });
   });
 });
