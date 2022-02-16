@@ -73,7 +73,7 @@ const makeOutOfStockIndexDoc = () => {
   return {
     index: {
       fields: ['stockStatus'],
-      name: 'sort_remind'
+      name: 'out_of_stock_index'
     }
   }
 }
@@ -89,7 +89,7 @@ const makeOutOfStockOptions = () => {
       },
     },
     fields: [
-      "_id", "expiry"
+      "_id"
     ]
   };
 }

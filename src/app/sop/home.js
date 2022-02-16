@@ -69,10 +69,11 @@ const goToHome = () =>
         ],
         [
           R.T,
-          R.always(free.sequence([
+          (currentVersion) => free.sequence([
+            version_ops.migrate(currentVersion),
+            version_ops.save(currentVersion),
             goToRelease(),
-            version_ops.save(currentVersion)
-          ]))
+          ])
         ],
       ])
     )

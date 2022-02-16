@@ -5,8 +5,8 @@ import * as free from 'fp/free';
 
 import * as batch_ops from './batch_ops';
 import * as item_ops from './item_ops';
-import * as stock_ops from './stock_ops';
 import * as filter_ops from './filter_ops';
+import * as stock_ops from './stock_ops';
 
 
 const randomDate = () => {
@@ -255,5 +255,4 @@ describe('Filter for out of stock', () => {
     const countResult = await interpret(filter_ops.getOutOfStockItemsCount());
     expect(countResult).toBe(1);
   });
-
 });

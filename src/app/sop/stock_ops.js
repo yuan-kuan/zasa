@@ -53,4 +53,4 @@ const refreshItemStockStatus = (itemId) =>
     .ap(batch_ops.getAll(itemId).map(R.complement(R.isEmpty)))
     .chain(updateItemStockStatus(itemId));
 
-export { Status, getItemStockStatus, refreshItemStockStatus };
+export { Status, getItemStockStatus, updateItemStockStatus, refreshItemStockStatus };
