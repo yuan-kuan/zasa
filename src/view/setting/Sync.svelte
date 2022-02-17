@@ -172,7 +172,7 @@
         <p class="mb-4">
           If you like to have one, send an email to <a
             href="mailto:kuan@hey.com">kuan@hey.com</a
-          >. It is free (now).
+          >
         </p>
       {/if}
 
