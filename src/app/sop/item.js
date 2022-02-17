@@ -16,6 +16,7 @@ import * as batch_ops from './batch_ops';
 import * as bulk_tag_ops from './bulk_tag_ops';
 import * as filter_ops from './filter_ops';
 import * as item_ops from './item_ops';
+import * as stock_ops from './stock_ops';
 import * as tag_ops from './tag_ops';
 import { tapLog } from 'app/utils';
 
@@ -73,6 +74,7 @@ const presentRemind = (itemId) =>
 const performCreateBatch = (itemId, expiryDate) =>
   free.sequence([
     batch_ops.create(itemId, expiryDate),
+    stock_ops.refreshItemStockStatus(itemId),
     presentBatches(itemId),
     setRef(ItemStores.savedStatus, `Saved new batch`)
   ]);
@@ -80,6 +82,7 @@ const performCreateBatch = (itemId, expiryDate) =>
 const performDeleteBatch = (itemId, batchId) =>
   free.sequence([
     batch_ops.remove(batchId),
+    stock_ops.refreshItemStockStatus(itemId),
     presentBatches(itemId),
     setRef(ItemStores.savedStatus, `Saved. Removed a batch`)
   ]);
@@ -94,6 +97,7 @@ const performBatchCounting = (itemId, batches, operation) =>
     (batch) => () =>
       addSop(() => free.sequence([
         operation(batch),
+        stock_ops.refreshItemStockStatus(itemId),
         presentBatches(itemId),
         setRef(ItemStores.savedStatus, `Saved. Updated a batch`)
       ]))
@@ -104,6 +108,7 @@ const performBatchDirectUpdate = (itemId, batches) =>
     (batch) => (count) =>
       addSop(() => free.sequence([
         batch_ops.updateAndSaveCount(count, batch),
+        stock_ops.refreshItemStockStatus(itemId),
         presentBatches(itemId),
         setRef(ItemStores.savedStatus, `Saved. Updated a batch`)
       ]))
