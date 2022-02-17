@@ -53,6 +53,8 @@ const performRemoveTagFilter = (tag) =>
 const performClearFilter = () =>
   free.sequence([
     filter_ops.updateSavedTagFilter(R.intersection([])),
+    filter_ops.setExpiringFlag(false),
+    filter_ops.setOutOfStockFlag(false),
     presentGrid(),
   ]);
 
