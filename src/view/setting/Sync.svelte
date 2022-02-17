@@ -181,10 +181,12 @@
           class="font-light text-primary underline place-self-center"
           on:click={() => (showingTips = !showingTips)}>What is this?</button
         >
-        <button
-          class="font-light text-primary underline place-self-center"
-          on:click={closeSettingUp}>Cancel</button
-        >
+        {#if !isSyncing}
+          <button
+            class="font-light text-primary underline place-self-center"
+            on:click={closeSettingUp}>Close</button
+          >
+        {/if}
       </div>
     </div>
   </Modal>
