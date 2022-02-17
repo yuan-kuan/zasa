@@ -54,7 +54,8 @@ const syncWithBackUp = (targetUrl, username, password) =>
     auth: {
       username, password
     },
-    bacth_size: 2,
+    batch_size: 1,
+    batches_limit: 1,
     filter: (doc) => !doc._id.startsWith('_design'),
   });
 
