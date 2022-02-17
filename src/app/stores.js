@@ -46,6 +46,9 @@ export const GridStores = {
  * @property {object} expiringItemCount
  * @property {object} expiringFilterSelected
  * @property {object} performToggleExpiringFilter
+ * @property {object} outOfStockItemCount 
+ * @property {object} outOfStockFilterSelected 
+ * @property {object} performToggleOutOfStockFilter 
 */
 
 /**
@@ -60,6 +63,9 @@ export const FilterStores = {
   expiringItemCount: createRef(),
   expiringFilterSelected: createRef(),
   performToggleExpiringFilter: createRef(),
+  outOfStockItemCount: createRef(),
+  outOfStockFilterSelected: createRef(),
+  performToggleOutOfStockFilter: createRef(),
 }
 
 /**

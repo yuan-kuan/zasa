@@ -151,7 +151,6 @@ test('Decrement the count of a batch', async () => {
       ]))
     .map(R.last);
 
-
   const result = await interpret(fm);
   expect(result).toHaveProperty('count', 2);
 });

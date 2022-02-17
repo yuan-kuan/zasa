@@ -383,6 +383,30 @@
       </article>
     </AccordionItem>
 
+    <AccordionItem key="showoutofstock">
+      <header slot="header">Show Only Out of Stock Items</header>
+      <article slot="body">
+        <p>
+          Similar to Expiring Items. You can use the Out of Stock filter tag to
+          show all the out of stock items.
+          <span class="flex flex-row justify-center items-start">
+            <Tag name="Out of Stock (2)" selected={false} />
+          </span>
+        </p>
+
+        <p>
+          After you delete the last batch from an item, that item will be
+          considered out of stock. Adding a new batch to it will revoke this
+          stauts.
+        </p>
+
+        <p>
+          New item before adding any batches will not be considered as out of
+          stock.
+        </p>
+      </article>
+    </AccordionItem>
+
     <AccordionItem key="backup">
       <header slot="header">Backup</header>
       <article slot="body">

@@ -107,11 +107,11 @@
     {/if}
 
     <div class="flex flex-row justify-center mt-2">
-      <button
+      <!-- <button
         class="btn bg-secondary text-white"
         on:click={() => (settingUp = true)}>Setup new Sync</button
       >
-      <span class="px-4" />
+      <span class="px-4" /> -->
       <button
         class="btn bg-primary text-white disabled:cursor-not-allowed disabled:bg-gray-200"
         disabled={isSyncing}
@@ -181,10 +181,12 @@
           class="font-light text-primary underline place-self-center"
           on:click={() => (showingTips = !showingTips)}>What is this?</button
         >
-        <button
-          class="font-light text-primary underline place-self-center"
-          on:click={closeSettingUp}>Cancel</button
-        >
+        {#if !isSyncing}
+          <button
+            class="font-light text-primary underline place-self-center"
+            on:click={closeSettingUp}>Close</button
+          >
+        {/if}
       </div>
     </div>
   </Modal>

@@ -8,6 +8,7 @@ import {
   makeMapWithKeysForDocAttachmentQueryOption,
   makeReduceByGroupQueryOption,
 } from '../db_ops';
+import * as stock_ops from './stock_ops';
 import * as kv from '../kv';
 import { convertBatchIdToItemId, docToItemWithBlob } from './item_utils';
 const L = {
@@ -67,6 +68,33 @@ const makeSortByRemindOptions = (remind) => {
   };
 }
 
+
+const makeOutOfStockIndexDoc = () => {
+  return {
+    index: {
+      fields: ['stockStatus'],
+      name: 'out_of_stock_index'
+    }
+  }
+}
+
+const makeOutOfStockOptions = () => {
+  return {
+    selector: {
+      type: {
+        $eq: 'i'
+      },
+      stockStatus: {
+        $eq: stock_ops.Status.out_of_stock
+      },
+    },
+    fields: [
+      "_id"
+    ]
+  };
+}
+
+
 const getSavedTagFilter = () =>
   kv.get([], 'filteringTags')
     .chain(
@@ -92,7 +120,8 @@ const removeFilterTag = (tag) =>
 const setup = () =>
   free.sequence([
     put(makeTagFilterDesignDoc()).call(free.bichain(free.of, free.of)),
-    createIndex(makeRemindIndexDoc())
+    createIndex(makeRemindIndexDoc()),
+    createIndex(makeOutOfStockIndexDoc())
   ]);
 
 const queryTagFilter = (options) => query('tagFilter', options)
@@ -133,11 +162,12 @@ const findExpiringItemIdAndExpiry = () =>
 
 const indexedMap = R.addIndex(R.map);
 
-const getExpiringItems = (tagFilter = R.identity) =>
+const getExpiringItems = (tagFilter = R.T) =>
   findExpiringItemIdAndExpiry()
     .chain((itemIdAndExpirys) =>
       free.of(itemIdAndExpirys)
         .map(R.pluck('_id'))
+        //TODO: Repeated convert?
         .map(R.map(convertBatchIdToItemId))
         .map(makeKeysAllDocOptionAttached)
         .chain(allDocs)
@@ -148,13 +178,42 @@ const getExpiringItems = (tagFilter = R.identity) =>
         ))
     )
 
+const itemWithTagFilter = (tags) =>
+  R.compose(
+    R.not,
+    R.isEmpty,
+    R.intersection(tags),
+    R.defaultTo([]),
+    R.view(L.tags));
+
 const getExpiringItemsWithTags = (tags) =>
-  getExpiringItems(
-    R.compose(R.not, R.isEmpty, R.intersection(tags), R.defaultTo([]), R.view(L.tags))
-  );
+  getExpiringItems(itemWithTagFilter(tags));
 
 const getExpiringItemCount = () =>
   findExpiringItemIdAndExpiry().map(R.length);
+
+const hasOutOfStockFlag = () => kv.get(false, 'hasOutOfStockFlag')
+  .chain(R.ifElse(R.identity, free.right, free.left));
+
+const setOutOfStockFlag = (toggle) => kv.set('hasOutOfStockFlag', toggle);
+
+const findOutOfStockItems = () =>
+  free.of(makeOutOfStockOptions())
+    .chain(find)
+
+const getOutOfStockItems = (tagFilter = R.identity) =>
+  findOutOfStockItems()
+    .map(R.pluck('_id'))
+    .map(makeKeysAllDocOptionAttached)
+    .chain(allDocs)
+    .map(R.filter(tagFilter))
+    .map(R.map(docToItemWithBlob))
+
+const getOutOfStockItemsCount = () =>
+  findOutOfStockItems().map(R.length);
+
+const getOutOfStockItemsWithTags = (tags) =>
+  getOutOfStockItems(itemWithTagFilter(tags));
 
 export {
   setup,
@@ -170,4 +229,10 @@ export {
   getExpiringItems,
   getExpiringItemCount,
   getExpiringItemsWithTags,
+
+  hasOutOfStockFlag,
+  setOutOfStockFlag,
+  getOutOfStockItems,
+  getOutOfStockItemsCount,
+  getOutOfStockItemsWithTags,
 };

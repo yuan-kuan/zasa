@@ -9,6 +9,12 @@ const L = {
   deleted: R.lensProp('_deleted'),
 };
 
+const makeStartEndRangeAllDocNoDocOption = (key) =>
+  R.pipe(
+    R.applySpec({ startkey: R.identity, endkey: (v) => `${v}\ufff0` }),
+  )(key);
+
+
 const makeStartEndRangeAllDocOption = (key) =>
   R.pipe(
     R.applySpec({ startkey: R.identity, endkey: (v) => `${v}\ufff0` }),
@@ -54,6 +60,7 @@ const syncWithBackUp = (targetUrl, username, password) =>
   });
 
 export {
+  makeStartEndRangeAllDocNoDocOption,
   makeStartEndRangeAllDocOption,
   makeStartEndRangeAllDocOptionAttached,
   makeKeysAllDocOptionAttached,

@@ -2,7 +2,13 @@
   import Tag from 'view/Tag.svelte';
 
   import { FilterStores } from 'app/stores';
-  const { tags, expiringItemCount, expiringFilterSelected } = FilterStores;
+  const {
+    tags,
+    expiringItemCount,
+    expiringFilterSelected,
+    outOfStockItemCount,
+    outOfStockFilterSelected,
+  } = FilterStores;
 </script>
 
 <div class="fixed bottom-12 right-2 ">
@@ -12,6 +18,9 @@
     {/each}
     {#if $expiringFilterSelected}
       <Tag name={`Expiring (${$expiringItemCount})`} dense on:tagclick />
+    {/if}
+    {#if $outOfStockFilterSelected}
+      <Tag name={`Out of stock (${$outOfStockItemCount})`} dense on:tagclick />
     {/if}
   </div>
 </div>

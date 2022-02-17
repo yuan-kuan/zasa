@@ -8,8 +8,8 @@
   export let photoChanged;
 
   let isTakingPhoto = false;
-  let photoSize;
   let photoUrl;
+  // let photoSize;
 
   const updatePhotoUrl = (blob) => {
     if (photoUrl != undefined) {
@@ -19,7 +19,7 @@
 
     if (blob) {
       photoUrl = URL.createObjectURL(blob);
-      photoSize = `${(blob.size / 1024 / 1024).toFixed(2)} MB`;
+      // photoSize = `${(blob.size / 1024 / 1024).toFixed(2)} MB`;
     }
   };
 
@@ -47,11 +47,11 @@
     src={photoUrl}
     alt=""
   />
-  <span
+  <!-- <span
     class="absolute bottom-2 left-2 px-2 text-primary  bg-primary-accent opacity-75 rounded-xl"
   >
     {photoSize}
-  </span>
+  </span> -->
   <div
     class="absolute bottom-2 right-2 px-2 text-primary  bg-primary-accent opacity-75 rounded-xl"
   >

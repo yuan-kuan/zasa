@@ -53,7 +53,7 @@ const presentHome = () =>
     presentGrid(),
   ]);
 
-const currentVersion = 1;
+const currentVersion = 2;
 
 const goToHome = () =>
   version_ops.load()
@@ -69,10 +69,11 @@ const goToHome = () =>
         ],
         [
           R.T,
-          R.always(free.sequence([
+          (previousVersion) => free.sequence([
+            version_ops.migrate(previousVersion),
+            version_ops.save(currentVersion),
             goToRelease(),
-            version_ops.save(currentVersion)
-          ]))
+          ])
         ],
       ])
     )

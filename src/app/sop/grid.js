@@ -53,6 +53,8 @@ const performRemoveTagFilter = (tag) =>
 const performClearFilter = () =>
   free.sequence([
     filter_ops.updateSavedTagFilter(R.intersection([])),
+    filter_ops.setExpiringFlag(false),
+    filter_ops.setOutOfStockFlag(false),
     presentGrid(),
   ]);
 
@@ -104,23 +106,73 @@ const presentExpiringFilter = (itsOn) =>
     setRef(FilterStores.performToggleExpiringFilter, () => addSop(() => performToggleExpiringFilter(!itsOn))),
   ]);
 
+const presentOutOfStockItems = () =>
+  filter_ops.getOutOfStockItems().chain(presentItems);
+
+const presentOutOfStockItemsWithTags = (tags) => {
+  return filter_ops.getOutOfStockItemsWithTags(tags).chain(presentItems);
+};
+
+const performToggleOutOfStockFilter = (v) =>
+  free.sequence([
+    filter_ops.setOutOfStockFlag(v),
+    presentGrid()
+  ]);
+
+const presentOutOfStockFilter = (itsOn) =>
+  free.sequence([
+    filter_ops.getOutOfStockItemsCount().chain(setRef(FilterStores.outOfStockItemCount)),
+    setRef(FilterStores.outOfStockFilterSelected, itsOn),
+    setRef(FilterStores.performToggleOutOfStockFilter, () => addSop(() => performToggleOutOfStockFilter(!itsOn))),
+  ]);
+
+
+const presentAllItemGrid = () =>
+  filter_ops.getSavedTagFilter()
+    .call(free.bichain(
+      free.parallelConverge([
+        presentTagSelection,
+        presentAllItems
+      ]),
+      free.parallelConverge([
+        presentTagSelection,
+        presentFilteredItem
+      ])
+    ))
+
+const presentOutOfStockGrid = () =>
+  filter_ops.hasOutOfStockFlag()
+    .call(free.bichain(
+      (no) =>
+        free.sequence([
+          presentOutOfStockFilter(no),
+          presentAllItemGrid(),
+        ]),
+      (yes) =>
+        free.sequence([
+          presentOutOfStockFilter(yes),
+          filter_ops.getSavedTagFilter()
+            .call(free.bichain(
+              () => free.parallel([
+                presentTagSelection([]),
+                presentOutOfStockItems()
+              ]),
+              free.parallelConverge([
+                presentTagSelection,
+                presentOutOfStockItemsWithTags
+              ])
+            ))
+        ])
+    ));
+
+
 const presentGrid = () =>
   filter_ops.hasExpiringFlag()
     .call(free.bichain(
       (no) =>
         free.sequence([
           presentExpiringFilter(no),
-          filter_ops.getSavedTagFilter()
-            .call(free.bichain(
-              free.parallelConverge([
-                presentTagSelection,
-                presentAllItems
-              ]),
-              free.parallelConverge([
-                presentTagSelection,
-                presentFilteredItem
-              ])
-            ))
+          presentOutOfStockGrid()
         ]),
       (yes) =>
         free.sequence([
