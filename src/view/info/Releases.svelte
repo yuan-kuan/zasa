@@ -8,9 +8,16 @@
   <p class="flex justify-center font-bold text-center text-xl pb-2">
     <span><Logo /></span> <span class="pl-1 pt-1">The Date</span>
   </p>
-  
+
   <p class="font-semibold text-base py-2">February 2022</p>
-  <p>patching</p>
+  <ul class="list-disc">
+    <li>
+      <i>Out of Stock filter:</i> As you deleted the last batch from an item, it
+      will be deemed out of stock. You can filter it with the new "out of stock"
+      filter.
+    </li>
+    <li>Polished Backup UI and setting page.</li>
+  </ul>
 
   <p class="font-semibold text-base py-2">December 2021</p>
 
