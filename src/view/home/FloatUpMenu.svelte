@@ -9,6 +9,10 @@
   const toggle = () => {
     expanded = !expanded;
   };
+
+  const reviewOnProductHunt = () => {
+    window.open('https://www.producthunt.com/posts/b4the-date', '_blank');
+  };
 </script>
 
 <BottomSideButton title="B4" on:click={toggle} />
@@ -29,5 +33,10 @@
     />
     <FloatUpMenuButton title="Info" on:click={$goToInfo} on:click={toggle} />
     <FloatUpMenuButton title="HowTo" on:click={$goToHowTo} on:click={toggle} />
+    <FloatUpMenuButton
+      title="Review"
+      on:click={reviewOnProductHunt}
+      on:click={toggle}
+    />
   </div>
 {/if}
