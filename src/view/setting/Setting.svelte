@@ -1,10 +1,17 @@
 <script>
   import Logo from 'view/Logo.svelte';
   import Sync from './Sync.svelte';
+  import YesNoDialog from './YesNoDialog.svelte';
 
   import { SettingStores } from 'app/stores';
   const { performCleanupStorage, performDestroyStorage, backFromSettingPage } =
     SettingStores;
+
+  let sureAboutReset = false;
+  const confirmReset = () => {
+    sureAboutReset = false;
+    $performDestroyStorage();
+  };
 </script>
 
 <header class="sticky top-0 bg-neutral bg-opacity-50 w-full z-10">
@@ -40,10 +47,18 @@
 
     <button
       class="btn bg-red-500 text-white self-center"
-      on:click={$performDestroyStorage}>Factory Reset</button
+      on:click={() => (sureAboutReset = true)}>Factory Reset</button
     >
   </div>
 
   <!-- Filler  -->
   <div class="flex-grow" />
 </div>
+
+{#if sureAboutReset}
+  <YesNoDialog
+    message="This will delete all local data. Are you sure?"
+    onCancel={() => (sureAboutReset = false)}
+    onConfirm={confirmReset}
+  />
+{/if}
